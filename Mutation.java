@@ -35,12 +35,8 @@ public class Mutation {
         
         dcr1.addRelations(dcrRelations1);
         
-        System.out.println("Init relations: \n" + dcr1.getRelations().toString() + "\n");
+        insertActivity(dcr1);
         
-        DriftSimulator.simpleRelationMutation(dcr1);
-        
-        System.out.println("Final relations: \n" + dcr1.getRelations().toString() + "\n");
-
         /*
         System.out.println("Initial activities in model: \n" 
                             + dcr1.getActivities().toString() + "\n");
@@ -54,8 +50,41 @@ public class Mutation {
     }
     
     /**
+     * Change pattern - Serial insert of activity
      * Mutation operations
      */
+    public static void insertActivity(DcrModel model) {
+        ArrayList<Triple<String,String,RELATION>> relationList 
+                = new ArrayList<Triple<String,String,RELATION>>(model.getRelations());
+        Triple<String,String,RELATION> randomRelation 
+            = relationList.get(rand.nextInt(relationList.size()));
+        
+        String act1 = randomRelation.getLeft();
+        String act2 = randomRelation.getMiddle();
+
+        Set<Triple<String,String,RELATION>> oldEdges 
+            = model.getDcrRelationsWithSource(act1);
+        
+        model.removeRelations(oldEdges);
+        
+        oldEdges.retainAll(model.getDcrRelationsWithActivity(act2));
+        
+        // Obtain relations shared between them
+        ArrayList<Triple<String,String,RELATION>> oldEdgesList
+            = new ArrayList<Triple<String,String,RELATION>>(oldEdges);
+        
+        String newActivity = getNewActivityName();
+        
+        for (Triple<String,String,RELATION> relation : oldEdgesList) {
+            model.addRelation(Triple.of(act1, newActivity, relation.getRight()));  
+            model.addRelation(Triple.of(newActivity, act2, relation.getRight()));  
+        }
+    }
+    
+    private static String getNewActivityName() {
+        actNum++;
+        return randomName + (actNum-1);
+    }
     
     /*
      * Randomly inserts or deletes an activity from the model
