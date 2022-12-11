@@ -25,35 +25,23 @@ public class Mutation {
         
         Set<Triple<String, String, DcrModel.RELATION>> dcrRelations1 = new HashSet<>();
 
-        dcrRelations1.add(Triple.of("Start", "Act3", DcrModel.RELATION.CONDITION));
+        dcrRelations1.add(Triple.of("Start", "Act2", DcrModel.RELATION.CONDITION));
         dcrRelations1.add(Triple.of("Start", "Act2", DcrModel.RELATION.RESPONSE));
-        dcrRelations1.add(Triple.of("Act4", "Act7", DcrModel.RELATION.RESPONSE));
-        dcrRelations1.add(Triple.of("Act4", "Act7", DcrModel.RELATION.INCLUDE));
-        dcrRelations1.add(Triple.of("Start", "Act4", DcrModel.RELATION.EXCLUDE));
-        dcrRelations1.add(Triple.of("Act4", "Act5", DcrModel.RELATION.CONDITION));
-        dcrRelations1.add(Triple.of("Act5", "Act6", DcrModel.RELATION.INCLUDE));
+        dcrRelations1.add(Triple.of("Act2", "Start", DcrModel.RELATION.RESPONSE));
+        dcrRelations1.add(Triple.of("Act2", "Act3", DcrModel.RELATION.RESPONSE));
         
         dcr1.addRelations(dcrRelations1);
         
-        insertActivity(dcr1);
+        String newAct = getNewActivityName();
         
-        /*
-        System.out.println("Initial activities in model: \n" 
-                            + dcr1.getActivities().toString() + "\n");
-        
-        DriftSimulator.simpleActivityMutation(dcr1);
-        
-        System.out.println();
-        System.out.println("Final activities in model: \n"
-                            + dcr1.getActivities().toString());
-                            */
+        insertActivityWithName(dcr1,newAct);
     }
     
     /**
      * Change pattern - Serial insert of activity
      * Mutation operations
      */
-    public static void insertActivity(DcrModel model) {
+    public static void insertActivityWithName(DcrModel model, String newActivity) {
         ArrayList<Triple<String,String,RELATION>> relationList 
                 = new ArrayList<Triple<String,String,RELATION>>(model.getRelations());
         Triple<String,String,RELATION> randomRelation 
@@ -61,27 +49,40 @@ public class Mutation {
         
         String act1 = randomRelation.getLeft();
         String act2 = randomRelation.getMiddle();
-
-        Set<Triple<String,String,RELATION>> oldEdges 
+        
+        Set<Triple<String,String,RELATION>> sourceEdges
             = model.getDcrRelationsWithSource(act1);
         
-        model.removeRelations(oldEdges);
+        ArrayList<Triple<String,String,RELATION>> targetEdgesList 
+            = new ArrayList<Triple<String,String,RELATION>>();
         
-        oldEdges.retainAll(model.getDcrRelationsWithActivity(act2));
+        for (Triple<String,String,RELATION> relation : model.getDcrRelationsWithSource(act2)) {
+            if (relation.getMiddle() == act1) targetEdgesList.add(relation);
+        }
         
-        // Obtain relations shared between them
-        ArrayList<Triple<String,String,RELATION>> oldEdgesList
-            = new ArrayList<Triple<String,String,RELATION>>(oldEdges);
+        Set<Triple<String,String,RELATION>> targetEdges 
+            = new HashSet<Triple<String, String, RELATION>>(targetEdgesList);
         
-        String newActivity = getNewActivityName();
+        sourceEdges.addAll(targetEdges);
         
-        for (Triple<String,String,RELATION> relation : oldEdgesList) {
-            model.addRelation(Triple.of(act1, newActivity, relation.getRight()));  
-            model.addRelation(Triple.of(newActivity, act2, relation.getRight()));  
+        model.removeRelations(sourceEdges);
+        
+        ArrayList<Triple<String,String,RELATION>> sourceEdgesList
+            = new ArrayList<Triple<String,String,RELATION>>(sourceEdges);
+        
+        for (Triple<String,String,RELATION> relation : sourceEdgesList) {
+            model.addRelation(Triple.of(relation.getLeft(), newActivity, relation.getRight()));  
+            model.addRelation(Triple.of(newActivity, relation.getMiddle(), relation.getRight()));  
         }
     }
     
-    private static String getNewActivityName() {
+    /**
+     * Change pattern - Remove activity 
+     */
+    public static void removeActivityWithName(DcrModel model, String activity) {
+    }
+    
+    public static String getNewActivityName() {
         actNum++;
         return randomName + (actNum-1);
     }
