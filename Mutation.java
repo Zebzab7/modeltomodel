@@ -6,9 +6,11 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
 import beamline.dcr.model.relations.DcrModel;
+import beamline.dcr.model.relations.DcrModel.RELATION;
 
 public class Mutation {
     
@@ -32,18 +34,25 @@ public class Mutation {
         dcrRelations1.add(Triple.of("Act5", "Act6", DcrModel.RELATION.INCLUDE));
         
         dcr1.addRelations(dcrRelations1);
+        
+        System.out.println("Init relations: \n" + dcr1.getRelations().toString() + "\n");
+        
+        DriftSimulator.simpleRelationMutation(dcr1);
+        
+        System.out.println("Final relations: \n" + dcr1.getRelations().toString() + "\n");
 
+        /*
         System.out.println("Initial activities in model: \n" 
-                            + dcr1.getActivities().toString());
+                            + dcr1.getActivities().toString() + "\n");
         
-        for (int i = 0; i < 10; i++) {
-            randomInsertDeletion(dcr1);
-        }
+        DriftSimulator.simpleActivityMutation(dcr1);
         
+        System.out.println();
         System.out.println("Final activities in model: \n"
                             + dcr1.getActivities().toString());
+                            */
     }
-
+    
     /**
      * Mutation operations
      */
@@ -51,8 +60,7 @@ public class Mutation {
     /*
      * Randomly inserts or deletes an activity from the model
      */
-    public static void randomInsertDeletion(DcrModel model) {
-        Random rand = new Random();
+    public static void randomAcitityInsertDelete(DcrModel model) {
         if (rand.nextInt(2) == 1) {
             model.addActivity(randomName + actNum);
             actNum++;
@@ -75,5 +83,47 @@ public class Mutation {
         }
     }
     
+    /*
+     * Randomly inserts or deletes an edge of a random type
+     */
+    public static void randomRelationInsertDelete(DcrModel model) {
+        RELATION[] edges 
+            = {RELATION.INCLUDE, RELATION.EXCLUDE, RELATION.CONDITION, RELATION.RESPONSE};
+        if (rand.nextInt(2) == 1) {
+            String act1 = getRandomActivityFromDCRModel(model);
+            String act2 = getRandomActivityFromDCRModel(model);
+            Triple<String,String,RELATION> tuple 
+                = new MutableTriple<String,String,RELATION>(act1,act2,RELATION.CONDITION);
+            model.addRelation(tuple);
+        } else {
+            removeRandomRelation(model);
+        }
+    }
     
+    // Removes a random relation from the model
+    public static void removeRandomRelation(DcrModel model) {
+        int count = model.getRelations().size();
+        ArrayList<Triple<String,String,RELATION>> relationList 
+            = new ArrayList<Triple<String,String,RELATION>>(model.getRelations());
+        try {
+            Triple<String,String,RELATION> removedElement = relationList.get(rand.nextInt(count));
+            model.removeRelation(removedElement.getLeft(), removedElement.getMiddle(), 
+                                    removedElement.getRight());
+        } catch (Exception e) {
+            System.out.println("Tried to remove relation when none were left");
+        }
+    }
+    
+    public static String getRandomActivityFromDCRModel(DcrModel model) {
+        ArrayList<String> activityList = new ArrayList<String>(model.getActivities());
+        return activityList.get(rand.nextInt(activityList.size()));
+    }
 }
+
+
+
+
+
+
+
+
