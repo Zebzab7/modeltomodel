@@ -1,4 +1,4 @@
-package modeltomodel;
+package beamline.dcr.modeltomodel;
 
 import java.util.HashSet;
 import java.util.Set;

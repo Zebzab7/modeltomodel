@@ -1,6 +1,8 @@
 package beamline.dcr.testsoftware;
 
 import beamline.dcr.model.relations.DcrModel;
+import beamline.dcr.modeltomodel.DcrSimilarity;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -127,6 +129,7 @@ public class ModelComparison {
 
         return jaccardTotal;
     }
+    
 
     public String getJaccardString() {
         Map<DcrModel.RELATION, Double> constraintWeight = new HashMap<>() {{
@@ -161,6 +164,10 @@ public class ModelComparison {
         return jaccardString.toString();
     }
 
+    public String getGEDString() {
+        double sim = DcrSimilarity.graphEditDistanceSimilarity(originalDcrModel, comparativeDcrModel);
+        return ""+sim;
+    }
 
     public void loadComparativeModel(String xmlGraphPath) throws IOException, SAXException, ParserConfigurationException {
         this.comparativeDcrModel = new DcrModel();

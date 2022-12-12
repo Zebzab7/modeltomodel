@@ -21,16 +21,18 @@ public class PatternChangeComparison {
         String currentPath = rootPath + "\\src\\main\\java\\beamline\\dcr\\testsoftware";
         String groundTruthModels = currentPath + "\\groundtruthmodels";
 
-
-        StringBuilder modelComparisonString = new StringBuilder("model,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," +
-                "jac_con,jac_resp,jac_precond,jac_mile,jac_incl,jac_excl," +
-                "jac_noresp,jac_spawn,jac_act\n");
-
-
+//        StringBuilder modelComparisonString = new StringBuilder("model,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," +
+//                "jac_con,jac_resp,jac_precond,jac_mile,jac_incl,jac_excl," +
+//                "jac_noresp,jac_spawn,jac_act\n");
+        
+        StringBuilder modelComparisonString 
+            = new StringBuilder("model,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," 
+                    + "GED-Similarity\n");
+        
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
             paths
                     .filter(Files::isRegularFile)
-                    .forEach(path -> {if(path.toString().endsWith(".xml")) {
+                    .forEach(path -> {if(path.toString().endsWith("25.xml")) {
                         try {
                             String filenameFull = path.getFileName().toString();
                             String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
@@ -88,12 +90,14 @@ public class PatternChangeComparison {
                                     }
                                     DcrModel adaptedModel  = modelAdaption.getModel();
                                     modelComparison.loadComparativeModel(adaptedModel);
-                                    String jaccardSim = modelComparison.getJaccardString();
+                                    String GEDString = modelComparison.getGEDString();
+                                    //String jaccardSim = modelComparison.getJaccardString();
 
                                     xmlString.append(filename +",").append(addActivitySerialInt + ",").append(addActivityParallelInt+ ",")
                                             .append(deleteActivityInt+ ",").append(replaceActivityInt+ ",").append(addConstraintInt+ ",")
                                             .append(removeConstraintInt+ ",").append(swapActivitiesInt +",");
-                                    xmlString.append( jaccardSim + "\n");
+                                    xmlString.append(GEDString + "\n");
+                                    //xmlString.append( jaccardSim + "\n");
                                 }
                             }
                         }

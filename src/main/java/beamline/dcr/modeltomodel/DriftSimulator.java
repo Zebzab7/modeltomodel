@@ -1,4 +1,4 @@
-package modeltomodel;
+package beamline.dcr.modeltomodel;
 
 import beamline.dcr.model.relations.DcrModel;
 
