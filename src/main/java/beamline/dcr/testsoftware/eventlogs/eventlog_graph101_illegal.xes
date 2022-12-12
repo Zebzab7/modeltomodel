@@ -1,0 +1,643 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<log xes.version="1.0" xes.features="nested-attributes" openxes.version="1.0RC7">
+	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.xesext"/>
+	<classifier name="Event Name" keys="concept:name"/>
+	<trace>
+		<string key="concept:name" value="trace 1"/>
+		<event>
+			<string key="concept:name" value="Activity0"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 2"/>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity6"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 3"/>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity5"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 4"/>
+		<event>
+			<string key="concept:name" value="Activity0"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 5"/>
+		<event>
+			<string key="concept:name" value="Activity0"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity6"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity22"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 6"/>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity6"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity11"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 7"/>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity5"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 8"/>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity9"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 9"/>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity22"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+			
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 10"/>
+		<event>
+			<string key="concept:name" value="Activity0"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity9"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 11"/>
+		<event>
+			<string key="concept:name" value="Activity0"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity9"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 12"/>
+		<event>
+			<string key="concept:name" value="Activity0"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity6"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity7"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+		<trace>
+		<string key="concept:name" value="trace 13"/>
+		<event>
+			<string key="concept:name" value="Activity0"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity12"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity13"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 14"/>
+		<event>
+			<string key="concept:name" value="Activity0"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>s
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity12"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity13"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="trace 15"/>
+		<event>
+			<string key="concept:name" value="Activity0"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity1"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity2"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity3"/>
+		</event>
+				<event>
+			<string key="concept:name" value="Activity12"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity8"/>
+		</event>
+
+		<event>
+			<string key="concept:name" value="Activity13"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity10"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity14"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity15"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity16"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity19"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity17"/>
+		</event>
+		<event>
+			<string key="concept:name" value="Activity18"/>
+		</event>
+			<event>
+			<string key="concept:name" value="Activity20"/>
+		</event>
+	</trace>
+</log>

@@ -1,0 +1,1438 @@
+<dcrgraph title="DCR - Annotation Process" dataTypesStatus="hide" filterLevel="-1" insightFilter="false" zoomLevel="-2" formGroupStyle="Normal" formLayoutStyle="Horizontal" graphBG="#ffffff" graphType="0">
+    <specification>
+        <resources>
+            <events>
+                <event id="Activity0">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="0" yLoc="50"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>1. Open your “annotation log” file</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>1</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity1">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="125" yLoc="50"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>2. Create a new DCR graph in dcrgraphs.net.</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>2</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity2">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="250" yLoc="50"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>3. Share the graph with the DCR team.</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>3</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity3">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="375" yLoc="50"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>4. Open the Process Highlighter</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>4</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity4" type="subprocess">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="0" yLoc="175"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription/>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>5</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                    <event id="Activity5">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="25" yLoc="225"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>determine whether the paragraph content is of technical nature or not.</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>6</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity6">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="150" yLoc="225"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>identifying the actors</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>7</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity7">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="275" yLoc="225"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>remove the ambiguities</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>8</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity8">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="400" yLoc="225"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>7. Identify activities, events, rights and obligations in a sentence</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>9</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity9">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="525" yLoc="450"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>&lt;p&gt;Perform label transformation&lt;/p&gt;</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>10</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity10">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="650" yLoc="225"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>Enrich your annotations </eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>11</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity13">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="25" yLoc="450"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>14</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity12">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="400" yLoc="450"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>Identify the sentences that constitute causal relations between events.</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>13</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity11">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="150" yLoc="375"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>activity attribution by relating events to roles</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>12</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity21">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="275" yLoc="375"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>ambiguities in this step</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>22</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity22">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="650" yLoc="425"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription>remove the ambiguities from the events,</eventDescription>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>23</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                </event>
+                <event id="Activity14">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="50" yLoc="650"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>revise the graph to detect any inconsistencies</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>15</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity15">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="200" yLoc="650"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>save your graph as a major revision </eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>16</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity16">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="325" yLoc="650"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>share the public url of the process</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>17</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity17">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="475" yLoc="800"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>Copy the resulting url next to the entry in the Excel document, and add the date and time of completion</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>18</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity18">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="825" yLoc="225"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>f for any reason one or more sentences do not correspond to any of the cases covered in the guideline, please collect them in a separate file (for instance, a Word document), and describe why it does not apply</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>19</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity19">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="475" yLoc="650"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>Evaluate the guideline and the usability of the process highlighter.</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>20</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity20">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="850" yLoc="800"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription>please send the Excel files (and any
+word files) to lopez@di.ku.dk.</eventDescription>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>21</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+            </events>
+            <subProcesses/>
+            <distribution/>
+            <labels>
+                <label id="1. Open your “annotation log” file"/>
+                <label id="2. Create a new DCR graph in dcrgraphs.net."/>
+                <label id="3. Share the graph with the DCR team."/>
+                <label id="4. Open the Process Highlighter"/>
+                <label id="Paragraph Analysis"/>
+                <label id="determine whether the paragraph content is of tech"/>
+                <label id="identifying the actors"/>
+                <label id="remove the ambiguities"/>
+                <label id="7. Identify activities, events, rights and obligat"/>
+                <label id="Perform label transformation"/>
+                <label id="Enrich event annotations "/>
+                <label id="activity attribution by relating events to roles"/>
+                <label id="Identify relations"/>
+                <label id="Enrich  relation annotations"/>
+                <label id="revise the graph to detect any inconsistencies"/>
+                <label id="save your graph as a major revision "/>
+                <label id="share the public url of the process"/>
+                <label id="Copy model url to Excel"/>
+                <label id="collect sentences not corresponding to guidelines in a word document and describe their problems"/>
+                <label id="Evaluate usability of the  guideline and the tool"/>
+                <label id="Send the Annotation logs, usability surveys and comments to lopez@di.ku.dk"/>
+                <label id="Resolve relation ambiguities"/>
+                <label id="remove ambiguities from events"/>
+            </labels>
+            <labelMappings>
+                <labelMapping eventId="Activity0" labelId="1. Open your “annotation log” file"/>
+                <labelMapping eventId="Activity1" labelId="2. Create a new DCR graph in dcrgraphs.net."/>
+                <labelMapping eventId="Activity2" labelId="3. Share the graph with the DCR team."/>
+                <labelMapping eventId="Activity3" labelId="4. Open the Process Highlighter"/>
+                <labelMapping eventId="Activity4" labelId="Paragraph Analysis"/>
+                <labelMapping eventId="Activity5" labelId="determine whether the paragraph content is of tech"/>
+                <labelMapping eventId="Activity6" labelId="identifying the actors"/>
+                <labelMapping eventId="Activity7" labelId="remove the ambiguities"/>
+                <labelMapping eventId="Activity8" labelId="7. Identify activities, events, rights and obligat"/>
+                <labelMapping eventId="Activity9" labelId="Perform label transformation"/>
+                <labelMapping eventId="Activity10" labelId="Enrich event annotations "/>
+                <labelMapping eventId="Activity11" labelId="activity attribution by relating events to roles"/>
+                <labelMapping eventId="Activity12" labelId="Identify relations"/>
+                <labelMapping eventId="Activity13" labelId="Enrich  relation annotations"/>
+                <labelMapping eventId="Activity14" labelId="revise the graph to detect any inconsistencies"/>
+                <labelMapping eventId="Activity15" labelId="save your graph as a major revision "/>
+                <labelMapping eventId="Activity16" labelId="share the public url of the process"/>
+                <labelMapping eventId="Activity17" labelId="Copy model url to Excel"/>
+                <labelMapping eventId="Activity18" labelId="collect sentences not corresponding to guidelines in a word document and describe their problems"/>
+                <labelMapping eventId="Activity19" labelId="Evaluate usability of the  guideline and the tool"/>
+                <labelMapping eventId="Activity20" labelId="Send the Annotation logs, usability surveys and comments to lopez@di.ku.dk"/>
+                <labelMapping eventId="Activity21" labelId="Resolve relation ambiguities"/>
+                <labelMapping eventId="Activity22" labelId="remove ambiguities from events"/>
+            </labelMappings>
+            <expressions/>
+            <variables/>
+            <variableAccesses>
+                <writeAccesses/>
+            </variableAccesses>
+            <custom>
+                <keywords/>
+                <roles/>
+                <groups/>
+                <phases/>
+                <eventTypes/>
+                <eventParameters/>
+                <graphDetails>
+1. Open your “annotation log” file. This is simply an Excel sheet containing rows of the sections you have annotated. In each row you will have the identifier of the section (e.g. “Consolidation of Social Services, section 50”), the time and date when you start the annotation process, the time and date when you finish the annotation process and the URL of the resulting DCR graph. Add a new entry by creating a new entry with the identifier and the starting time. An example of an annotation log can be found in Table 2.
+2. Create a new DCR graph in dcrgraphs.net. Use as a title the name of the law and the section to be annotated, for instance “Consolidation of Social Services, Section 50”. In the description of the graph, include the text coming from the section to be annotated.
+3. Share the graph with the DCR team. To do that you will need to open the Designer, open the advanced features, click on the “share graph” tab, and select the users you want to share it with. Please include “Rasmus Iven” and “Hugo Andres Lopez - Real” as part of the shared users.
+4. Open the Process Highlighter by clicking on the top menu of the graph, in Apps → Highlighter. A new window will appear and you will have the text of the section. We recommend that you position the new window and the graph window side-by-side, to see the consequences of the annotations in your graph.
+5. Starting with a the first paragraph of the section and continuing with the rest, use the annotation tools in the process highlighter to determine whether the paragraph content is of technical nature or not. You can do this following the guidelines in Section 5. Those sections/subsections/ paragraphs/subparagraphs that are not technical norms will be annotated as comments in the process highlighter, leaving only the sentences that describe technical norms without comment annotations.
+6. Process each of the remaining sentences, identifying the actors involved in a norm following the guidelines in Section 6. Annotate each of them as roles using the “role” annotation type in the process highlighter. In some cases, you will need to remove the ambiguities from the roles, you will do this by applying the patterns in Step 12
+7. Identify activities, events, rights and obligations in a sentence. To do so, follow the guidelines in Section 7, and use the activity annotation type. In some cases, you will need to remove the ambiguities from the events, you will do this by applying the patterns in Step 12.
+8. Perform label transformation whenever they are needed, so events in the process model become understandable. Follow the guidelines described in Section 9.
+9. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process. Consult Section 7.1 to see how.
+10. Proceed to perform activity attribution by relating events to roles. To do so, please refer to the guidelines in Section 8.
+11. Identify the sentences that constitute causal relations between events. Use the relation type annotation in the Highlighter this time. Follow the guidelines in Section 10 for this. In case of ambiguities in this step, please apply the patterns in Step 12.
+12. In the case you find conceptual links between different entities, please mark these as aliases following the guidelines in Section 11.
+13. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process. Consult Section 10.3 to see how.
+14. Once you have finished annotating at Section level, revise the graph to detect any inconsistencies. Do this based on Section 13.
+15. After clearing any inconsistencies, save your graph as a major revision with name “For Revision”2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion.
+16. If for any reason one or more sentences do not correspond to any of the cases covered in the guideline, please collect them in a separate file (for instance, a Word document), and describe why it does not apply.
+17. Evaluate the guideline and the usability of the process highlighter. See the evaluation phase in Section 15
+18. Proceed with the next section and go back to step 1.
+19.  Once you have finished the annotations, please send the Excel files (and any
+word files) to lopez@di.ku.dk.</graphDetails>
+                <graphLanguage>en-US</graphLanguage>
+                <graphDomain>process</graphDomain>
+                <graphFilters>
+                    <filteredGroups/>
+                    <filteredRoles/>
+                    <filteredPhases/>
+                </graphFilters>
+                <hightlighterMarkup id="HLM"/>
+                <highlighterMarkup>
+                    <highlightLayers>
+                        <highlightLayer default="true" name="description">
+1. Open your “annotation log” file. This is simply an Excel sheet containing rows of the sections you have annotated. In each row you will have the identifier of the section (e.g. “Consolidation of Social Services, section 50”), the time and date when you start the annotation process, the time and date when you finish the annotation process and the URL of the resulting DCR graph. Add a new entry by creating a new entry with the identifier and the starting time. An example of an annotation log can be found in Table 2.
+2. Create a new DCR graph in dcrgraphs.net. Use as a title the name of the law and the section to be annotated, for instance “Consolidation of Social Services, Section 50”. In the description of the graph, include the text coming from the section to be annotated.
+3. Share the graph with the DCR team. To do that you will need to open the Designer, open the advanced features, click on the “share graph” tab, and select the users you want to share it with. Please include “Rasmus Iven” and “Hugo Andres Lopez - Real” as part of the shared users.
+4. Open the Process Highlighter by clicking on the top menu of the graph, in Apps → Highlighter. A new window will appear and you will have the text of the section. We recommend that you position the new window and the graph window side-by-side, to see the consequences of the annotations in your graph.
+5. Starting with a the first paragraph of the section and continuing with the rest, use the annotation tools in the process highlighter to determine whether the paragraph content is of technical nature or not. You can do this following the guidelines in Section 5. Those sections/subsections/ paragraphs/subparagraphs that are not technical norms will be annotated as comments in the process highlighter, leaving only the sentences that describe technical norms without comment annotations.
+6. Process each of the remaining sentences, identifying the actors involved in a norm following the guidelines in Section 6. Annotate each of them as roles using the “role” annotation type in the process highlighter. In some cases, you will need to remove the ambiguities from the roles, you will do this by applying the patterns in Step 12
+7. Identify activities, events, rights and obligations in a sentence. To do so, follow the guidelines in Section 7, and use the activity annotation type. In some cases, you will need to remove the ambiguities from the events, you will do this by applying the patterns in Step 12.
+8. Perform label transformation whenever they are needed, so events in the process model become understandable. Follow the guidelines described in Section 9.
+9. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process. Consult Section 7.1 to see how.
+10. Proceed to perform activity attribution by relating events to roles. To do so, please refer to the guidelines in Section 8.
+11. Identify the sentences that constitute causal relations between events. Use the relation type annotation in the Highlighter this time. Follow the guidelines in Section 10 for this. In case of ambiguities in this step, please apply the patterns in Step 12.
+12. In the case you find conceptual links between different entities, please mark these as aliases following the guidelines in Section 11.
+13. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process. Consult Section 10.3 to see how.
+14. Once you have finished annotating at Section level, revise the graph to detect any inconsistencies. Do this based on Section 13.
+15. After clearing any inconsistencies, save your graph as a major revision with name “For Revision”2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion.
+16. If for any reason one or more sentences do not correspond to any of the cases covered in the guideline, please collect them in a separate file (for instance, a Word document), and describe why it does not apply.
+17. Evaluate the guideline and the usability of the process highlighter. See the evaluation phase in Section 15
+18. Proceed with the next section and go back to step 1.
+19.  Once you have finished the annotations, please send the Excel files (and any
+word files) to lopez@di.ku.dk.</highlightLayer>
+                    </highlightLayers>
+                    <highlights>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="0" end="34">1. Open your “annotation log” file</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity0"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="522" end="565">2. Create a new DCR graph in dcrgraphs.net.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity1"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="785" end="822">3. Share the graph with the DCR team.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity2"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="1066" end="1097">4. Open the Process Highlighter</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity3"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="1508" end="1578">determine whether the paragraph content is of technical nature or not.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity5"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="1903" end="1925">identifying the actors</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity6"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2108" end="2130">remove the ambiguities</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity7"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2199" end="2267">7. Identify activities, events, rights and obligations in a sentence</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity8"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2481" end="2509">Perform label transformation</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity9"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2638" end="2662">Enrich your annotations </range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity10"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2805" end="2853">activity attribution by relating events to roles</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity11"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2913" end="2984">Identify the sentences that constitute causal relations between events.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity12"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3310" end="3421">Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity13"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3511" end="3557">revise the graph to detect any inconsistencies</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity14"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3627" end="3663">save your graph as a major revision </range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity15"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3693" end="3728">share the public url of the process</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity16"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3731" end="3834">Copy the resulting url next to the entry in the Excel document, and add the date and time of completion</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity17"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3840" end="4049">f for any reason one or more sentences do not correspond to any of the cases covered in the guideline, please collect them in a separate file (for instance, a Word document), and describe why it does not apply</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity18"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="4054" end="4122">Evaluate the guideline and the usability of the process highlighter.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity19"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="4262" end="4328">please send the Excel files (and any
+word files) to lopez@di.ku.dk.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity20"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2076" end="2199">In some cases, you will need to remove the ambiguities from the roles, you will do this by applying the patterns in Step 12</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity6--condition--Activity7"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2385" end="2423">remove the ambiguities from the events</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity7"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2353" end="2477">In some cases, you will need to remove the ambiguities from the events, you will do this by applying the patterns in Step 12</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity8--condition--Activity7"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2481" end="2588">Perform label transformation whenever they are needed, so events in the process model become understandable</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity8--condition--Activity9"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2635" end="2751">9. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process. </range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity8--condition--Activity10"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2635" end="2751">9. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process. </range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity8--response--Activity10"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2782" end="2853">10. Proceed to perform activity attribution by relating events to roles</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity8--condition--Activity11"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2782" end="2853">10. Proceed to perform activity attribution by relating events to roles</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity6--condition--Activity11"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2909" end="2984">11. Identify the sentences that constitute causal relations between events.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity8--condition--Activity12"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3105" end="3129">ambiguities in this step</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity21"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3094" end="3167">In case of ambiguities in this step, please apply the patterns in Step 12</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity12--condition--Activity21"/>
+                            </items>
+                        </highlight>
+                        <highlight type="activity">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2385" end="2424">remove the ambiguities from the events,</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity22"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2353" end="2477">In some cases, you will need to remove the ambiguities from the events, you will do this by applying the patterns in Step 12</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity8--condition--Activity22"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="2076" end="2199">In some cases, you will need to remove the ambiguities from the roles, you will do this by applying the patterns in Step 12</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity6--condition--Activity7"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3306" end="3422">13. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity12--condition--Activity13"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3459" end="3557">Once you have finished annotating at Section level, revise the graph to detect any inconsistencies</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity4--response--Activity14"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3590" end="3687"> After clearing any inconsistencies, save your graph as a major revision with name “For Revision”</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity14--condition--Activity15"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3687" end="3835">2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity15--condition--Activity16"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3687" end="3835">2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity15--response--Activity16"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3687" end="3835">2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity16--condition--Activity17"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3687" end="3835">2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion.</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity16--response--Activity17"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="4050" end="4161">17. Evaluate the guideline and the usability of the process highlighter. See the evaluation phase in Section 15</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity16--condition--Activity19"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="4050" end="4161">17. Evaluate the guideline and the usability of the process highlighter. See the evaluation phase in Section 15</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity16--response--Activity19"/>
+                            </items>
+                        </highlight>
+                        <highlight type="relation">
+                            <layers>
+                                <layer name="description">
+                                    <ranges>
+                                        <range start="3591" end="3834">After clearing any inconsistencies, save your graph as a major revision with name “For Revision”2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion</range>
+                                    </ranges>
+                                </layer>
+                            </layers>
+                            <items>
+                                <item id="Activity17--response--Activity20"/>
+                            </items>
+                        </highlight>
+                    </highlights>
+                </highlighterMarkup>
+            </custom>
+        </resources>
+        <constraints>
+            <conditions>
+                <condition sourceId="Activity1" targetId="Activity2" filterLevel="0" description="" time="" groups="" link="Activity1--condition--Activity2"/>
+                <condition sourceId="Activity3" targetId="Activity4" filterLevel="0" description="" time="" groups="" link="Activity3--condition--Activity4"/>
+                <condition sourceId="Activity6" targetId="Activity7" filterLevel="0" description="In some cases, you will need to remove the ambiguities from the roles, you will do this by applying the patterns in Step 12" time="" groups=""/>
+                <condition sourceId="Activity8" targetId="Activity7" filterLevel="0" description="In some cases, you will need to remove the ambiguities from the events, you will do this by applying the patterns in Step 12" time="" groups=""/>
+                <condition sourceId="Activity8" targetId="Activity9" filterLevel="0" description="Perform label transformation whenever they are needed, so events in the process model become understandable" time="" groups=""/>
+                <condition sourceId="Activity8" targetId="Activity10" filterLevel="0" description="9. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process. " time="" groups=""/>
+                <condition sourceId="Activity8" targetId="Activity11" filterLevel="0" description="10. Proceed to perform activity attribution by relating events to roles" time="" groups=""/>
+                <condition sourceId="Activity6" targetId="Activity11" filterLevel="0" description="10. Proceed to perform activity attribution by relating events to roles" time="" groups=""/>
+                <condition sourceId="Activity8" targetId="Activity12" filterLevel="0" description="11. Identify the sentences that constitute causal relations between events." time="" groups=""/>
+                <condition sourceId="Activity12" targetId="Activity21" filterLevel="0" description="In case of ambiguities in this step, please apply the patterns in Step 12" time="" groups=""/>
+                <condition sourceId="Activity8" targetId="Activity22" filterLevel="0" description="In some cases, you will need to remove the ambiguities from the events, you will do this by applying the patterns in Step 12" time="" groups=""/>
+                <condition sourceId="Activity12" targetId="Activity13" filterLevel="0" description="13. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process." time="" groups=""/>
+                <condition sourceId="Activity4" targetId="Activity14" filterLevel="0" description="" time="" groups="" link="Activity4--condition--Activity14"/>
+                <condition sourceId="Activity14" targetId="Activity15" filterLevel="0" description=" After clearing any inconsistencies, save your graph as a major revision with name “For Revision”" time="" groups=""/>
+                <condition sourceId="Activity15" targetId="Activity16" filterLevel="0" description="2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion." time="" groups=""/>
+                <condition sourceId="Activity16" targetId="Activity17" filterLevel="0" description="2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion." time="" groups=""/>
+                <condition sourceId="Activity4" targetId="Activity18" filterLevel="0" description="" time="" groups="" link="Activity4--condition--Activity18"/>
+                <condition sourceId="Activity16" targetId="Activity19" filterLevel="0" description="17. Evaluate the guideline and the usability of the process highlighter. See the evaluation phase in Section 15" time="" groups=""/>
+                <condition sourceId="Activity18" targetId="Activity20" filterLevel="0" description="" time="" groups="" link="Activity18--condition--Activity20"/>
+                <condition sourceId="Activity17" targetId="Activity20" filterLevel="0" description="" time="" groups="" link="Activity17--condition--Activity20"/>
+                <condition sourceId="Activity19" targetId="Activity20" filterLevel="0" description="" time="" groups="" link="Activity19--condition--Activity20"/>
+            </conditions>
+            <responses>
+                <response sourceId="Activity0" targetId="Activity1" filterLevel="0" description="" time="" groups=""/>
+                <response sourceId="Activity1" targetId="Activity2" filterLevel="0" description="" time="" groups=""/>
+                <response sourceId="Activity2" targetId="Activity3" filterLevel="0" description="" time="" groups=""/>
+                <response sourceId="Activity3" targetId="Activity4" filterLevel="0" description="" time="" groups=""/>
+                <response sourceId="Activity8" targetId="Activity10" filterLevel="0" description="9. Enrich your annotations with information regarding difficulty and confi- dence levels of the annotation process. " time="" groups=""/>
+                <response sourceId="Activity4" targetId="Activity14" filterLevel="0" description="Once you have finished annotating at Section level, revise the graph to detect any inconsistencies" time="" groups=""/>
+                <response sourceId="Activity15" targetId="Activity16" filterLevel="0" description="2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion." time="" groups=""/>
+                <response sourceId="Activity16" targetId="Activity17" filterLevel="0" description="2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion." time="" groups=""/>
+                <response sourceId="Activity16" targetId="Activity19" filterLevel="0" description="17. Evaluate the guideline and the usability of the process highlighter. See the evaluation phase in Section 15" time="" groups=""/>
+                <response sourceId="Activity19" targetId="Activity20" filterLevel="0" description="" time="" groups=""/>
+                <response sourceId="Activity17" targetId="Activity20" filterLevel="0" description="After clearing any inconsistencies, save your graph as a major revision with name “For Revision”2 and share the public url of the process3. Copy the resulting url next to the entry in the Excel document, and add the date and time of completion" time="" groups=""/>
+                <response sourceId="Activity18" targetId="Activity20" filterLevel="0" description="" time="" groups=""/>
+                <response sourceId="Activity14" targetId="Activity15" filterLevel="0" description="" time="" groups=""/>
+                <response sourceId="Activity12" targetId="Activity13" filterLevel="0" description="" time="" groups=""/>
+            </responses>
+            <coresponses/>
+            <excludes/>
+            <includes/>
+            <milestones>
+                <milestone sourceId="Activity1" targetId="Activity2" filterLevel="0" description="" time="" groups="" link="Activity1--condition--Activity2"/>
+                <milestone sourceId="Activity3" targetId="Activity4" filterLevel="0" description="" time="" groups="" link="Activity3--condition--Activity4"/>
+                <milestone sourceId="Activity4" targetId="Activity14" filterLevel="0" description="" time="" groups="" link="Activity4--condition--Activity14"/>
+                <milestone sourceId="Activity4" targetId="Activity18" filterLevel="0" description="" time="" groups="" link="Activity4--condition--Activity18"/>
+                <milestone sourceId="Activity18" targetId="Activity20" filterLevel="0" description="" time="" groups="" link="Activity18--condition--Activity20"/>
+                <milestone sourceId="Activity17" targetId="Activity20" filterLevel="0" description="" time="" groups="" link="Activity17--condition--Activity20"/>
+                <milestone sourceId="Activity19" targetId="Activity20" filterLevel="0" description="" time="" groups="" link="Activity19--condition--Activity20"/>
+            </milestones>
+            <spawns/>
+        </constraints>
+    </specification>
+    <runtime>
+        <custom>
+            <globalMarking/>
+        </custom>
+        <marking>
+            <globalStore/>
+            <executed/>
+            <included>
+                <event id="Activity0"/>
+                <event id="Activity1"/>
+                <event id="Activity2"/>
+                <event id="Activity3"/>
+                <event id="Activity4"/>
+                <event id="Activity5"/>
+                <event id="Activity6"/>
+                <event id="Activity7"/>
+                <event id="Activity8"/>
+                <event id="Activity9"/>
+                <event id="Activity10"/>
+                <event id="Activity11"/>
+                <event id="Activity12"/>
+                <event id="Activity13"/>
+                <event id="Activity14"/>
+                <event id="Activity15"/>
+                <event id="Activity16"/>
+                <event id="Activity17"/>
+                <event id="Activity18"/>
+                <event id="Activity19"/>
+                <event id="Activity20"/>
+                <event id="Activity21"/>
+                <event id="Activity22"/>
+            </included>
+            <pendingResponses/>
+        </marking>
+    </runtime>
+</dcrgraph>
