@@ -1,6 +1,7 @@
 package beamline.dcr.testsoftware.testrunners;
 
 import beamline.dcr.model.relations.DcrModel;
+import beamline.dcr.modeltomodel.DcrSimilarity;
 import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.view.DcrModelXML;
@@ -12,9 +13,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Random;
 import java.util.stream.Stream;
 
 public class PatternChangeComparison {
+    
+    static final int ITERATIONS = 100;
+    
+    static Random rand = new Random();
     
     public enum DRIFT {
         SUDDEN,
@@ -78,24 +84,98 @@ public class PatternChangeComparison {
     
     public static String createAdaptionString(String modelPath, String filename, DRIFT driftType) throws ParserConfigurationException, SAXException, IOException {
         
+        StringBuilder xmlString;
+        
         switch (driftType) {
             case SUDDEN:
-                System.out.println("This the sudden one yo");
+                xmlString = suddenDriftMutations(modelPath, filename);
                 break;
             case GRADUAL:
-                System.out.println("This the gradual one yo");
+                xmlString = gradualDriftMutations(modelPath, filename);
                 break;
             case SEASONAL:
-                System.out.println("This the seasonal one yo");
+                xmlString = seasonalDriftMutations(modelPath, filename);
                 break;
             case INCREMENTAL:
-                System.out.println("This the incremental one yo");
+                xmlString = incrementalDriftMutations(modelPath, filename);
                 break;
         }
         
-        StringBuilder xmlString = randomMutations(modelPath, filename);
+        xmlString = randomMutations(modelPath, filename);
         
         return xmlString.toString();
+    }
+    
+    /*
+     * Sudden drift should incorporate only one single and very significant drift
+     */
+    private static StringBuilder suddenDriftMutations(String modelPath, String filename) throws IOException, SAXException, ParserConfigurationException {
+        int drifts = 10;
+        int driftIteration = rand.nextInt(ITERATIONS);
+        
+        ModelComparison modelComparison = new ModelComparison(modelPath);
+        StringBuilder xmlString = new StringBuilder();
+        
+        ModelAdaption modelAdaption;
+        for (int i = 0; i < ITERATIONS; i++) {
+            modelAdaption = new ModelAdaption(modelPath);
+            if (i == driftIteration) {
+                if (modelAdaption.insertActivitySerial(drifts) ||
+                        modelAdaption.insertActivityParallel(drifts) ||
+                        modelAdaption.deleteActivity(drifts) ||
+                        modelAdaption.replaceActivity(drifts) ||
+                        modelAdaption.addConstraint(drifts) ||
+                        modelAdaption.removeConstraint(drifts) ||
+                        modelAdaption.swapActivities(drifts)) {
+                    System.out.println("The execution of a mutation operation was unsuccessful");
+                } 
+            } else {
+                if (modelAdaption.randomMutation(1)) {
+                    
+                }
+            }
+            DcrModel adaptedModel = modelAdaption.getModel();
+            modelComparison.loadComparativeModel(adaptedModel);
+        }
+        
+        String GEDString = modelComparison.getGEDString();
+        String CNEString = modelComparison.getCNEString();
+        String jaccardSim = modelComparison.getJaccardString();
+        
+        xmlString.append(filename +",");
+        xmlString.append(GEDString + ",").append(CNEString + ",").append(jaccardSim + "\n");
+        
+        return xmlString;
+    }
+    
+    private static StringBuilder gradualDriftMutations(String modelPath, String filename) {
+        StringBuilder xmlString = new StringBuilder();
+        
+        /*
+         * 
+         */
+       
+        return xmlString;
+    }
+    
+    private static StringBuilder seasonalDriftMutations(String modelPath, String filename) {
+        StringBuilder xmlString = new StringBuilder();
+        
+        /*
+         * 
+         */
+       
+        return xmlString;
+    }
+    
+    private static StringBuilder incrementalDriftMutations(String modelPath, String filename) {
+        StringBuilder xmlString = new StringBuilder();
+        
+        /*
+         * 
+         */
+       
+        return xmlString;
     }
     
     private static StringBuilder randomMutations(String modelPath, String filename) throws IOException, SAXException, ParserConfigurationException {
@@ -145,51 +225,4 @@ public class PatternChangeComparison {
         return xmlString;
     }
     
-    public static String originalCreateAdaptionString(String modelPath, String filename) throws ParserConfigurationException, SAXException, IOException {
-        StringBuilder xmlString = new StringBuilder();
-
-        ModelAdaption modelAdaption;
-        ModelComparison modelComparison = new ModelComparison(modelPath);
-        for (int addActivitySerialInt = 0; addActivitySerialInt <= 3; addActivitySerialInt++){
-            for (int addActivityParallelInt = 0; addActivityParallelInt <= 3; addActivityParallelInt++){
-                for (int deleteActivityInt = 0; deleteActivityInt <= 3; deleteActivityInt++){
-                    for (int replaceActivityInt = 0; replaceActivityInt <= 3; replaceActivityInt++){
-                        for (int addConstraintInt = 0; addConstraintInt <= 3; addConstraintInt++){
-                            for (int removeConstraintInt = 0; removeConstraintInt <= 3; removeConstraintInt++){
-                                for (int swapActivitiesInt = 0; swapActivitiesInt <= 3; swapActivitiesInt++){
-
-                                    modelAdaption = new ModelAdaption(modelPath);
-                                    if (!modelAdaption.insertActivitySerial(addActivitySerialInt) ||
-                                    !modelAdaption.insertActivityParallel(addActivityParallelInt) ||
-                                    ! modelAdaption.deleteActivity(deleteActivityInt) ||
-                                    ! modelAdaption.replaceActivity(replaceActivityInt) ||
-                                    ! modelAdaption.addConstraint(addConstraintInt) ||
-                                    ! modelAdaption.removeConstraint(removeConstraintInt) ||
-                                    ! modelAdaption.swapActivities(swapActivitiesInt)){
-                                        continue;
-                                    }
-                                    DcrModel adaptedModel  = modelAdaption.getModel();
-                                    modelComparison.loadComparativeModel(adaptedModel);
-                                    String GEDString = modelComparison.getGEDString();
-                                    String CNEString = modelComparison.getCNEString();
-                                    double jaccard = modelComparison.getJaccardSimilarity();
-                                    String jaccardSim = ""+jaccard;
-
-                                    xmlString.append(filename +",").append(addActivitySerialInt + ",").append(addActivityParallelInt+ ",")
-                                            .append(deleteActivityInt+ ",").append(replaceActivityInt+ ",").append(addConstraintInt+ ",")
-                                            .append(removeConstraintInt+ ",").append(swapActivitiesInt +",");
-                                    xmlString.append(GEDString + ",").append(CNEString + ",").append(jaccardSim + "\n");
-                                    //xmlString.append( jaccardSim + "\n");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return xmlString.toString();
-    }
-
-
 }

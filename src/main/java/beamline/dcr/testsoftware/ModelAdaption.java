@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class ModelAdaption {
+    
     private DcrModel model;
 
     public ModelAdaption(String modelPath) throws IOException, SAXException, ParserConfigurationException {
@@ -177,6 +178,32 @@ public class ModelAdaption {
             }
             model.addRelations(relationsToAdd);
             model.removeRelations(relationsToRemove);
+        }
+        return true;
+    }
+    public boolean randomMutation(int numRepeatings) {
+        switch((new Random()).nextInt(7)) {
+            case 0:
+                insertActivitySerial(numRepeatings);
+                break;
+            case 1:
+                insertActivityParallel(numRepeatings);
+                break;
+            case 2:
+                deleteActivity(numRepeatings);
+                break;
+            case 3:
+                replaceActivity(numRepeatings);
+                break;
+            case 4:
+                addConstraint(numRepeatings);
+                break;
+            case 5:
+                removeConstraint(numRepeatings);
+                break;
+            case 6:
+                swapActivities(numRepeatings);
+                break;
         }
         return true;
     }
