@@ -31,7 +31,7 @@ public class DcrModel {
 		SEQUENCE;
 	}
 
-	public DcrModel() {
+	public DcrModel()  {
 		this.activites = new HashSet<>();
 	}
 
@@ -204,6 +204,16 @@ public class DcrModel {
 			}
 		}
 
+	}
+	
+	/*
+	 * Returns a shallow copy of this DCR model
+	 */
+	public DcrModel getClone() {
+	    DcrModel copy = new DcrModel();
+	    copy.addActivities(activites);
+	    copy.addRelations(relations);
+	    return copy;
 	}
 
 }

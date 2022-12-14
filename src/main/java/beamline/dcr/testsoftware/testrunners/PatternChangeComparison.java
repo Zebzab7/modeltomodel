@@ -31,60 +31,64 @@ public class PatternChangeComparison {
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
         String rootPath = System.getProperty("user.dir");
-        String currentPath = rootPath + "\\src\\main\\java\\beamline\\dcr\\testsoftware";
-        String groundTruthModels = currentPath + "\\groundtruthmodels";
+        String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
+        String groundTruthModels = currentPath + "/groundtruthmodels";
 
-//        StringBuilder modelComparisonString = new StringBuilder("model,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," +
-//                "jac_con,jac_resp,jac_precond,jac_mile,jac_incl,jac_excl," +
-//                "jac_noresp,jac_spawn,jac_act\n");
-        
+        /*
+         *  StringBuilder modelComparisonString = new StringBuilder("model,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," +
+                "jac_con,jac_resp,jac_precond,jac_mile,jac_incl,jac_excl," +
+                "jac_noresp,jac_spawn,jac_act\n");
+         */
+       
         for (DRIFT driftType : DRIFT.values()) {
-            StringBuilder modelComparisonString 
-            = new StringBuilder("model,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," 
-                    + "GED-Similarity,CNE-Similarity,jaccard-Similarity\n");
-            
-            try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
-                paths
-                        .filter(Files::isRegularFile)
-                        .forEach(path -> {if(path.toString().endsWith("25.xml")) {
-                            try {
-                                String filenameFull = path.getFileName().toString();
-                                String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
-                                String simString = createAdaptionString(path.toString(),filenameTrimmed,driftType);
-                                //System.out.println(simString);
-                                modelComparisonString.append(simString);
-                                System.out.println(filenameTrimmed + " has been compared");
-                            } catch (ParserConfigurationException e) {
-                                e.printStackTrace();
-                            } catch (SAXException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }});
+            if (driftType.equals(DRIFT.SUDDEN)) {
+                StringBuilder modelComparisonString 
+                = new StringBuilder("model," 
+                        + "GED,CNE,Jaccard\n");
+                
+                try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
+                    paths
+                    .filter(Files::isRegularFile)
+                    .forEach(path -> {if(path.toString().endsWith("25.xml")) {
+                        try {
+                            String filenameFull = path.getFileName().toString();
+                            String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
+                            System.out.println("Beginning with sudden drift mutation... ");
+                            String simString = createAdaptionString(path.toString(),filenameTrimmed,driftType);
+                            //System.out.println(simString);
+                            modelComparisonString.append(simString);
+                            System.out.println(filenameTrimmed + " has been compared");
+                        } catch (ParserConfigurationException e) {
+                            e.printStackTrace();
+                        } catch (SAXException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        
+                        
+                    }});
+                }
+                
+                try {
+                    FileWriter myWriter 
+                    = new FileWriter(currentPath + driftType.toString() + "-" + java.time.LocalDate.now() + ".csv"/*,true*/);
+                    myWriter.write(modelComparisonString.toString());
+                    myWriter.close();
+                    
+                } catch (IOException e) {
+                    System.out.println("An error occurred.");
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("not sudden");
             }
-
-            try {
-                //FileWriter myWriter = new FileWriter(currentPath+"/evaluations/patternChangeComparison/Jaccards"+ java.time.LocalDate.now() + ".csv",true);
-                FileWriter myWriter 
-                    = new FileWriter(currentPath + driftType.toString() + "-" + java.time.LocalDate.now() + ".csv",true);
-                myWriter.write(modelComparisonString.toString());
-                myWriter.close();
-
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
-            }
-
-
         }
     }
     
     public static String createAdaptionString(String modelPath, String filename, DRIFT driftType) throws ParserConfigurationException, SAXException, IOException {
         
-        StringBuilder xmlString;
+        StringBuilder xmlString = new StringBuilder();
         
         switch (driftType) {
             case SUDDEN:
@@ -101,8 +105,6 @@ public class PatternChangeComparison {
                 break;
         }
         
-        xmlString = randomMutations(modelPath, filename);
-        
         return xmlString.toString();
     }
     
@@ -110,40 +112,51 @@ public class PatternChangeComparison {
      * Sudden drift should incorporate only one single and very significant drift
      */
     private static StringBuilder suddenDriftMutations(String modelPath, String filename) throws IOException, SAXException, ParserConfigurationException {
-        int drifts = 10;
-        int driftIteration = rand.nextInt(ITERATIONS);
+        int driftStrength = 5;
+        //int driftIteration = rand.nextInt(ITERATIONS);
+        int driftIteration = 50;
+        System.out.println("Ok big drift will be at: " + driftIteration + " yo");
         
-        ModelComparison modelComparison = new ModelComparison(modelPath);
         StringBuilder xmlString = new StringBuilder();
         
-        ModelAdaption modelAdaption;
+        ModelComparison modelComparison = new ModelComparison(modelPath);
+        ModelAdaption modelAdaption = new ModelAdaption(modelPath);
+        
         for (int i = 0; i < ITERATIONS; i++) {
-            modelAdaption = new ModelAdaption(modelPath);
+            modelComparison.loadComparativeModel(modelAdaption.getModel());
+            //System.out.println("We on iteration " + i + " yo");
             if (i == driftIteration) {
-                if (modelAdaption.insertActivitySerial(drifts) ||
-                        modelAdaption.insertActivityParallel(drifts) ||
-                        modelAdaption.deleteActivity(drifts) ||
-                        modelAdaption.replaceActivity(drifts) ||
-                        modelAdaption.addConstraint(drifts) ||
-                        modelAdaption.removeConstraint(drifts) ||
-                        modelAdaption.swapActivities(drifts)) {
-                    System.out.println("The execution of a mutation operation was unsuccessful");
+                System.out.println("Not here");
+                if (!modelAdaption.insertActivitySerial(driftStrength) ||
+                        !modelAdaption.insertActivityParallel(driftStrength) ||
+                        !modelAdaption.deleteActivity(driftStrength) ||
+                        !modelAdaption.replaceActivity(driftStrength) ||
+                        !modelAdaption.addConstraint(driftStrength) ||
+                        !modelAdaption.removeConstraint(driftStrength) ||
+                        !modelAdaption.swapActivities(driftStrength)) {
+                    System.out.println("Mutation operation was unsuccessful");
                 } 
             } else {
-                if (modelAdaption.randomMutation(1)) {
-                    
+                /*
+                 * If only noise then save the current state
+                 * then adapt it (the noise), calculate similarity
+                 * and load back the original model
+                 */
+                
+                DcrModel previousModel = modelAdaption.getModel().getClone();
+                if (!modelAdaption.insertActivitySerial(1)) {
+                    System.out.println("Noise mutation was unsuccessful");
                 }
+                modelAdaption = new ModelAdaption(previousModel);
             }
-            DcrModel adaptedModel = modelAdaption.getModel();
-            modelComparison.loadComparativeModel(adaptedModel);
+            
+            String GEDString = modelComparison.getGEDString();
+            String CNEString = modelComparison.getCNEString();
+            String jaccardSim = modelComparison.getJaccardSimilarity() + "";
+            
+            xmlString.append(filename +",");
+            xmlString.append(GEDString + ",").append(CNEString + ",").append(jaccardSim + "\n");
         }
-        
-        String GEDString = modelComparison.getGEDString();
-        String CNEString = modelComparison.getCNEString();
-        String jaccardSim = modelComparison.getJaccardString();
-        
-        xmlString.append(filename +",");
-        xmlString.append(GEDString + ",").append(CNEString + ",").append(jaccardSim + "\n");
         
         return xmlString;
     }

@@ -16,7 +16,11 @@ public class ModelAdaption {
         this.model = new DcrModel();
         this.model.loadModel(modelPath);
     }
-
+    
+    public ModelAdaption(DcrModel model) {
+        this.model = model;
+    }
+    
     public boolean insertActivitySerial(int numRepeatings){
 
         for (int i = 0; i < numRepeatings; i++) {
