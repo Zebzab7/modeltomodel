@@ -187,9 +187,6 @@ public class DcrModel {
 			}
 		}
 
-
-
-
 	}
 	private void addToRelationSet(NodeList constraintList){
 		for(int i = 0; i < constraintList.getLength(); i++){

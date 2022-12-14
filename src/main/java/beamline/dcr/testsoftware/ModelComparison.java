@@ -168,6 +168,11 @@ public class ModelComparison {
         double sim = DcrSimilarity.graphEditDistanceSimilarity(originalDcrModel, comparativeDcrModel);
         return ""+sim;
     }
+    
+    public String getCNEString() {
+        double sim = DcrSimilarity.commonNodesAndEdgesSimilarity(originalDcrModel, comparativeDcrModel);
+        return ""+sim;
+    }
 
     public void loadComparativeModel(String xmlGraphPath) throws IOException, SAXException, ParserConfigurationException {
         this.comparativeDcrModel = new DcrModel();

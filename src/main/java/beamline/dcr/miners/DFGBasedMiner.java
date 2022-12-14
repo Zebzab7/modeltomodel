@@ -143,7 +143,7 @@ public class DFGBasedMiner extends AbstractMiner {
     public DcrModel convert(ExtendedDFG dfg) throws IllegalAccessException, InstantiationException {
         DcrModel model = new DcrModel();
         this.postorderTraversal= new LinkedHashSet<>();
-
+        
 
         this.unionRelationSet = new UnionRelationSet(dfg,relationsThreshold);
 

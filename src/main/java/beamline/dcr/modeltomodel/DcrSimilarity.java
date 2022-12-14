@@ -66,7 +66,8 @@ public class DcrSimilarity {
         Set<Triple<String, String, RELATION>> relationsA = modelA.getRelations();
         Set<Triple<String, String, RELATION>> relationsB = modelB.getRelations();
         
-        double num = 2 * (intersection(actA,actB).size() + intersection(relationsA,relationsB).size());
+        
+        double num = 2*(intersection(actA,actB).size() + intersection(relationsA,relationsB).size());
         double denom = (actA.size() + actB.size() + relationsA.size() + relationsB.size());
         
         return num/denom;
