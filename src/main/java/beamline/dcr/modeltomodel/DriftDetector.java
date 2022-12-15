@@ -16,7 +16,7 @@ public class DriftDetector {
     /**
      * Returns the number of concept drifts that have been detected from the models
      */
-    public int detectConceptDriftFromRepository(ArrayList<DcrModel> models) {
+    public int detectConceptDriftFromModelSeries(ArrayList<DcrModel> models) {
         
         return 1;
     }

@@ -11,6 +11,8 @@ import java.util.*;
 public class ModelAdaption {
     
     private DcrModel model;
+    
+    Random r = new Random();
 
     public ModelAdaption(String modelPath) throws IOException, SAXException, ParserConfigurationException {
         this.model = new DcrModel();
@@ -22,7 +24,7 @@ public class ModelAdaption {
     }
     
     public boolean insertActivitySerial(int numRepeatings){
-
+        
         for (int i = 0; i < numRepeatings; i++) {
             String activityNew = getRandomNonExistingActivity();
 
@@ -58,7 +60,7 @@ public class ModelAdaption {
         return true;
     }
     public boolean insertActivityParallel(int numRepeatings){
-
+        
         for (int i = 0; i < numRepeatings; i++) {
             String randomActivity = getRandomNonExistingActivity();
             model.addActivity(randomActivity);
@@ -215,16 +217,18 @@ public class ModelAdaption {
         return model;
     }
     private String getRandomNonExistingActivity(){
+        //System.out.println("I come in here");
         Set<String> activities = model.getActivities();
-        Random r = new Random();
 
-        String alphabet = "123xyz";
-        String randomActivity = "A";
+        String alphabet = "xyzq!&#¤%&!";
+        String randomActivity = "xy";
+        int length = alphabet.length();
         while (activities.contains(randomActivity)){
-            randomActivity = "Activity " + String.valueOf(alphabet.charAt(r.nextInt(alphabet.length()))) + String.valueOf(alphabet.charAt(r.nextInt(alphabet.length())));
+            randomActivity = "Activity " + String.valueOf(alphabet.charAt(r.nextInt(length))) 
+                + String.valueOf(alphabet.charAt(r.nextInt(length)));
         }
-
-
+        
+        //System.out.println("Now i return");
         return randomActivity;
     }
     public String getRandomExistingActivity(Set<Triple<String,String, DcrModel.RELATION>> relationSet){

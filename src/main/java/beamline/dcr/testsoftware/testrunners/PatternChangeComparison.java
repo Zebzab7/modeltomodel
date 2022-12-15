@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -41,68 +42,86 @@ public class PatternChangeComparison {
          */
        
         for (DRIFT driftType : DRIFT.values()) {
-            if (driftType.equals(DRIFT.SUDDEN)) {
-                StringBuilder modelComparisonString 
-                = new StringBuilder("model," 
-                        + "GED,CNE,Jaccard\n");
-                
-                try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
-                    paths
-                    .filter(Files::isRegularFile)
-                    .forEach(path -> {if(path.toString().endsWith("25.xml")) {
-                        try {
-                            String filenameFull = path.getFileName().toString();
-                            String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
-                            System.out.println("Beginning with sudden drift mutation... ");
-                            String simString = createAdaptionString(path.toString(),filenameTrimmed,driftType);
-                            //System.out.println(simString);
-                            modelComparisonString.append(simString);
-                            System.out.println(filenameTrimmed + " has been compared");
-                        } catch (ParserConfigurationException e) {
-                            e.printStackTrace();
-                        } catch (SAXException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        
-                        
-                    }});
-                }
-                
-                try {
-                    FileWriter myWriter 
-                    = new FileWriter(currentPath + driftType.toString() + "-" + java.time.LocalDate.now() + ".csv"/*,true*/);
-                    myWriter.write(modelComparisonString.toString());
-                    myWriter.close();
+            StringBuilder modelComparisonString 
+            = new StringBuilder("model," 
+                    + "GED,CNE,Jaccard\n");
+            
+            try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
+                paths
+                .filter(Files::isRegularFile)
+                .forEach(path -> {if(path.toString().endsWith("25.xml")) {
+                    try {
+                        String filenameFull = path.getFileName().toString();
+                        String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
+                        String simString = createAdaptionString(path.toString(),filenameTrimmed,driftType);
+                        //System.out.println(simString);
+                        modelComparisonString.append(simString);
+                        System.out.println(filenameTrimmed + " has been compared");
+                    } catch (ParserConfigurationException e) {
+                        e.printStackTrace();
+                    } catch (SAXException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     
-                } catch (IOException e) {
-                    System.out.println("An error occurred.");
-                    e.printStackTrace();
-                }
-            } else {
-                System.out.println("not sudden");
+                    
+                }});
+            }
+            
+            try {
+                FileWriter myWriter 
+                = new FileWriter(currentPath + driftType.toString() + "-" + java.time.LocalDate.now() + ".csv"/*,true*/);
+                myWriter.write(modelComparisonString.toString());
+                myWriter.close();
+                
+            } catch (IOException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
             }
         }
     }
     
     public static String createAdaptionString(String modelPath, String filename, DRIFT driftType) throws ParserConfigurationException, SAXException, IOException {
         
+        ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         StringBuilder xmlString = new StringBuilder();
         
+        DcrModel referenceModel = new DcrModel();
+        referenceModel.loadModel(modelPath);
+
+        /*
+         * These functions should really return a list of models (the mutations) given a specific model
+         */
         switch (driftType) {
             case SUDDEN:
-                xmlString = suddenDriftMutations(modelPath, filename);
+                models = suddenDriftMutations(referenceModel);
                 break;
             case GRADUAL:
-                xmlString = gradualDriftMutations(modelPath, filename);
+                models = gradualDriftMutations(referenceModel);
                 break;
             case SEASONAL:
-                xmlString = seasonalDriftMutations(modelPath, filename);
+                models = seasonalDriftMutations(referenceModel);
                 break;
             case INCREMENTAL:
-                xmlString = incrementalDriftMutations(modelPath, filename);
+                models = incrementalDriftMutations(referenceModel);
                 break;
+        }
+        
+        /*
+         * this is the part where it should convert models to similarity values and then a string
+         */
+        
+        ModelComparison modelComparison = new ModelComparison(referenceModel);
+        for (int i = 0; i < models.size(); i++) {
+            modelComparison.loadComparativeModel(models.get(i));
+            
+            String GEDString = modelComparison.getGEDString();
+            String CNEString = modelComparison.getCNEString();
+            String jaccardSim = modelComparison.getJaccardSimilarity() + "";
+            
+            xmlString.append(filename +",");
+            xmlString.append(GEDString + ",").append(CNEString + ",").append(jaccardSim + "\n");
         }
         
         return xmlString.toString();
@@ -111,22 +130,17 @@ public class PatternChangeComparison {
     /*
      * Sudden drift should incorporate only one single and very significant drift
      */
-    private static StringBuilder suddenDriftMutations(String modelPath, String filename) throws IOException, SAXException, ParserConfigurationException {
+    private static ArrayList<DcrModel> suddenDriftMutations(DcrModel referenceModel) {
+        
+        ArrayList<DcrModel> models = new ArrayList<DcrModel>();
+        
         int driftStrength = 5;
-        //int driftIteration = rand.nextInt(ITERATIONS);
-        int driftIteration = 50;
-        System.out.println("Ok big drift will be at: " + driftIteration + " yo");
+        int driftIteration = rand.nextInt(ITERATIONS);
         
-        StringBuilder xmlString = new StringBuilder();
-        
-        ModelComparison modelComparison = new ModelComparison(modelPath);
-        ModelAdaption modelAdaption = new ModelAdaption(modelPath);
+        ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
         
         for (int i = 0; i < ITERATIONS; i++) {
-            modelComparison.loadComparativeModel(modelAdaption.getModel());
-            //System.out.println("We on iteration " + i + " yo");
             if (i == driftIteration) {
-                System.out.println("Not here");
                 if (!modelAdaption.insertActivitySerial(driftStrength) ||
                         !modelAdaption.insertActivityParallel(driftStrength) ||
                         !modelAdaption.deleteActivity(driftStrength) ||
@@ -136,6 +150,8 @@ public class PatternChangeComparison {
                         !modelAdaption.swapActivities(driftStrength)) {
                     System.out.println("Mutation operation was unsuccessful");
                 } 
+                models.add(modelAdaption.getModel());
+                modelAdaption = new ModelAdaption(modelAdaption.getModel().getClone());
             } else {
                 /*
                  * If only noise then save the current state
@@ -147,48 +163,119 @@ public class PatternChangeComparison {
                 if (!modelAdaption.insertActivitySerial(1)) {
                     System.out.println("Noise mutation was unsuccessful");
                 }
+                models.add(modelAdaption.getModel());
                 modelAdaption = new ModelAdaption(previousModel);
             }
-            
-            String GEDString = modelComparison.getGEDString();
-            String CNEString = modelComparison.getCNEString();
-            String jaccardSim = modelComparison.getJaccardSimilarity() + "";
-            
-            xmlString.append(filename +",");
-            xmlString.append(GEDString + ",").append(CNEString + ",").append(jaccardSim + "\n");
         }
         
-        return xmlString;
+        return models;
     }
     
-    private static StringBuilder gradualDriftMutations(String modelPath, String filename) {
-        StringBuilder xmlString = new StringBuilder();
+    private static ArrayList<DcrModel> gradualDriftMutations(DcrModel referenceModel) {
         
-        /*
-         * 
-         */
-       
-        return xmlString;
+        ArrayList<DcrModel> models = new ArrayList<DcrModel>();
+        
+        int driftStrength = 1;
+        
+        int divisor = 4;
+        int temp = ITERATIONS/divisor;
+        
+        int gradualStart = temp;
+        int gradualEnd = ITERATIONS-temp;
+        
+        ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
+        for (int i = 0; i < ITERATIONS; i++) {
+            if (i < gradualStart || i > gradualEnd) {
+                DcrModel previousModel = modelAdaption.getModel().getClone();
+                if (!modelAdaption.insertActivitySerial(1)) {
+                    System.out.println("Noise mutation was unsuccessful");
+                }
+                models.add(modelAdaption.getModel());
+                modelAdaption = new ModelAdaption(previousModel);
+            } else {
+                if (!modelAdaption.insertActivitySerial(driftStrength)) {
+                    System.out.println("Mutation operation was unsuccessful");
+                } 
+                models.add(modelAdaption.getModel());
+                modelAdaption = new ModelAdaption(modelAdaption.getModel().getClone());
+            }
+        }
+        return models;
     }
     
-    private static StringBuilder seasonalDriftMutations(String modelPath, String filename) {
-        StringBuilder xmlString = new StringBuilder();
+    private static ArrayList<DcrModel> seasonalDriftMutations(DcrModel referenceModel) {
         
-        /*
-         * 
-         */
-       
-        return xmlString;
+        ArrayList<DcrModel> models = new ArrayList<DcrModel>();
+        
+        int driftStrength = 10;
+        
+        int seasonalStart = ITERATIONS/3;
+        int seasonalEnd = ITERATIONS - seasonalStart;
+        
+        ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
+        
+        for (int i = 0; i < ITERATIONS; i++) {
+            if (seasonalStart == i) {
+                if (!modelAdaption.insertActivitySerial(driftStrength) ||
+                        !modelAdaption.insertActivityParallel(driftStrength) ||
+                        !modelAdaption.deleteActivity(driftStrength) ||
+                        !modelAdaption.replaceActivity(driftStrength) ||
+                        !modelAdaption.addConstraint(driftStrength) ||
+                        !modelAdaption.removeConstraint(driftStrength) ||
+                        !modelAdaption.swapActivities(driftStrength)) {
+                    System.out.println("Mutation operation was unsuccessful");
+                } 
+                models.add(modelAdaption.getModel());
+                modelAdaption = new ModelAdaption(modelAdaption.getModel().getClone());
+            } else if (seasonalEnd == i) {
+                modelAdaption = new ModelAdaption(referenceModel.getClone());
+            } else {
+                DcrModel previousModel = modelAdaption.getModel().getClone();
+                if (!modelAdaption.insertActivitySerial(1)) {
+                    System.out.println("Noise mutation was unsuccessful");
+                }
+                models.add(modelAdaption.getModel());
+                modelAdaption = new ModelAdaption(previousModel);
+            }
+        }
+        
+        return models;
     }
     
-    private static StringBuilder incrementalDriftMutations(String modelPath, String filename) {
-        StringBuilder xmlString = new StringBuilder();
+    private static ArrayList<DcrModel> incrementalDriftMutations(DcrModel referenceModel) {
+
+        ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
-        /*
-         * 
-         */
-       
-        return xmlString;
+        int driftStrength = 1;
+        
+        int increments = 4;
+        int incrementSize = ITERATIONS/increments;
+        
+        ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
+        
+        for (int i = 0; i < ITERATIONS; i++) {
+            if (i != 0 && i != ITERATIONS && (i%incrementSize) == 0) {
+                if (!modelAdaption.insertActivitySerial(driftStrength) ||
+                        !modelAdaption.insertActivityParallel(driftStrength) ||
+                        !modelAdaption.deleteActivity(driftStrength) ||
+                        !modelAdaption.replaceActivity(driftStrength) ||
+                        !modelAdaption.addConstraint(driftStrength) ||
+                        !modelAdaption.removeConstraint(driftStrength) ||
+                        !modelAdaption.swapActivities(driftStrength)) {
+                    System.out.println("Mutation operation was unsuccessful");
+                } 
+                models.add(modelAdaption.getModel());
+                modelAdaption = new ModelAdaption(modelAdaption.getModel().getClone());
+            } else {
+                DcrModel previousModel = modelAdaption.getModel().getClone();
+                if (!modelAdaption.insertActivitySerial(1)) {
+                    System.out.println("Noise mutation was unsuccessful");
+                }
+                models.add(modelAdaption.getModel());
+                modelAdaption = new ModelAdaption(previousModel);
+            }
+        }
+        return models;
     }
     
     private static StringBuilder randomMutations(String modelPath, String filename) throws IOException, SAXException, ParserConfigurationException {
