@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.DcrModel.RELATION;
+import beamline.dcr.testsoftware.ModelComparison;
 
 public class DcrSimilarity {
     
@@ -57,6 +58,12 @@ public class DcrSimilarity {
         return 1.0;
     }
     
+    public static double jaccardSimilarity(DcrModel modelA, DcrModel modelB) {
+        ModelComparison modelComparison = new ModelComparison(modelA);
+        modelComparison.loadComparativeModel(modelB);
+        return modelComparison.getJaccardSimilarity();
+    }
+    
     /*
      * Returns similarity based on common nodes and edges of graphs
      */
@@ -91,6 +98,10 @@ public class DcrSimilarity {
         
         return 1-sim;
     }
+    
+    /**
+     * Helper functions
+     */
     
     /*
      * Returns a set representing the intersection between two sets

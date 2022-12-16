@@ -49,7 +49,7 @@ public class PatternChangeComparison {
             try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
                 paths
                 .filter(Files::isRegularFile)
-                .forEach(path -> {if(path.toString().endsWith("25.xml")) {
+                .forEach(path -> {if(path.toString().endsWith("101.xml")) {
                     try {
                         String filenameFull = path.getFileName().toString();
                         String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
@@ -130,7 +130,7 @@ public class PatternChangeComparison {
     /*
      * Sudden drift should incorporate only one single and very significant drift
      */
-    private static ArrayList<DcrModel> suddenDriftMutations(DcrModel referenceModel) {
+    public static ArrayList<DcrModel> suddenDriftMutations(DcrModel referenceModel) {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
@@ -171,7 +171,7 @@ public class PatternChangeComparison {
         return models;
     }
     
-    private static ArrayList<DcrModel> gradualDriftMutations(DcrModel referenceModel) {
+    public static ArrayList<DcrModel> gradualDriftMutations(DcrModel referenceModel) {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
@@ -203,7 +203,7 @@ public class PatternChangeComparison {
         return models;
     }
     
-    private static ArrayList<DcrModel> seasonalDriftMutations(DcrModel referenceModel) {
+    public static ArrayList<DcrModel> seasonalDriftMutations(DcrModel referenceModel) {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
@@ -242,7 +242,7 @@ public class PatternChangeComparison {
         return models;
     }
     
-    private static ArrayList<DcrModel> incrementalDriftMutations(DcrModel referenceModel) {
+    public static ArrayList<DcrModel> incrementalDriftMutations(DcrModel referenceModel) {
 
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
