@@ -13,4 +13,8 @@ public class CommonNodesAndEdges implements DistanceMetric<DcrModel> {
         return DcrSimilarity.commonNodesAndEdgesSimilarity(arg0, arg1);
     }
     
+    @Override
+    public String toString() {
+        return "CNE";
+    }
 }

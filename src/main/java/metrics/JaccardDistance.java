@@ -13,5 +13,11 @@ public class JaccardDistance implements DistanceMetric<DcrModel> {
         return 1.0-DcrSimilarity.jaccardSimilarity(arg0, arg1);
     }
     
+    @Override
+    public String toString() {
+        return "JaccardDist";
+    }
+    
+    
 
 }

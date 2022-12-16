@@ -169,6 +169,11 @@ public class ModelComparison {
         return ""+sim;
     }
     
+    public String getGEDWString() {
+        double sim = DcrSimilarity.graphEditDistanceSimilarityWithWeights(originalDcrModel, comparativeDcrModel);
+        return ""+sim;
+    }
+    
     public String getCNEString() {
         double sim = DcrSimilarity.commonNodesAndEdgesSimilarity(originalDcrModel, comparativeDcrModel);
         return ""+sim;

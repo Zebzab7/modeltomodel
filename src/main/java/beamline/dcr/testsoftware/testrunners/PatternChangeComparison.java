@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 public class PatternChangeComparison {
     
-    static final int ITERATIONS = 100;
+    static int iterations = 100;
     
     static Random rand = new Random();
     
@@ -135,11 +135,11 @@ public class PatternChangeComparison {
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
         int driftStrength = 5;
-        int driftIteration = rand.nextInt(ITERATIONS);
+        int driftIteration = rand.nextInt(iterations);
         
         ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
         
-        for (int i = 0; i < ITERATIONS; i++) {
+        for (int i = 0; i < iterations; i++) {
             if (i == driftIteration) {
                 if (!modelAdaption.insertActivitySerial(driftStrength) ||
                         !modelAdaption.insertActivityParallel(driftStrength) ||
@@ -178,13 +178,13 @@ public class PatternChangeComparison {
         int driftStrength = 1;
         
         int divisor = 4;
-        int temp = ITERATIONS/divisor;
+        int temp = iterations/divisor;
         
         int gradualStart = temp;
-        int gradualEnd = ITERATIONS-temp;
+        int gradualEnd = iterations-temp;
         
         ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
-        for (int i = 0; i < ITERATIONS; i++) {
+        for (int i = 0; i < iterations; i++) {
             if (i < gradualStart || i > gradualEnd) {
                 DcrModel previousModel = modelAdaption.getModel().getClone();
                 if (!modelAdaption.insertActivitySerial(1)) {
@@ -209,12 +209,12 @@ public class PatternChangeComparison {
         
         int driftStrength = 10;
         
-        int seasonalStart = ITERATIONS/3;
-        int seasonalEnd = ITERATIONS - seasonalStart;
+        int seasonalStart = iterations/3;
+        int seasonalEnd = iterations - seasonalStart;
         
         ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
         
-        for (int i = 0; i < ITERATIONS; i++) {
+        for (int i = 0; i < iterations; i++) {
             if (seasonalStart == i) {
                 if (!modelAdaption.insertActivitySerial(driftStrength) ||
                         !modelAdaption.insertActivityParallel(driftStrength) ||
@@ -249,12 +249,12 @@ public class PatternChangeComparison {
         int driftStrength = 1;
         
         int increments = 4;
-        int incrementSize = ITERATIONS/increments;
+        int incrementSize = iterations/increments;
         
         ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
         
-        for (int i = 0; i < ITERATIONS; i++) {
-            if (i != 0 && i != ITERATIONS && (i%incrementSize) == 0) {
+        for (int i = 0; i < iterations; i++) {
+            if (i != 0 && i != iterations && (i%incrementSize) == 0) {
                 if (!modelAdaption.insertActivitySerial(driftStrength) ||
                         !modelAdaption.insertActivityParallel(driftStrength) ||
                         !modelAdaption.deleteActivity(driftStrength) ||
@@ -323,6 +323,10 @@ public class PatternChangeComparison {
             }
         }
         return xmlString;
+    }
+    
+    public static void setIterations(int num) {
+        iterations = num;
     }
     
 }

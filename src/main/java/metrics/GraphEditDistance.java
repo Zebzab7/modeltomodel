@@ -13,4 +13,9 @@ public class GraphEditDistance implements DistanceMetric<DcrModel> {
 //        System.out.println("Similarity: " + DcrSimilarity.graphEditDistanceSimilarity(arg0, arg1));
         return 1.0-DcrSimilarity.graphEditDistanceSimilarity(arg0, arg1);
     }
+    
+    @Override
+    public String toString() {
+        return "GED";
+    }
 }
