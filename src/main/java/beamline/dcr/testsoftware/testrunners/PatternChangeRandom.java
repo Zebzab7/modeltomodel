@@ -50,7 +50,7 @@ public class PatternChangeRandom {
         
         try {
             FileWriter myWriter 
-            = new FileWriter(currentPath  + "RANDOM-" + java.time.LocalDate.now() + ".csv"/*,true*/);
+            = new FileWriter(currentPath + "/evaluations/randomMutations/" + "RANDOM-" + java.time.LocalDate.now() + ".csv"/*,true*/);
             myWriter.write(modelComparisonString.toString());
             myWriter.close();
             

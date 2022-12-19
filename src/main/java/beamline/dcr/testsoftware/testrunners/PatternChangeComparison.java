@@ -21,6 +21,8 @@ public class PatternChangeComparison {
     
     static int iterations = 100;
     
+    static boolean applyNoise = true;
+    
     static Random rand = new Random();
     
     public enum DRIFT {
@@ -29,11 +31,18 @@ public class PatternChangeComparison {
         SEASONAL,
         INCREMENTAL
     }
+    
+    public static void setApplyNoise(boolean applyNoise) {
+        PatternChangeComparison.applyNoise = applyNoise;
+    }
 
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/groundtruthmodels";
+        String noiseString = "Noise";
+        
+        if (!applyNoise) noiseString = "NoNoise";
 
         for (DRIFT driftType : DRIFT.values()) {
             StringBuilder modelComparisonString 
@@ -64,7 +73,8 @@ public class PatternChangeComparison {
             
             try {
                 FileWriter myWriter 
-                = new FileWriter(currentPath + driftType.toString() + "-" + java.time.LocalDate.now() + ".csv"/*,true*/);
+                = new FileWriter(currentPath + "/evaluations/driftChange/" + driftType.toString() 
+                    + "-" + noiseString + "-" + java.time.LocalDate.now() + ".csv"/*,true*/);
                 myWriter.write(modelComparisonString.toString());
                 myWriter.close();
                 
@@ -145,18 +155,16 @@ public class PatternChangeComparison {
                 models.add(modelAdaption.getModel());
                 modelAdaption = new ModelAdaption(modelAdaption.getModel().getClone());
             } else {
-                /*
-                 * If only noise then save the current state
-                 * then adapt it (the noise), calculate similarity
-                 * and load back the original model
-                 */
                 
-                DcrModel previousModel = modelAdaption.getModel().getClone();
-                if (!modelAdaption.insertActivitySerial(1)) {
-                    System.out.println("Noise mutation was unsuccessful");
-                }
+                DcrModel nextModel = modelAdaption.getModel().getClone();
+                if (applyNoise) {
+                    nextModel = modelAdaption.getModel().getClone();
+                    if (!modelAdaption.insertActivitySerial(1)) {
+                        System.out.println("Noise mutation was unsuccessful");
+                    }
+                } 
                 models.add(modelAdaption.getModel());
-                modelAdaption = new ModelAdaption(previousModel);
+                modelAdaption = new ModelAdaption(nextModel);
             }
         }
         
@@ -178,12 +186,15 @@ public class PatternChangeComparison {
         ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
         for (int i = 0; i < iterations; i++) {
             if (i < gradualStart || i > gradualEnd) {
-                DcrModel previousModel = modelAdaption.getModel().getClone();
-                if (!modelAdaption.insertActivitySerial(1)) {
-                    System.out.println("Noise mutation was unsuccessful");
-                }
+                DcrModel nextModel = modelAdaption.getModel().getClone();
+                if (applyNoise) {
+                    nextModel = modelAdaption.getModel().getClone();
+                    if (!modelAdaption.insertActivitySerial(1)) {
+                        System.out.println("Noise mutation was unsuccessful");
+                    }
+                } 
                 models.add(modelAdaption.getModel());
-                modelAdaption = new ModelAdaption(previousModel);
+                modelAdaption = new ModelAdaption(nextModel);
             } else {
                 if (!modelAdaption.insertActivitySerial(driftStrength)) {
                     System.out.println("Mutation operation was unsuccessful");
@@ -222,12 +233,15 @@ public class PatternChangeComparison {
             } else if (seasonalEnd == i) {
                 modelAdaption = new ModelAdaption(referenceModel.getClone());
             } else {
-                DcrModel previousModel = modelAdaption.getModel().getClone();
-                if (!modelAdaption.insertActivitySerial(1)) {
-                    System.out.println("Noise mutation was unsuccessful");
-                }
+                DcrModel nextModel = modelAdaption.getModel().getClone();
+                if (applyNoise) {
+                    nextModel = modelAdaption.getModel().getClone();
+                    if (!modelAdaption.insertActivitySerial(1)) {
+                        System.out.println("Noise mutation was unsuccessful");
+                    }
+                } 
                 models.add(modelAdaption.getModel());
-                modelAdaption = new ModelAdaption(previousModel);
+                modelAdaption = new ModelAdaption(nextModel);
             }
         }
         
@@ -259,12 +273,15 @@ public class PatternChangeComparison {
                 models.add(modelAdaption.getModel());
                 modelAdaption = new ModelAdaption(modelAdaption.getModel().getClone());
             } else {
-                DcrModel previousModel = modelAdaption.getModel().getClone();
-                if (!modelAdaption.insertActivitySerial(1)) {
-                    System.out.println("Noise mutation was unsuccessful");
-                }
+                DcrModel nextModel = modelAdaption.getModel().getClone();
+                if (applyNoise) {
+                    nextModel = modelAdaption.getModel().getClone();
+                    if (!modelAdaption.insertActivitySerial(1)) {
+                        System.out.println("Noise mutation was unsuccessful");
+                    }
+                } 
                 models.add(modelAdaption.getModel());
-                modelAdaption = new ModelAdaption(previousModel);
+                modelAdaption = new ModelAdaption(nextModel);
             }
         }
         return models;
