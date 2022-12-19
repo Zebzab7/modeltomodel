@@ -35,12 +35,6 @@ public class PatternChangeComparison {
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/groundtruthmodels";
 
-        /*
-         *  StringBuilder modelComparisonString = new StringBuilder("model,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," +
-                "jac_con,jac_resp,jac_precond,jac_mile,jac_incl,jac_excl," +
-                "jac_noresp,jac_spawn,jac_act\n");
-         */
-
         for (DRIFT driftType : DRIFT.values()) {
             StringBuilder modelComparisonString 
             = new StringBuilder("model,GED,CNE,Jaccard\n");
@@ -52,7 +46,7 @@ public class PatternChangeComparison {
                     try {
                         String filenameFull = path.getFileName().toString();
                         String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
-                        String simString = createAdaptionString(path.toString(),filenameTrimmed,driftType);
+                        String simString = createSimulationString(path.toString(),filenameTrimmed,driftType);
                         //System.out.println(simString);
                         modelComparisonString.append(simString);
                         System.out.println(filenameTrimmed + " has been compared");
@@ -81,7 +75,10 @@ public class PatternChangeComparison {
         }
     }
     
-    public static String createAdaptionString(String modelPath, String filename, DRIFT driftType) throws ParserConfigurationException, SAXException, IOException {
+    /*
+     * Creates an output string for a csv file.
+     */
+    public static String createSimulationString(String modelPath, String filename, DRIFT driftType) throws ParserConfigurationException, SAXException, IOException {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         StringBuilder xmlString = new StringBuilder();
@@ -106,10 +103,6 @@ public class PatternChangeComparison {
                 models = incrementalDriftMutations(referenceModel);
                 break;
         }
-        
-        /*
-         * this is the part where it should convert models to similarity values and then a string
-         */
         
         ModelComparison modelComparison = new ModelComparison(referenceModel);
         for (int i = 0; i < models.size(); i++) {
@@ -275,53 +268,6 @@ public class PatternChangeComparison {
             }
         }
         return models;
-    }
-    
-    private static StringBuilder randomMutations(String modelPath, String filename) throws IOException, SAXException, ParserConfigurationException {
-        
-        StringBuilder xmlString = new StringBuilder();
-        
-        ModelAdaption modelAdaption;
-        ModelComparison modelComparison = new ModelComparison(modelPath);
-        
-        for (int addActivitySerialInt = 0; addActivitySerialInt <= 3; addActivitySerialInt++){
-            for (int addActivityParallelInt = 0; addActivityParallelInt <= 3; addActivityParallelInt++){
-                for (int deleteActivityInt = 0; deleteActivityInt <= 3; deleteActivityInt++){
-                    for (int replaceActivityInt = 0; replaceActivityInt <= 3; replaceActivityInt++){
-                        for (int addConstraintInt = 0; addConstraintInt <= 3; addConstraintInt++){
-                            for (int removeConstraintInt = 0; removeConstraintInt <= 3; removeConstraintInt++){
-                                for (int swapActivitiesInt = 0; swapActivitiesInt <= 3; swapActivitiesInt++){
-
-                                    modelAdaption = new ModelAdaption(modelPath);
-                                    if (!modelAdaption.insertActivitySerial(addActivitySerialInt) ||
-                                    !modelAdaption.insertActivityParallel(addActivityParallelInt) ||
-                                    ! modelAdaption.deleteActivity(deleteActivityInt) ||
-                                    ! modelAdaption.replaceActivity(replaceActivityInt) ||
-                                    ! modelAdaption.addConstraint(addConstraintInt) ||
-                                    ! modelAdaption.removeConstraint(removeConstraintInt) ||
-                                    ! modelAdaption.swapActivities(swapActivitiesInt)){
-                                        continue;
-                                    }
-                                    DcrModel adaptedModel  = modelAdaption.getModel();
-                                    modelComparison.loadComparativeModel(adaptedModel);
-                                    String GEDString = modelComparison.getGEDString();
-                                    String CNEString = modelComparison.getCNEString();
-                                    double jaccard = modelComparison.getJaccardSimilarity();
-                                    String jaccardSim = ""+jaccard;
-
-                                    xmlString.append(filename +",").append(addActivitySerialInt + ",").append(addActivityParallelInt+ ",")
-                                            .append(deleteActivityInt+ ",").append(replaceActivityInt+ ",").append(addConstraintInt+ ",")
-                                            .append(removeConstraintInt+ ",").append(swapActivitiesInt +",");
-                                    xmlString.append(GEDString + ",").append(CNEString + ",").append(jaccardSim + "\n");
-                                    //xmlString.append( jaccardSim + "\n");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return xmlString;
     }
     
     public static void setIterations(int num) {

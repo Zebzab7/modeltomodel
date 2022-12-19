@@ -25,46 +25,6 @@ public class DcrSimilarity {
         put(DcrModel.RELATION.SEQUENCE, 0.0);
     }};
     
-    /*
-     * Initial (ugly version) of test for GED
-     */
-    public static void main(String[] args) {
-        
-        DcrModel dcr1 = new DcrModel();
-        DcrModel dcr2 = new DcrModel();
-        
-        Set<Triple<String, String, DcrModel.RELATION>> dcrRelations1 = new HashSet<>();
-
-        dcrRelations1.add(Triple.of("Start", "Activity 3", DcrModel.RELATION.CONDITION));
-        dcrRelations1.add(Triple.of("Start", "Activity 2", DcrModel.RELATION.RESPONSE));
-        dcrRelations1.add(Triple.of("Activity 2", "Activity 4", DcrModel.RELATION.INCLUDE));
-        dcrRelations1.add(Triple.of("Activity 4", "Activity 4", DcrModel.RELATION.EXCLUDE));
-        dcrRelations1.add(Triple.of("Activity 4", "Activity 7", DcrModel.RELATION.RESPONSE));
-        dcrRelations1.add(Triple.of("Activity 4", "Activity 7", DcrModel.RELATION.INCLUDE));
-        dcrRelations1.add(Triple.of("Start", "Activity 4", DcrModel.RELATION.EXCLUDE));
-        dcrRelations1.add(Triple.of("Activity 4", "Activity 5", DcrModel.RELATION.CONDITION));
-        dcrRelations1.add(Triple.of("Activity 4", "Activity 6", DcrModel.RELATION.INCLUDE));
-
-        dcr1.addRelations(dcrRelations1);
-        
-        Set<Triple<String, String, DcrModel.RELATION>> dcrRelations2 = new HashSet<>();
-        
-        dcrRelations2.add(Triple.of("Start", "Activity 3", DcrModel.RELATION.CONDITION));
-        dcrRelations2.add(Triple.of("Start", "Activity 2", DcrModel.RELATION.RESPONSE));
-        dcrRelations2.add(Triple.of("Activity 3", "Activity 2", DcrModel.RELATION.RESPONSE));
-        dcrRelations2.add(Triple.of("Activity 2", "Activity 4", DcrModel.RELATION.INCLUDE));
-        dcrRelations2.add(Triple.of("Activity 4", "Activity 4", DcrModel.RELATION.EXCLUDE));
-        dcrRelations2.add(Triple.of("Start", "Activity 4", DcrModel.RELATION.EXCLUDE));
-        dcrRelations2.add(Triple.of("Activity 4", "Activity 5", DcrModel.RELATION.CONDITION));
-        dcrRelations2.add(Triple.of("Activity 4", "Activity 6", DcrModel.RELATION.INCLUDE));
-
-        dcr2.addRelations(dcrRelations2);
-        
-        System.out.println(graphEditDistanceSimilarity(dcr1, dcr2));
-        System.out.println(commonNodesAndEdgesSimilarity(dcr1, dcr2));
-    }
-    
-    
     public static double jaccardSimilarity(DcrModel modelA, DcrModel modelB) {
         ModelComparison modelComparison = new ModelComparison(modelA);
         modelComparison.loadComparativeModel(modelB);
