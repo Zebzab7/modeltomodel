@@ -34,6 +34,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/s194624/.m2/repository/com/github/DBSCan/dbscan-0.1.jar"/>
+	<classpathentry kind="lib" path="src/main/resources/dbscan-0.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
