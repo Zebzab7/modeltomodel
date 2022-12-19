@@ -14,7 +14,6 @@ import org.xml.sax.SAXException;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
-import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 
 public class PatternChangeRandom {
     public static void main(String[] args) throws IOException {

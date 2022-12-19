@@ -37,6 +37,8 @@ public class StreamDateTester {
         int observationsBeforeEvaluation = Integer.parseInt(args[9]);
         String[] dcrConstraints = args[10].split(" ");
         //
+        
+        int count = 0;
 
         Set<Integer> traceWindowSizes = new HashSet<>();
         for (String size : traceWindowSizesStringList ){
@@ -127,6 +129,7 @@ public class StreamDateTester {
                         }
 
                         DcrModel dcrModel = sc.getDcrModel();
+                        count++;
                         //comparison
 
                         ModelComparison modelComparison = new ModelComparison(dcrModel);
@@ -148,6 +151,8 @@ public class StreamDateTester {
                 }
             }
         }
+        
+        System.out.println("Count: " + count);
         String outputDirectoryPath =  currentPath + "/evaluations/"+ eventlogNumber +"/modelmodel";
 
         File outputDirectoryObject = new File(outputDirectoryPath);

@@ -40,7 +40,6 @@ public class DcrSimilarity {
         Set<Triple<String, String, RELATION>> relationsA = modelA.getRelations();
         Set<Triple<String, String, RELATION>> relationsB = modelB.getRelations();
         
-        
         double num = 2*(intersection(actA,actB).size() + intersection(relationsA,relationsB).size());
         double denom = (actA.size() + actB.size() + relationsA.size() + relationsB.size());
         
@@ -66,9 +65,6 @@ public class DcrSimilarity {
         return 1-sim;
     }
 
-    /*
-     * 
-     */
     public static double graphEditDistanceSimilarityWithWeights(DcrModel modelA, DcrModel modelB) {
         Set<String> actA = modelA.getActivities();
         Set<String> actB = modelB.getActivities();
@@ -78,17 +74,21 @@ public class DcrSimilarity {
         Set<String> activitiesDiff = symmetricDifference(actA, actB);
         Set<Triple<String, String, RELATION>> relationsDiff 
             = symmetricDifference(relationsA, relationsB);
-        
+
+        double activitiesDiffDist = 0.0;
         double relationsDiffDist = 0.0;
-        for (Triple<String,String,RELATION> relation : relationsDiff) {
-            relationsDiffDist *= constraintWeight.get(relation.getRight());
+
+        for (RELATION relationType : RELATION.values()) {
+            int sum = 0;
+            for (Triple<String,String,RELATION> relation : relationsDiff) {
+                if (relation.getRight().equals(relationType)) {
+                    sum++;
+                }
+            }
+            relationsDiffDist += (constraintWeight.get(relationType)*sum); 
         }
         
-        Set<Triple<String,String,RELATION>> union = union(relationsA,relationsB);
         double relationsDist = 0.0;
-        for (Triple<String,String,RELATION> relation : union) {
-            relationsDist *= constraintWeight.get(relation.getRight());
-        }
         
         double dist = activitiesDiff.size() + relationsDiffDist;
         double sim = dist/(actA.size() + actB.size() + relationsDist);
