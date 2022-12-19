@@ -40,7 +40,7 @@ public class PatternChangeComparison {
                 "jac_con,jac_resp,jac_precond,jac_mile,jac_incl,jac_excl," +
                 "jac_noresp,jac_spawn,jac_act\n");
          */
-       
+
         for (DRIFT driftType : DRIFT.values()) {
             StringBuilder modelComparisonString 
             = new StringBuilder("model," 

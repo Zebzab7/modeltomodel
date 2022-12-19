@@ -17,6 +17,7 @@ import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import metrics.CommonNodesAndEdges;
+import metrics.DumbDistance;
 import metrics.GraphEditDistance;
 import metrics.JaccardDistance;
 
@@ -28,7 +29,7 @@ public class DriftDetector {
     }
     
     static double eps = 0.15;
-    static int minPoints = 5;
+    static int minPoints = 10;
     
     public static void setEps(double eps) {
         DriftDetector.eps = eps;
@@ -39,15 +40,19 @@ public class DriftDetector {
     }
     
     static ArrayList<DistanceMetric<DcrModel>> metrics = new ArrayList<DistanceMetric<DcrModel>>
-    (Arrays.asList(new GraphEditDistance(), new CommonNodesAndEdges(),new JaccardDistance()));
+        (Arrays.asList(new GraphEditDistance(), new CommonNodesAndEdges(), new JaccardDistance(), new DumbDistance()));
+
+    public static void addDistanceMetric(DistanceMetric<DcrModel> newMetric) {
+        metrics.add(newMetric);
+    }
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, DBSCANClusteringException {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String modelPath = rootPath + "/src/main/java/beamline/dcr/testsoftware/groundtruthmodels/process101.xml";
         
-//        StringBuilder outputString
-//            = new StringBuilder("Metric,Sudden,Gradual,Seasonal,Incremental,eps,minPoints\n");
+        StringBuilder outputString
+            = new StringBuilder("Metric,Sudden,Gradual,Seasonal,Incremental\n");
         
         DcrModel referenceModel = new DcrModel();
         referenceModel.loadModel(modelPath);
@@ -58,7 +63,7 @@ public class DriftDetector {
         ArrayList<ArrayList<DcrModel>> incrementalSeries = new ArrayList<ArrayList<DcrModel>>();
         
         // Initialize expected values and simulate data sets of process models
-        int iterations = 5;
+        int iterations = 50;
         int[][] expectedVals = new int[metrics.size()][iterations];
         for(int i = 0; i < iterations; i++) {
             suddenSeries.add(PatternChangeComparison.suddenDriftMutations(referenceModel));
@@ -85,10 +90,15 @@ public class DriftDetector {
             System.out.println();
         }
         
-//        FileWriter myWriter 
-//            = new FileWriter(currentPath + "Test-" + java.time.LocalDate.now() + ".csv"/*,true*/);
-//        myWriter.write(outputString.toString());
-//        myWriter.close();
+        for (int i = 0; i < metrics.size(); i++) {
+            outputString.append(metrics.get(i).toString() + ",").append(MSE[0][i] + ",").append(MSE[1][i] + ",")
+                    .append(MSE[2][i] + ",").append(MSE[3][i] + "\n");
+        }
+        
+        FileWriter myWriter 
+            = new FileWriter(currentPath + "Test-" + java.time.LocalDate.now() + ".csv"/*,true*/);
+        myWriter.write(outputString.toString());
+        myWriter.close();
     }
     
     /**

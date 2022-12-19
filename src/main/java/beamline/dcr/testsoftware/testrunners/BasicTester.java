@@ -20,7 +20,7 @@ import java.util.List;
 
 public class BasicTester {
     public static void main(String[] args) throws Exception {
-
+        
         //Test parameters
         String eventLogNumber = args[0];
         int relationsThreshold = Integer.parseInt(args[1]);
@@ -29,10 +29,10 @@ public class BasicTester {
         boolean saveAsXml = Boolean.parseBoolean(args[4]);
         boolean compareToDisCoveR = Boolean.parseBoolean(args[5]); // false for reference model true for DisCoveR
         String[] dcrConstraints = args[6].split(" ");
-
-
-
-
+        
+        
+        
+        
         DFGBasedMiner sc = new DFGBasedMiner();
         Collection<MinerParameterValue> coll = new ArrayList<>();
 
@@ -107,7 +107,7 @@ public class BasicTester {
         System.out.println("F1-score: " + modelComparison.getF1());
         System.out.println("Model precision: " + modelComparison.getPrecision());
         System.out.println("Model recall: " + modelComparison.getRecall());
-
+        
         sc.stop();
         System.exit(0);
     }

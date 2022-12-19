@@ -64,13 +64,6 @@ public class DcrSimilarity {
         System.out.println(commonNodesAndEdgesSimilarity(dcr1, dcr2));
     }
     
-    public static double causalFootPrints(DcrModel model) {
-        return 1.0;
-    }
-    
-    public static double featureBasedExtraction(DcrModel model) {
-        return 1.0;
-    }
     
     public static double jaccardSimilarity(DcrModel modelA, DcrModel modelB) {
         ModelComparison modelComparison = new ModelComparison(modelA);
