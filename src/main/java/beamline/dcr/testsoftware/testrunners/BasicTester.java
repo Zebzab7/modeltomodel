@@ -31,8 +31,6 @@ public class BasicTester {
         String[] dcrConstraints = args[6].split(" ");
         
         
-        
-        
         DFGBasedMiner sc = new DFGBasedMiner();
         Collection<MinerParameterValue> coll = new ArrayList<>();
 

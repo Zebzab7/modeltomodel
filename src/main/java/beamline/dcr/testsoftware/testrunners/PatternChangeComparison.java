@@ -43,8 +43,7 @@ public class PatternChangeComparison {
 
         for (DRIFT driftType : DRIFT.values()) {
             StringBuilder modelComparisonString 
-            = new StringBuilder("model," 
-                    + "GED,CNE,Jaccard\n");
+            = new StringBuilder("model,GED,CNE,Jaccard\n");
             
             try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
                 paths
@@ -170,7 +169,7 @@ public class PatternChangeComparison {
         
         return models;
     }
-    
+
     public static ArrayList<DcrModel> gradualDriftMutations(DcrModel referenceModel) {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
