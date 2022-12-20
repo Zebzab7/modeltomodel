@@ -21,7 +21,7 @@ public class PatternChangeRandom {
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/groundtruthmodels";
         
-       StringBuilder modelComparisonString = new StringBuilder("model,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," +
+       StringBuilder modelComparisonString = new StringBuilder("sep=,\nmodel,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," +
             "GED, CNE, Jaccard\n");
     
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
@@ -86,7 +86,7 @@ public class PatternChangeRandom {
                                     }
                                     DcrModel adaptedModel  = modelAdaption.getModel();
                                     modelComparison.loadComparativeModel(adaptedModel);
-                                    String GEDString = modelComparison.getGEDString();
+                                    String GEDString = modelComparison.getGEDWString();
                                     String CNEString = modelComparison.getCNEString();
                                     double jaccard = modelComparison.getJaccardSimilarity();
                                     String jaccardSim = ""+jaccard;

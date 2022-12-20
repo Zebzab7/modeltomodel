@@ -46,7 +46,7 @@ public class PatternChangeComparison {
 
         for (DRIFT driftType : DRIFT.values()) {
             StringBuilder modelComparisonString 
-            = new StringBuilder("model,GED,CNE,Jaccard\n");
+            = new StringBuilder("sep=,\nmodel,GED,CNE,Jaccard\n");
             
             try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
                 paths
@@ -118,7 +118,7 @@ public class PatternChangeComparison {
         for (int i = 0; i < models.size(); i++) {
             modelComparison.loadComparativeModel(models.get(i));
             
-            String GEDString = modelComparison.getGEDString();
+            String GEDString = modelComparison.getGEDWString();
             String CNEString = modelComparison.getCNEString();
             String jaccardSim = modelComparison.getJaccardSimilarity() + "";
             

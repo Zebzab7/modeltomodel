@@ -163,7 +163,7 @@ public class ModelComparison {
 
         return jaccardString.toString();
     }
-
+    
     public String getGEDString() {
         double sim = DcrSimilarity.graphEditDistanceSimilarity(originalDcrModel, comparativeDcrModel);
         return ""+sim;

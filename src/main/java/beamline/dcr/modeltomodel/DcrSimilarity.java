@@ -75,9 +75,8 @@ public class DcrSimilarity {
         Set<Triple<String, String, RELATION>> relationsDiff 
             = symmetricDifference(relationsA, relationsB);
 
-        double activitiesDiffDist = 0.0;
         double relationsDiffDist = 0.0;
-
+        
         for (RELATION relationType : RELATION.values()) {
             int sum = 0;
             for (Triple<String,String,RELATION> relation : relationsDiff) {
