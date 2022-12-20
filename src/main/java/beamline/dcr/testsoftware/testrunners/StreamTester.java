@@ -200,7 +200,7 @@ public class StreamTester {
 
         myObj.createNewFile();
         try {
-            FileWriter myWriter = new FileWriter(filePath,true);
+            FileWriter myWriter = new FileWriter(filePath/*,true*/);
             String columnTitles ="maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces\n";
 
             myWriter.write("sep=,\n" + columnTitles+csvResults);
