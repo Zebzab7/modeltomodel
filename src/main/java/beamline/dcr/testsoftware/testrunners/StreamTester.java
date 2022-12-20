@@ -25,6 +25,7 @@ import java.util.*;
 public class StreamTester {
     public static void main(String[] args) throws Exception {
         //Test parameters
+        
         String eventlogNumber =args[0];
         int relationsThreshold = Integer.parseInt(args[1]);
         String[] patternList = args[2].split(" ");
@@ -38,6 +39,7 @@ public class StreamTester {
         String[] dcrConstraints = args[10].split(" ");
         //
 
+        
         Set<Integer> traceWindowSizes = new HashSet<>();
         for (String size : traceWindowSizesStringList ){
             traceWindowSizes.add(Integer.parseInt(size));
@@ -56,10 +58,10 @@ public class StreamTester {
         String streamPath = currentPath + "/eventlogs/eventlog_graph"+eventlogNumber+ ".xes";
 
         File xesFile = new File(streamPath);
+        
         XesXmlParser xesParser = new XesXmlParser();
-
         List<XLog> parsedXesFile = xesParser.parse(xesFile);
-
+        
         //Define test stream
         Map<String, List<String>> traceCollection = new HashMap<String, List<String>>();
         Map<String,Integer> traceExecutionTime= new HashMap<String, Integer>();
@@ -87,7 +89,6 @@ public class StreamTester {
         for(int maxTraces : maxTracesList){
 
             for(int traceSize : traceWindowSizes){
-
 
             String discoverModelPath = currentPath + "/discovermodels/DCR_graph" + eventlogNumber +
                     "_online_" +traceSize+".xml";
@@ -119,8 +120,7 @@ public class StreamTester {
             coll.add(fileParam4);
 
             sc.configure(coll);
-
-
+            
             // simulate stream
             int currentObservedEvents = 0;
             int currentIteration = 1;
@@ -131,7 +131,6 @@ public class StreamTester {
                     int numActivitiesInTrace = traceCollection.get(currentTraceId).size();
                     if (currentIteration % traceExecutionEntry.getValue() == 0 &&
                             currentTraceIndex<numActivitiesInTrace) {
-
                         String activityName = traceCollection.get(currentTraceId).get(currentTraceIndex);
                         sc.consumeEvent(currentTraceId, activityName);
                         traceCurrentIndex.replace(currentTraceId, currentTraceIndex + 1);
@@ -142,9 +141,6 @@ public class StreamTester {
                                         "maxtraces"+maxTraces +"_tracesize"+traceSize + "_obs" + currentObservedEvents);
                             }
 
-
-
-                            ExtendedDFG extendedDFG = sc.getExtendedDFG();
                             DcrModel dcrModel = sc.getDcrModel();
                             //comparison
                             UnionRelationSet unionRelationSet = sc.getUnionRelationSet();
@@ -169,6 +165,13 @@ public class StreamTester {
                 }
                 currentIteration++;
                 System.out.println(currentObservedEvents + " of " + totalObservations);
+            }
+            // Reset all trace indexes to 0.
+            for (XLog traces : parsedXesFile){
+                for (XTrace trace : traces) {
+                    String traceId = trace.getAttributes().get("concept:name").toString();
+                    traceCurrentIndex.replace(traceId, 0);
+                }
             }
         }
         }
