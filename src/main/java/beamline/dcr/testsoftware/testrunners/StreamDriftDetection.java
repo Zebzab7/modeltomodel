@@ -26,7 +26,7 @@ import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;
 import beamline.dcr.view.DcrModelXML;
 
-public class BasicStreamDriftDetection {
+public class StreamDriftDetection {
     public static void main(String[] args) throws Exception {
         //Test parameters
         
