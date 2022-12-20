@@ -20,6 +20,7 @@ import beamline.core.web.miner.models.MinerParameterValue;
 import beamline.dcr.miners.DFGBasedMiner;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.UnionRelationSet;
+import beamline.dcr.modeltomodel.DcrSimilarity;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;
@@ -30,16 +31,16 @@ public class BasicStreamDriftDetection {
         //Test parameters
         
         String eventlogNumber =args[0];
-        int relationsThreshold = Integer.parseInt(args[1]);
+        int relationsThreshold = 0;
+        double sigDiff = Double.parseDouble(args[1]);
         String[] patternList = args[2].split(" ");
         String[] transitiveReductionList = args[3].split(" ");
         boolean saveAsXml = Boolean.parseBoolean(args[4]);
-        boolean compareToDisCoveR = Boolean.parseBoolean(args[5]); // false for reference model true for DisCoveR at windowsize
-        boolean saveEventLogs= Boolean.parseBoolean(args[6]);
-        String[] traceWindowSizesStringList = args[7].split(" ");
-        String[] maxTracesStringList = args[8].split(" ");
-        int observationsBeforeEvaluation = Integer.parseInt(args[9]);
-        String[] dcrConstraints = args[10].split(" ");
+        boolean saveEventLogs= Boolean.parseBoolean(args[5]);
+        String[] traceWindowSizesStringList = args[6].split(" ");
+        String[] maxTracesStringList = args[7].split(" ");
+        int observationsBeforeEvaluation = Integer.parseInt(args[8]);
+        String[] dcrConstraints = args[9].split(" ");
         //
 
         
@@ -88,15 +89,18 @@ public class BasicStreamDriftDetection {
                 }
             }
         }
+        
+        DcrModel referenceModel = new DcrModel();
+        referenceModel.loadModel(groundTruthModelPath);
+        
+        DcrModel groundTruthModel = new DcrModel();
+        groundTruthModel.loadModel(groundTruthModelPath);
 
         for(int maxTraces : maxTracesList){
 
             for(int traceSize : traceWindowSizes){
 
-            String discoverModelPath = currentPath + "/discovermodels/DCR_graph" + eventlogNumber +
-                    "_online_" +traceSize+".xml";
-            String compareModel = compareToDisCoveR ? discoverModelPath: groundTruthModelPath ;
-
+            String compareModel = groundTruthModelPath ;
 
             DFGBasedMiner sc = new DFGBasedMiner();
             Collection<MinerParameterValue> coll = new ArrayList<>();
@@ -127,6 +131,10 @@ public class BasicStreamDriftDetection {
             // simulate stream
             int currentObservedEvents = 0;
             int currentIteration = 1;
+            
+            int comparisons = 0;
+            int drifts = 0;
+            
             while(currentObservedEvents < totalObservations) {
                 for (Map.Entry<String, Integer> traceExecutionEntry : traceExecutionTime.entrySet()) {
                     String currentTraceId = traceExecutionEntry.getKey();
@@ -139,30 +147,48 @@ public class BasicStreamDriftDetection {
                         traceCurrentIndex.replace(currentTraceId, currentTraceIndex + 1);
                         currentObservedEvents++;
                         if (currentObservedEvents % observationsBeforeEvaluation == 0) {
+                            
                             if (saveEventLogs){
                                 sc.saveCurrentWindowLog(currentPath + "/eventlogs/online/online_eventlog_graph"+eventlogNumber+
                                         "maxtraces"+maxTraces +"_tracesize"+traceSize + "_obs" + currentObservedEvents);
                             }
                             
-                            ModelComparison modelComparison = new ModelComparison(groundTruthModelPath);
-                            DcrModel dcrModel = sc.getDcrModel();
-                            //comparison
-                            UnionRelationSet unionRelationSet = sc.getUnionRelationSet();
-                            TransitionSystem transitionSystem = new TransitionSystem(unionRelationSet);
-                            ConformanceChecking conformanceChecking = new ConformanceChecking(streamPath,transitionSystem);
-                            conformanceChecking.checkConformance();
+                            DcrModel discoveredModel = sc.getDcrModel();
+                            double simRef = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, discoveredModel);
+                            double simTrue = DcrSimilarity.graphEditDistanceSimilarityWithWeights(groundTruthModel, discoveredModel);
                             
+                            System.out.println("Similarity to reference: " + simRef);
+                            System.out.println("Similarity to true model: " + simTrue);
+                            
+                            comparisons++;
+                            boolean changeDetected = false;
+                            if (simRef < sigDiff) {
+                                changeDetected = true;
+                                System.out.println("A change is detected, updating model...");
+                                referenceModel = discoveredModel;
+                                drifts++;
+                            } else {
+                                changeDetected = false;
+                                System.out.println("Insignificant change...");
+                            }
+                            System.out.println();
+                            
+                            csvResults.append(maxTraces + ",").append(traceSize + ",").append(currentObservedEvents + ",")
+                                .append(changeDetected + ",").append(sigDiff + ",").append(simRef + ",").append(simTrue + "\n");
                             
                             if (saveAsXml){
-                                new DcrModelXML(dcrModel).toFile(fileName+"_obs"+currentObservedEvents);
+                                new DcrModelXML(discoveredModel).toFile(fileName+"_obs"+currentObservedEvents);
                             }
                         }
                     }
                 }
                 currentIteration++;
-                System.out.println(currentObservedEvents + " of " + totalObservations);
+//                System.out.println(currentObservedEvents + " of " + totalObservations);
             }
-            // Reset all trace indexes to 0.
+            
+            System.out.println(drifts + " drifts detected out of " + comparisons + " comparisons");
+            
+            // Reset all trace indexes to 0 
             for (XLog traces : parsedXesFile){
                 for (XTrace trace : traces) {
                     String traceId = trace.getAttributes().get("concept:name").toString();
@@ -177,13 +203,13 @@ public class BasicStreamDriftDetection {
         if (!outputDirectoryObject.exists()){
             outputDirectoryObject.mkdirs();
         }
-        String filePath = outputDirectoryPath + "/results_" + observationsBeforeEvaluation+ ".csv";
+        String filePath = outputDirectoryPath + "/results_" + "GEDW" + observationsBeforeEvaluation+ ".csv";
         File myObj = new File(filePath);
 
         myObj.createNewFile();
         try {
-            FileWriter myWriter = new FileWriter(filePath,true);
-            String columnTitles ="maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces\n";
+            FileWriter myWriter = new FileWriter(filePath);
+            String columnTitles ="maxTraces,traceSize,observed,change_detected,sigDiff,GEDWRef,GEDWTrue\n";
 
             myWriter.write(columnTitles+csvResults);
             myWriter.close();

@@ -87,10 +87,6 @@ public class StreamTester {
             }
         }
         
-        DcrModel previousModel = new DcrModel();
-        DcrModel trueModel = new DcrModel();
-        trueModel.loadModel(groundTruthModelPath);
-        
         for(int maxTraces : maxTracesList){
 
             for(int traceSize : traceWindowSizes){
@@ -147,10 +143,7 @@ public class StreamTester {
                             }
                             
                             DcrModel dcrModel = sc.getDcrModel();
-                            
-                            System.out.println("sim prev: " + DcrSimilarity.graphEditDistanceSimilarity(dcrModel, previousModel));
-                            System.out.println("sim true: " + DcrSimilarity.graphEditDistanceSimilarity(dcrModel, trueModel));
-                            
+
                             //comparison
                             UnionRelationSet unionRelationSet = sc.getUnionRelationSet();
                             TransitionSystem transitionSystem = new TransitionSystem(unionRelationSet);
@@ -169,16 +162,12 @@ public class StreamTester {
                             if (saveAsXml){
                                 new DcrModelXML(dcrModel).toFile(fileName+"_obs"+currentObservedEvents);
                             }
-                            previousModel = dcrModel;
                         }
                     }
                 }
                 currentIteration++;
-//                System.out.println(currentObservedEvents + " of " + totalObservations);
+                System.out.println(currentObservedEvents + " of " + totalObservations);
             }
-            
-            System.out.println(trueModel.getActivities().toString());
-            System.out.println(trueModel.getRelations().toString());
             
             // Reset all trace indexes to 0.
             for (XLog traces : parsedXesFile){
