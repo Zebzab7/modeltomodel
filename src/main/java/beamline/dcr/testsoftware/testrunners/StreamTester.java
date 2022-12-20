@@ -7,6 +7,7 @@ import beamline.dcr.miners.DFGBasedMiner;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.UnionRelationSet;
 import beamline.dcr.model.relations.dfg.ExtendedDFG;
+import beamline.dcr.modeltomodel.DcrSimilarity;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;
@@ -85,7 +86,11 @@ public class StreamTester {
                 }
             }
         }
-
+        
+        DcrModel previousModel = new DcrModel();
+        DcrModel trueModel = new DcrModel();
+        trueModel.loadModel(groundTruthModelPath);
+        
         for(int maxTraces : maxTracesList){
 
             for(int traceSize : traceWindowSizes){
@@ -140,8 +145,12 @@ public class StreamTester {
                                 sc.saveCurrentWindowLog(currentPath + "/eventlogs/online/online_eventlog_graph"+eventlogNumber+
                                         "maxtraces"+maxTraces +"_tracesize"+traceSize + "_obs" + currentObservedEvents);
                             }
-
+                            
                             DcrModel dcrModel = sc.getDcrModel();
+                            
+                            System.out.println("sim prev: " + DcrSimilarity.graphEditDistanceSimilarity(dcrModel, previousModel));
+                            System.out.println("sim true: " + DcrSimilarity.graphEditDistanceSimilarity(dcrModel, trueModel));
+                            
                             //comparison
                             UnionRelationSet unionRelationSet = sc.getUnionRelationSet();
                             TransitionSystem transitionSystem = new TransitionSystem(unionRelationSet);
@@ -160,12 +169,17 @@ public class StreamTester {
                             if (saveAsXml){
                                 new DcrModelXML(dcrModel).toFile(fileName+"_obs"+currentObservedEvents);
                             }
+                            previousModel = dcrModel;
                         }
                     }
                 }
                 currentIteration++;
-                System.out.println(currentObservedEvents + " of " + totalObservations);
+//                System.out.println(currentObservedEvents + " of " + totalObservations);
             }
+            
+            System.out.println(trueModel.getActivities().toString());
+            System.out.println(trueModel.getRelations().toString());
+            
             // Reset all trace indexes to 0.
             for (XLog traces : parsedXesFile){
                 for (XTrace trace : traces) {
@@ -189,7 +203,7 @@ public class StreamTester {
             FileWriter myWriter = new FileWriter(filePath,true);
             String columnTitles ="maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces\n";
 
-            myWriter.write(columnTitles+csvResults);
+            myWriter.write("sep=,\n" + columnTitles+csvResults);
             myWriter.close();
 
         } catch (IOException e) {
