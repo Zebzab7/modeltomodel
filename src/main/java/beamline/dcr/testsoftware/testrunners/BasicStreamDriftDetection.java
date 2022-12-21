@@ -42,7 +42,9 @@ public class BasicStreamDriftDetection {
         int observationsBeforeEvaluation = Integer.parseInt(args[8]);
         String[] dcrConstraints = args[9].split(" ");
         //
-
+        
+        ArrayList<DcrModel> repository = new ArrayList<DcrModel>();
+        
         
         Set<Integer> traceWindowSizes = new HashSet<>();
         for (String size : traceWindowSizesStringList ){
@@ -157,19 +159,21 @@ public class BasicStreamDriftDetection {
                             double simRef = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, discoveredModel);
                             double simTrue = DcrSimilarity.graphEditDistanceSimilarityWithWeights(groundTruthModel, discoveredModel);
                             
-//                            System.out.println("Similarity to reference: " + simRef);
-//                            System.out.println("Similarity to true model: " + simTrue);
+                            System.out.println("Similarity to reference: " + simRef);
+                            System.out.println("Similarity to true model: " + simTrue);
                             
                             boolean changeDetected = false;
+                            comparisons++;
                             if (simRef < sigDiff) {
+                                drifts++;
                                 changeDetected = true;
-//                                System.out.println("A change is detected, updating model...");
+                                System.out.println("A change is detected, updating model...");
                                 referenceModel = discoveredModel;
                             } else {
                                 changeDetected = false;
-//                                System.out.println("Insignificant change...");
+                                System.out.println("Insignificant change...");
                             }
-//                            System.out.println();
+                            System.out.println();
                             
                             csvResults.append(maxTraces + ",").append(traceSize + ",").append(currentObservedEvents + ",")
                                 .append(changeDetected + ",").append(sigDiff + ",").append(simRef + ",").append(simTrue + "\n");
@@ -181,8 +185,10 @@ public class BasicStreamDriftDetection {
                     }
                 }
                 currentIteration++;
-                System.out.println(currentObservedEvents + " of " + totalObservations);
+//                System.out.println(currentObservedEvents + " of " + totalObservations);
             }
+            
+            System.out.println(drifts + " drifts out of " + comparisons + " comparisons");
             
             // Reset all trace indexes to 0 
             for (XLog traces : parsedXesFile){
