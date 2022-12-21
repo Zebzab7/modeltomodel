@@ -27,12 +27,14 @@ public class ModelRepository {
         }
         
         if (unique) {
+            System.out.println("Addition sucessful");
             repository.add(model);
-            return -1; 
+            return 0; 
         }
-        return 0;
+        System.out.println("Addition not succesful");
+        return -1;
     }
-
+    
     public static double similarity(DcrModel modelA, DcrModel modelB, METRIC metric) {
         switch (metric) {
             case GED:

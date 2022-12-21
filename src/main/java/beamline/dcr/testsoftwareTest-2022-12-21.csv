@@ -1,0 +1,5 @@
+Metric,Sudden,Gradual,Seasonal,Incremental
+GED,0.2,1.0,0.0,3.4000000000000004
+CNE,0.2,1.0,0.0,3.4000000000000004
+JaccardDist,0.2,1.0,0.0,3.2
+Weighted GED,0.2,1.0,0.0,1.0

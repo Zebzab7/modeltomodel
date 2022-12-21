@@ -33,12 +33,3 @@ maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitn
 5,5,155,0.6956521739130435,NaN,0.0,1.0,0.33701814058956914,
 5,5,160,0.6956521739130435,NaN,0.0,1.0,0.33701814058956914,
 5,5,165,0.6956521739130435,NaN,0.0,1.0,0.33701814058956914,
-maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces
-maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces
-maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces
-maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces
-maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces
-maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces
-maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces
-maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces
-maxTraces,traceSize,observed,model_jaccard,model_precision,model_recall,log_fitness,log_precision,illegal_traces

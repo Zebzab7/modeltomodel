@@ -43,7 +43,7 @@ public class ModelComparison {
 
         return tp / (tp + fp);
     }
-
+    
     private int getIntersectionSize(){
 
         Set<Triple<String,String, DcrModel.RELATION>> minedRelations = originalDcrModel.getRelations();

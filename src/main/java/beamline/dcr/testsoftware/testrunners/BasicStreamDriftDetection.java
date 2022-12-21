@@ -21,6 +21,7 @@ import beamline.dcr.miners.DFGBasedMiner;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.UnionRelationSet;
 import beamline.dcr.modeltomodel.DcrSimilarity;
+import beamline.dcr.modeltomodel.ModelRepository;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;
@@ -43,8 +44,7 @@ public class BasicStreamDriftDetection {
         String[] dcrConstraints = args[9].split(" ");
         //
         
-        ArrayList<DcrModel> repository = new ArrayList<DcrModel>();
-        
+        ModelRepository repo = new ModelRepository();
         
         Set<Integer> traceWindowSizes = new HashSet<>();
         for (String size : traceWindowSizesStringList ){

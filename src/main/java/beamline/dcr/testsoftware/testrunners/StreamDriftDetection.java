@@ -21,10 +21,13 @@ import beamline.dcr.miners.DFGBasedMiner;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.UnionRelationSet;
 import beamline.dcr.modeltomodel.DcrSimilarity;
+import beamline.dcr.modeltomodel.DriftDetector;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;
 import beamline.dcr.view.DcrModelXML;
+import metrics.GraphEditDistance;
+import metrics.WeightedGraphEditDistance;
 
 public class StreamDriftDetection {
     public static void main(String[] args) throws Exception {
@@ -43,6 +46,8 @@ public class StreamDriftDetection {
         String[] dcrConstraints = args[9].split(" ");
         //
 
+        
+        ArrayList<DcrModel> discoveredModels = new ArrayList<DcrModel>();
         
         Set<Integer> traceWindowSizes = new HashSet<>();
         for (String size : traceWindowSizesStringList ){
@@ -132,9 +137,6 @@ public class StreamDriftDetection {
             int currentObservedEvents = 0;
             int currentIteration = 1;
             
-            int comparisons = 0;
-            int drifts = 0;
-            
             while(currentObservedEvents < totalObservations) {
                 for (Map.Entry<String, Integer> traceExecutionEntry : traceExecutionTime.entrySet()) {
                     String currentTraceId = traceExecutionEntry.getKey();
@@ -154,25 +156,8 @@ public class StreamDriftDetection {
                             }
                             
                             DcrModel discoveredModel = sc.getDcrModel();
-                            double simRef = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, discoveredModel);
-                            double simTrue = DcrSimilarity.graphEditDistanceSimilarityWithWeights(groundTruthModel, discoveredModel);
                             
-//                            System.out.println("Similarity to reference: " + simRef);
-//                            System.out.println("Similarity to true model: " + simTrue);
-                            
-                            boolean changeDetected = false;
-                            if (simRef < sigDiff) {
-                                changeDetected = true;
-//                                System.out.println("A change is detected, updating model...");
-                                referenceModel = discoveredModel;
-                            } else {
-                                changeDetected = false;
-//                                System.out.println("Insignificant change...");
-                            }
-//                            System.out.println();
-                            
-                            csvResults.append(maxTraces + ",").append(traceSize + ",").append(currentObservedEvents + ",")
-                                .append(changeDetected + ",").append(sigDiff + ",").append(simRef + ",").append(simTrue + "\n");
+                            discoveredModels.add(discoveredModel);
                             
                             if (saveAsXml){
                                 new DcrModelXML(discoveredModel).toFile(fileName+"_obs"+currentObservedEvents);
@@ -183,6 +168,9 @@ public class StreamDriftDetection {
                 currentIteration++;
                 System.out.println(currentObservedEvents + " of " + totalObservations);
             }
+            
+            int drifts = DriftDetector.DBSCAN(discoveredModels, 0.15, 10, new WeightedGraphEditDistance());
+            System.out.println("Detected " + drifts + " drifts...");
             
             // Reset all trace indexes to 0 
             for (XLog traces : parsedXesFile){

@@ -20,6 +20,7 @@ import metrics.CommonNodesAndEdges;
 import metrics.DumbDistance;
 import metrics.GraphEditDistance;
 import metrics.JaccardDistance;
+import metrics.WeightedGraphEditDistance;
 
 public class DriftDetector {
     
@@ -29,7 +30,7 @@ public class DriftDetector {
     }
     
     static double eps = 0.15;
-    static int minPoints = 10;
+    static int minPoints = 5;
     
     public static void setEps(double eps) {
         DriftDetector.eps = eps;
@@ -40,7 +41,7 @@ public class DriftDetector {
     }
     
     static ArrayList<DistanceMetric<DcrModel>> metrics = new ArrayList<DistanceMetric<DcrModel>>
-        (Arrays.asList(new GraphEditDistance(), new CommonNodesAndEdges(), new JaccardDistance(), new DumbDistance()));
+        (Arrays.asList(new GraphEditDistance(), new CommonNodesAndEdges(), new JaccardDistance(), new WeightedGraphEditDistance()));
 
     public static void addDistanceMetric(DistanceMetric<DcrModel> newMetric) {
         metrics.add(newMetric);
@@ -63,7 +64,7 @@ public class DriftDetector {
         ArrayList<ArrayList<DcrModel>> incrementalSeries = new ArrayList<ArrayList<DcrModel>>();
         
         // Initialize expected values and simulate data sets of process models
-        int iterations = 50;
+        int iterations = 5;
         int[][] expectedVals = new int[metrics.size()][iterations];
         for(int i = 0; i < iterations; i++) {
             suddenSeries.add(PatternChangeComparison.suddenDriftMutations(referenceModel));
@@ -115,7 +116,7 @@ public class DriftDetector {
         } catch (DBSCANClusteringException e) {
             System.out.println("There was some kind of error with clustering data...");
         }
-          
+        
         return list.size()-1;
     }
     
@@ -154,10 +155,10 @@ public class DriftDetector {
         return drifts;
     }
     
-    /*
+    /**
      * Considers two models and determines if they are significantly different from each other
      */
-    public int detectSignificantDifference(DcrModel modelA, DcrModel modelB, SIMILARITY_MEASURE sim, double sigDiff) {
+    public static int detectSignificantDifference(DcrModel modelA, DcrModel modelB, SIMILARITY_MEASURE sim, double sigDiff) {
         double similarity = -1.0;
         switch(sim) {
             case GED: 
@@ -169,7 +170,7 @@ public class DriftDetector {
         if (similarity < sigDiff) return 1;
         return 0;
     }
-    /*
+    /**
      * Calculates the mean square error from predicted values and expected values
      */
     public static double meanSquareError(int[] predictedVals, int[] expectedVals) {
