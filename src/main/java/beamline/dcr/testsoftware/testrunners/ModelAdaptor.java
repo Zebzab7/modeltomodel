@@ -49,8 +49,8 @@ public class ModelAdaptor {
         
         
         for (int i = 0; i < models.size(); i++) {
-//            new DcrModelXML(models.get(i)).toFile(currentPath + "/modelvariations/" + "suddenProcess101" + i);
-            new DcrModelJson(models.get(i)).toFile(currentPath + "/modelvariations/" + "suddenProcess101-" + i);
+            new DcrModelXML(models.get(i)).toFile(currentPath + "/modelvariations/" + "suddenProcess101-" + i);
+//            new DcrModelJson(models.get(i)).toFile(currentPath + "/modelvariations/" + "suddenProcess101-" + i);
         }
         
 //        DcrModel m1 = new DcrModel();

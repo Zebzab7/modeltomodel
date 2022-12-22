@@ -1,11 +1,14 @@
 package beamline.dcr.model.relations;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,6 +22,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class DcrModel {
 	private Set<String> activites;
+	private Set<Triple<String, String, RELATION>> relations = new HashSet<Triple<String, String, RELATION>>();
+	
 	public enum RELATION {
 		PRECONDITION,
 		CONDITION,
@@ -30,12 +35,10 @@ public class DcrModel {
 		NORESPONSE,
 		SEQUENCE;
 	}
-
+	
 	public DcrModel()  {
 		this.activites = new HashSet<>();
 	}
-
-	private Set<Triple<String, String, RELATION>> relations = new HashSet<Triple<String, String, RELATION>>();
 	
 	public void addRelations(Set<Triple<String, String, RELATION>> setOfRelations) {
 		for (Triple<String, String, RELATION> relation : setOfRelations){
@@ -205,6 +208,8 @@ public class DcrModel {
 		}
 
 	}
+	
+	
 	
 	/*
 	 * Returns a shallow copy of this DCR model

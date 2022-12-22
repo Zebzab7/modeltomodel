@@ -102,8 +102,6 @@ public class BasicStreamDriftDetection {
 
             for(int traceSize : traceWindowSizes){
 
-            String compareModel = groundTruthModelPath ;
-
             DFGBasedMiner sc = new DFGBasedMiner();
             Collection<MinerParameterValue> coll = new ArrayList<>();
 
