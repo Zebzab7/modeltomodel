@@ -136,20 +136,14 @@ public class PatternChangeComparison {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
-        int driftStrength = 5;
+        int driftStrength = 10;
         int driftIteration = rand.nextInt(iterations);
         
         ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
         
         for (int i = 0; i < iterations; i++) {
             if (i == driftIteration) {
-                if (!modelAdaption.insertActivitySerial(driftStrength) ||
-                        !modelAdaption.insertActivityParallel(driftStrength) ||
-                        !modelAdaption.deleteActivity(driftStrength) ||
-                        !modelAdaption.replaceActivity(driftStrength) ||
-                        !modelAdaption.addConstraint(driftStrength) ||
-                        !modelAdaption.removeConstraint(driftStrength) ||
-                        !modelAdaption.swapActivities(driftStrength)) {
+                if (!modelAdaption.everyMutation(driftStrength)) {
                     System.out.println("Mutation operation was unsuccessful");
                 } 
                 models.add(modelAdaption.getModel());
@@ -159,7 +153,7 @@ public class PatternChangeComparison {
                 DcrModel nextModel = modelAdaption.getModel().getClone();
                 if (applyNoise) {
                     nextModel = modelAdaption.getModel().getClone();
-                    if (!modelAdaption.insertActivitySerial(1)) {
+                    if (!modelAdaption.randomMutation(1)) {
                         System.out.println("Noise mutation was unsuccessful");
                     }
                 } 
@@ -189,14 +183,14 @@ public class PatternChangeComparison {
                 DcrModel nextModel = modelAdaption.getModel().getClone();
                 if (applyNoise) {
                     nextModel = modelAdaption.getModel().getClone();
-                    if (!modelAdaption.insertActivitySerial(1)) {
+                    if (!modelAdaption.randomMutation(1)) {
                         System.out.println("Noise mutation was unsuccessful");
                     }
                 } 
                 models.add(modelAdaption.getModel());
                 modelAdaption = new ModelAdaption(nextModel);
             } else {
-                if (!modelAdaption.insertActivitySerial(driftStrength)) {
+                if (!modelAdaption.randomMutation(driftStrength)) {
                     System.out.println("Mutation operation was unsuccessful");
                 } 
                 models.add(modelAdaption.getModel());
@@ -219,13 +213,7 @@ public class PatternChangeComparison {
         
         for (int i = 0; i < iterations; i++) {
             if (seasonalStart == i) {
-                if (!modelAdaption.insertActivitySerial(driftStrength) ||
-                        !modelAdaption.insertActivityParallel(driftStrength) ||
-                        !modelAdaption.deleteActivity(driftStrength) ||
-                        !modelAdaption.replaceActivity(driftStrength) ||
-                        !modelAdaption.addConstraint(driftStrength) ||
-                        !modelAdaption.removeConstraint(driftStrength) ||
-                        !modelAdaption.swapActivities(driftStrength)) {
+                if (!modelAdaption.everyMutation(driftStrength)) {
                     System.out.println("Mutation operation was unsuccessful");
                 } 
                 models.add(modelAdaption.getModel());
@@ -236,7 +224,7 @@ public class PatternChangeComparison {
                 DcrModel nextModel = modelAdaption.getModel().getClone();
                 if (applyNoise) {
                     nextModel = modelAdaption.getModel().getClone();
-                    if (!modelAdaption.insertActivitySerial(1)) {
+                    if (!modelAdaption.randomMutation(1)) {
                         System.out.println("Noise mutation was unsuccessful");
                     }
                 } 
@@ -261,13 +249,7 @@ public class PatternChangeComparison {
         
         for (int i = 0; i < iterations; i++) {
             if (i != 0 && i != iterations && (i%incrementSize) == 0) {
-                if (!modelAdaption.insertActivitySerial(driftStrength) ||
-                        !modelAdaption.insertActivityParallel(driftStrength) ||
-                        !modelAdaption.deleteActivity(driftStrength) ||
-                        !modelAdaption.replaceActivity(driftStrength) ||
-                        !modelAdaption.addConstraint(driftStrength) ||
-                        !modelAdaption.removeConstraint(driftStrength) ||
-                        !modelAdaption.swapActivities(driftStrength)) {
+                if (!modelAdaption.everyMutation(driftStrength)) {
                     System.out.println("Mutation operation was unsuccessful");
                 } 
                 models.add(modelAdaption.getModel());
@@ -276,7 +258,7 @@ public class PatternChangeComparison {
                 DcrModel nextModel = modelAdaption.getModel().getClone();
                 if (applyNoise) {
                     nextModel = modelAdaption.getModel().getClone();
-                    if (!modelAdaption.insertActivitySerial(1)) {
+                    if (!modelAdaption.randomMutation(1)) {
                         System.out.println("Noise mutation was unsuccessful");
                     }
                 } 

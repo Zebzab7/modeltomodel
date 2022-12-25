@@ -49,7 +49,7 @@ public class DriftDetector {
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, DBSCANClusteringException {
         String rootPath = System.getProperty("user.dir");
-        String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
+        String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware/";
         String modelPath = rootPath + "/src/main/java/beamline/dcr/testsoftware/groundtruthmodels/process101.xml";
         
         StringBuilder outputString

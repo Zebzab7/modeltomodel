@@ -219,6 +219,18 @@ public class ModelAdaption {
         }
         return true;
     }
+    public boolean everyMutation(int driftStrength) {
+        if (!insertActivitySerial(driftStrength) ||
+                !insertActivityParallel(driftStrength) ||
+                !deleteActivity(driftStrength) ||
+                !replaceActivity(driftStrength) ||
+                !addConstraint(driftStrength) ||
+                !removeConstraint(driftStrength) ||
+                !swapActivities(driftStrength)) {
+            return false;
+        } 
+        return true;
+    }
     public DcrModel getModel(){
         return model;
     }
