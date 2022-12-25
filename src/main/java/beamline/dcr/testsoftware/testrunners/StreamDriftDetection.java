@@ -25,6 +25,7 @@ import beamline.dcr.modeltomodel.DriftDetector;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;
+import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import beamline.dcr.view.DcrModelXML;
 import metrics.GraphEditDistance;
 import metrics.WeightedGraphEditDistance;
@@ -34,15 +35,16 @@ public class StreamDriftDetection {
       //Test parameters
         int eventlogNumber = 111;
         int relationsThreshold = 0;
-        double eps = 0.15;
-        int minPoints = 10;
-        String[] patternList = ("Condition Response").split(" ");
+        double eps = 0.1;
+        int minPoints = 5;
+        String[] patternList = ("Condition Response Include Exclude").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
         int maxTraces = 5;
         int traceSize = 5;
-        int observationsBeforeEvaluation = 5;
+        int observationsBeforeEvaluation = 2;
         int logs = 2;
-        String[] dcrConstraints = ("Condition Response").split(" ");
+        DRIFT driftType = DRIFT.SUDDEN;
+        String[] dcrConstraints = ("Condition Response Include Exclude").split(" ");
         //
         
         ArrayList<DcrModel> discoveredModels = new ArrayList<DcrModel>();
@@ -72,6 +74,7 @@ public class StreamDriftDetection {
         sc.configure(coll);
         
         for (int i = 0; i < logs; i++) {
+            
             ArrayList<DcrModel> iterationModels = new ArrayList<DcrModel>();
             
             String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + (eventlogNumber+i) +".xml";
@@ -81,7 +84,7 @@ public class StreamDriftDetection {
             
             XesXmlParser xesParser = new XesXmlParser();
             List<XLog> parsedXesFile = xesParser.parse(xesFile);
-        
+            
             //Define test stream
             Map<String, List<String>> traceCollection = new HashMap<String, List<String>>();
             Map<String,Integer> traceExecutionTime= new HashMap<String, Integer>();
@@ -116,7 +119,6 @@ public class StreamDriftDetection {
             while(currentObservedEvents < totalObservations) {
                 for (Map.Entry<String, Integer> traceExecutionEntry : traceExecutionTime.entrySet()) {
                     String currentTraceId = traceExecutionEntry.getKey();
-//                    System.out.println(currentTraceId);
                     int currentTraceIndex = traceCurrentIndex.get(currentTraceId);
                     int numActivitiesInTrace = traceCollection.get(currentTraceId).size();
                     if (currentIteration % traceExecutionEntry.getValue() == 0 &&
@@ -126,8 +128,8 @@ public class StreamDriftDetection {
                         traceCurrentIndex.replace(currentTraceId, currentTraceIndex + 1);
                         currentObservedEvents++;
                         if (currentObservedEvents % observationsBeforeEvaluation == 0) {
-                            
                             DcrModel discoveredModel = sc.getDcrModel();
+                            System.out.println(discoveredModel.getActivities().size());
                             iterationModels.add(discoveredModel);
                             
                             double simTrue = DcrSimilarity.graphEditDistanceSimilarityWithWeights(groundTruthModel, discoveredModel);
@@ -138,7 +140,7 @@ public class StreamDriftDetection {
                     }
                 }
                 currentIteration++;
-                System.out.println(currentObservedEvents + " of " + totalObservations);
+//                System.out.println(currentObservedEvents + " of " + totalObservations);
             }
             
             // Reset all trace indexes to 0 

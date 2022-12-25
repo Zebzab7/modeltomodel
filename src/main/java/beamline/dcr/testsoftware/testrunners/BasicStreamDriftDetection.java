@@ -69,7 +69,6 @@ public class BasicStreamDriftDetection {
         coll.add(fileParam4);
         
         sc.configure(coll);
-
         
         for (int i = 0; i < logs; i++) {
             String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + (eventlogNumber+i) +".xml";

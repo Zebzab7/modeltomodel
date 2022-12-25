@@ -34,13 +34,16 @@ import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import beamline.dcr.view.DcrModelXML;
 
 public class TraceGenerator {
-    static Random rand = new Random();
     private static int eventLogNumber = 101;
-    private static int traceLength = 20;
-    private static int traces = 10;
-    private static int modelVariations = 3;
+    private static int traceLength = 15;
+    private static int traces = 20;
+    private static int modelVariations = 2;
     private static int driftStrength = 10;
-    private static DRIFT driftType = DRIFT.SUDDEN;
+    private static int multiplier = 4;
+    
+    static Random rand = new Random();
+
+    private static long idCounter = 0;
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         
@@ -66,6 +69,10 @@ public class TraceGenerator {
             referenceModels.add(modelAdaption.getModel().getClone());
         }
         
+        for (DcrModel model : referenceModels ) {
+            System.out.println(model.getActivities().size());
+        }
+        
         if (generateTraces(referenceModels)) {
             System.out.println("Traces have been generated");
         } 
@@ -75,17 +82,15 @@ public class TraceGenerator {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         
-        LinkedHashMap<String, List<String>> generatedTraces = new LinkedHashMap<String, List<String>>();
-        
         for (int k = 0; k < modelVariations; k++) {
+            LinkedHashMap<String, List<String>> generatedTraces = new LinkedHashMap<String, List<String>>();
             DcrModel model = models.get(k);
             
             for (int i = 0; i < traces; i++) {
                 DcrModelExecution execution = new DcrModelExecution(model.getClone());
-                Triple<ArrayList<String>, ArrayList<String>, ArrayList<String>> marking 
-                    = execution.getMarking();
                 
-                for (int j = 0; j < traceLength; j++) {
+                int fullTraceLength = traceLength*multiplier;
+                for (int j = 0; j < fullTraceLength; j++) {
                     ArrayList<String> executionOrder = new ArrayList<String>(model.getActivities());
                     Collections.shuffle(executionOrder);
                     
@@ -95,8 +100,18 @@ public class TraceGenerator {
                         }
                     }
                 }
-                generatedTraces.put("Trace" + i, execution.getTrace());
-//                System.out.println(execution.getTrace().toString());
+                
+                int firstIndex = rand.nextInt(fullTraceLength-traceLength);
+                int lastIndex = firstIndex+traceLength;
+                
+                ArrayList<String> fullTrace = execution.getTrace();
+                ArrayList<String> subTrace = new ArrayList<String>();
+                
+                for (int j = firstIndex; j < lastIndex; j++) {
+                    subTrace.add(fullTrace.get(j));
+                }
+                
+                generatedTraces.put("Trace " + i + "-" + getUniqueID(), subTrace);
             }
             saveLog(currentPath + "/eventlogs/eventlog_graph" + (eventLogNumber+k+10), generatedTraces);
         }
@@ -151,5 +166,8 @@ public class TraceGenerator {
         }
 
     }
-    
+
+    public static synchronized String getUniqueID() {
+        return String.valueOf(idCounter++);
+    }   
 }

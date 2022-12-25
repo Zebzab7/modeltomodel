@@ -239,10 +239,10 @@ public class ModelAdaption {
         Set<String> activities = model.getActivities();
 
         String alphabet = "xyzq!&#¤%&!";
-        String randomActivity = "xy";
+        String randomActivity = "Activityxy";
         int length = alphabet.length();
         while (activities.contains(randomActivity)){
-            randomActivity = "Activity " + String.valueOf(alphabet.charAt(r.nextInt(length))) 
+            randomActivity = "Activity" + String.valueOf(alphabet.charAt(r.nextInt(length))) 
                 + String.valueOf(alphabet.charAt(r.nextInt(length)));
         }
         
