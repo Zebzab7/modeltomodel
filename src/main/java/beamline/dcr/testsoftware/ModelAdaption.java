@@ -1,6 +1,8 @@
 package beamline.dcr.testsoftware;
 
 import beamline.dcr.model.relations.DcrModel;
+import beamline.dcr.model.relations.DcrModel.RELATION;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.xml.sax.SAXException;
 
@@ -114,6 +116,10 @@ public class ModelAdaption {
             Random random = new Random();
 
             DcrModel.RELATION randomConstraint = constraints.get(random.nextInt(size));
+            while (!(randomConstraint.equals(RELATION.CONDITION) ||randomConstraint.equals(RELATION.RESPONSE) ||
+                    randomConstraint.equals(RELATION.INCLUDE) || randomConstraint.equals(RELATION.EXCLUDE))) {
+                randomConstraint = constraints.get(random.nextInt(size));
+            }
 
             model.addRelation(Triple.of(source, target, randomConstraint));
         }

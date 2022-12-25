@@ -66,9 +66,9 @@ public class StreamTester {
         List<XLog> parsedXesFile = xesParser.parse(xesFile);
         
         //Define test stream
-        Map<String, List<String>> traceCollection = new HashMap<String, List<String>>();
-        Map<String,Integer> traceExecutionTime= new HashMap<String, Integer>();
-        Map<String,Integer> traceCurrentIndex= new HashMap<String, Integer>();
+        Map<String, List<String>> traceCollection = new LinkedHashMap<String, List<String>>();
+        Map<String,Integer> traceExecutionTime= new LinkedHashMap<String, Integer>();
+        Map<String,Integer> traceCurrentIndex= new LinkedHashMap<String, Integer>();
         int counter = 1;
         int totalObservations = 0;
         for (XLog traces : parsedXesFile){
@@ -124,12 +124,15 @@ public class StreamTester {
 
             sc.configure(coll);
             
+            int count = 0;
+            
             // simulate stream
             int currentObservedEvents = 0;
             int currentIteration = 1;
             while(currentObservedEvents < totalObservations) {
                 for (Map.Entry<String, Integer> traceExecutionEntry : traceExecutionTime.entrySet()) {
                     String currentTraceId = traceExecutionEntry.getKey();
+                    System.out.println(currentTraceId);
                     int currentTraceIndex = traceCurrentIndex.get(currentTraceId);
                     int numActivitiesInTrace = traceCollection.get(currentTraceId).size();
                     if (currentIteration % traceExecutionEntry.getValue() == 0 &&
@@ -168,8 +171,10 @@ public class StreamTester {
                     }
                 }
                 currentIteration++;
-                System.out.println(currentObservedEvents + " of " + totalObservations);
+//                System.out.println(currentObservedEvents + " of " + totalObservations);
             }
+            System.out.println(count);
+            System.out.println(traceExecutionTime.toString());
             
             // Reset all trace indexes to 0.
             for (XLog traces : parsedXesFile){

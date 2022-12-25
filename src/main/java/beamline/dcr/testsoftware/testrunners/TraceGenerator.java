@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -32,15 +33,15 @@ import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.view.DcrModelXML;
 
 public class TraceGenerator {
-    static Map<String, List<String>> observedActivitiesInTrace = new HashMap<>();
+    static Map<String, List<String>> observedActivitiesInTrace = new LinkedHashMap<>();
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         
         int eventLogNumber = 101;
         int traceLength = 20;
-        int traces = 5;
-        int modelVariations = 3;
-        int driftStrength = 5;
+        int traces = 10;
+        int modelVariations = 2;
+        int driftStrength = 10;
         
         Random rand = new Random();
         
@@ -49,22 +50,30 @@ public class TraceGenerator {
 
         String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + eventLogNumber + ".xml";
 
-        DcrModel model = new DcrModel();
-        model.loadModel(groundTruthModelPath);
+        DcrModel initModel = new DcrModel();
+        initModel.loadModel(groundTruthModelPath);
+        
+        ArrayList<DcrModel> models = new ArrayList<DcrModel>();
+        
+        models.add(initModel.getClone());
+        
+        ModelAdaption modelAdaption = new ModelAdaption(initModel);
+        for (int i = 0; i < modelVariations-1; i++) {
+            if (!modelAdaption.insertActivitySerial(driftStrength) ||
+                    !modelAdaption.insertActivityParallel(driftStrength) ||
+                    !modelAdaption.deleteActivity(driftStrength) ||
+                    !modelAdaption.replaceActivity(driftStrength) ||
+                    !modelAdaption.addConstraint(driftStrength) ||
+                    !modelAdaption.removeConstraint(driftStrength) ||
+                    !modelAdaption.swapActivities(driftStrength)) {
+                System.out.println("Mutation operation was unsuccessful");
+            } 
+            models.add(modelAdaption.getModel().getClone());
+        }
         
         for (int k = 0; k < modelVariations; k++) {
-            if (k != 0) {
-                ModelAdaption modelAdaption = new ModelAdaption(model);
-                if (!modelAdaption.insertActivitySerial(driftStrength) ||
-                        !modelAdaption.insertActivityParallel(driftStrength) ||
-                        !modelAdaption.deleteActivity(driftStrength) ||
-                        !modelAdaption.replaceActivity(driftStrength) ||
-                        !modelAdaption.addConstraint(driftStrength) ||
-                        !modelAdaption.removeConstraint(driftStrength) ||
-                        !modelAdaption.swapActivities(driftStrength)) {
-                    System.out.println("Mutation operation was unsuccessful");
-                } 
-            }
+            DcrModel model = models.get(k);
+            
             System.out.println("Size (Activity): " + model.getActivities().size());
             (new DcrModelXML(model)).toFile(currentPath + "/groundtruthmodels/" + "Process" + (eventLogNumber+k+10));
             
@@ -77,15 +86,7 @@ public class TraceGenerator {
                     
                     ArrayList<String> executionOrder = new ArrayList<String>(model.getActivities());
                     Collections.shuffle(executionOrder);
-//                    
-//                    ArrayList<String> executionOrder = new ArrayList<String>(marking.getMiddle());
-//                    Collections.shuffle(executionOrder);
-//                    
-//                    ArrayList<String> tmp = new ArrayList<String>(model.getActivities());
-//                    tmp.removeAll(executionOrder);
-//                    Collections.shuffle(tmp);
-//                    executionOrder.addAll(tmp);
-//                    
+                    
                     for (int l = 0; l < executionOrder.size(); l++) {
                         if (execution.executeActivity(executionOrder.get(l))) {
                             break;
@@ -93,10 +94,10 @@ public class TraceGenerator {
                     }
                 }
                 observedActivitiesInTrace.put("Trace" + i, execution.getTrace());
-                System.out.println(execution.getTrace().toString());
+//                System.out.println(execution.getTrace().toString());
             }
-            System.out.println();
             saveLog(currentPath + "/eventlogs/eventlog_graph" + (eventLogNumber+k+10));
+            System.out.println(observedActivitiesInTrace.size());
         }
     }
     

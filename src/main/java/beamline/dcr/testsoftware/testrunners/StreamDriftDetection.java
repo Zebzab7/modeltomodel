@@ -31,108 +31,84 @@ import metrics.WeightedGraphEditDistance;
 
 public class StreamDriftDetection {
     public static void main(String[] args) throws Exception {
-        //Test parameters
-        
-        String eventlogNumber =args[0];
+      //Test parameters
+        int eventlogNumber = 111;
         int relationsThreshold = 0;
-        double sigDiff = Double.parseDouble(args[1]);
-        String[] patternList = args[2].split(" ");
-        String[] transitiveReductionList = args[3].split(" ");
-        boolean saveAsXml = Boolean.parseBoolean(args[4]);
-        boolean saveEventLogs= Boolean.parseBoolean(args[5]);
-        String[] traceWindowSizesStringList = args[6].split(" ");
-        String[] maxTracesStringList = args[7].split(" ");
-        int observationsBeforeEvaluation = Integer.parseInt(args[8]);
-        String[] dcrConstraints = args[9].split(" ");
+        double eps = 0.15;
+        int minPoints = 10;
+        String[] patternList = ("Condition Response").split(" ");
+        String[] transitiveReductionList = (" ").split(" ");
+        int maxTraces = 5;
+        int traceSize = 5;
+        int observationsBeforeEvaluation = 5;
+        int logs = 2;
+        String[] dcrConstraints = ("Condition Response").split(" ");
         //
-
         
         ArrayList<DcrModel> discoveredModels = new ArrayList<DcrModel>();
         
-        Set<Integer> traceWindowSizes = new HashSet<>();
-        for (String size : traceWindowSizesStringList ){
-            traceWindowSizes.add(Integer.parseInt(size));
-        }
-        Set<Integer> maxTracesList = new HashSet<>();
-        for (String size : maxTracesStringList ){
-            maxTracesList.add(Integer.parseInt(size));
-        }
-
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
 
-        StringBuilder csvResults = new StringBuilder();
-
-        String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + eventlogNumber +".xml";
-        String streamPath = currentPath + "/eventlogs/eventlog_graph"+eventlogNumber+ ".xes";
-
-        File xesFile = new File(streamPath);
+        DFGBasedMiner sc = new DFGBasedMiner();
+        Collection<MinerParameterValue> coll = new ArrayList<>();
         
-        XesXmlParser xesParser = new XesXmlParser();
-        List<XLog> parsedXesFile = xesParser.parse(xesFile);
+        MinerParameterValue confParam = new MinerParameterValue("DCR Patterns", patternList);
+        coll.add(confParam);
+        MinerParameterValue transParam = new MinerParameterValue("Transitive Reduction", transitiveReductionList);
+        coll.add(transParam);
+        MinerParameterValue relationThresholdParam = new MinerParameterValue("Relations Threshold", relationsThreshold);
+        coll.add(relationThresholdParam);
+        MinerParameterValue dcrConstraintsParam = new MinerParameterValue("DCR Constraints", dcrConstraints);
+        coll.add(dcrConstraintsParam);
         
-        //Define test stream
-        Map<String, List<String>> traceCollection = new HashMap<String, List<String>>();
-        Map<String,Integer> traceExecutionTime= new HashMap<String, Integer>();
-        Map<String,Integer> traceCurrentIndex= new HashMap<String, Integer>();
-        int counter = 1;
-        int totalObservations = 0;
-        for (XLog traces : parsedXesFile){
-            for (XTrace trace : traces){
-                String traceId = trace.getAttributes().get("concept:name").toString();
-                if (!traceCollection.containsKey(traceId)){
-                    traceCollection.put(traceId,new ArrayList<>());
-                    traceExecutionTime.put(traceId,(counter % 5)+1);
-                    traceCurrentIndex.put(traceId,0);
-                    counter ++;
-                }
-                for (XEvent event : trace ){
-                    totalObservations++;
-                    String activity = event.getAttributes().get("concept:name").toString();
-                    //String activity = event.getAttributes().get("EventName").toString(); // Dreyer's fond
-                    traceCollection.get(traceId).add(activity);
+        MinerParameterValue fileParam2 = new MinerParameterValue("Stream Miner", "Sliding Window");
+        coll.add(fileParam2);
+        MinerParameterValue fileParam3 = new MinerParameterValue("Trace Window Size", traceSize);
+        coll.add(fileParam3);
+        MinerParameterValue fileParam4 = new MinerParameterValue("Max Traces", maxTraces);
+        coll.add(fileParam4);
+        
+        sc.configure(coll);
+        
+        for (int i = 0; i < logs; i++) {
+            ArrayList<DcrModel> iterationModels = new ArrayList<DcrModel>();
+            
+            String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + (eventlogNumber+i) +".xml";
+            String streamPath = currentPath + "/eventlogs/eventlog_graph"+ (eventlogNumber+i) + ".xes";
+            
+            File xesFile = new File(streamPath);
+            
+            XesXmlParser xesParser = new XesXmlParser();
+            List<XLog> parsedXesFile = xesParser.parse(xesFile);
+        
+            //Define test stream
+            Map<String, List<String>> traceCollection = new HashMap<String, List<String>>();
+            Map<String,Integer> traceExecutionTime= new HashMap<String, Integer>();
+            Map<String,Integer> traceCurrentIndex= new HashMap<String, Integer>();
+            int counter = 1;
+            int totalObservations = 0;
+            for (XLog traces : parsedXesFile){
+                for (XTrace trace : traces){
+                    String traceId = trace.getAttributes().get("concept:name").toString();
+                    if (!traceCollection.containsKey(traceId)){
+                        traceCollection.put(traceId,new ArrayList<>());
+                        traceExecutionTime.put(traceId,(counter % 5)+1);
+                        traceCurrentIndex.put(traceId,0);
+                        counter ++;
+                    }
+                    for (XEvent event : trace ){
+                        totalObservations++;
+                        String activity = event.getAttributes().get("concept:name").toString();
+                        //String activity = event.getAttributes().get("EventName").toString(); // Dreyer's fond
+                        traceCollection.get(traceId).add(activity);
+                    }
                 }
             }
-        }
-        
-        DcrModel referenceModel = new DcrModel();
-        referenceModel.loadModel(groundTruthModelPath);
-        
-        DcrModel groundTruthModel = new DcrModel();
-        groundTruthModel.loadModel(groundTruthModelPath);
-
-        for(int maxTraces : maxTracesList){
-
-            for(int traceSize : traceWindowSizes){
-
-            String compareModel = groundTruthModelPath ;
-
-            DFGBasedMiner sc = new DFGBasedMiner();
-            Collection<MinerParameterValue> coll = new ArrayList<>();
-
-            MinerParameterValue confParam = new MinerParameterValue("DCR Patterns", patternList);
-            coll.add(confParam);
-            MinerParameterValue transParam = new MinerParameterValue("Transitive Reduction", transitiveReductionList);
-            coll.add(transParam);
-            MinerParameterValue relationThresholdParam = new MinerParameterValue("Relations Threshold", relationsThreshold);
-            coll.add(relationThresholdParam);
-            MinerParameterValue dcrConstraintsParam = new MinerParameterValue("DCR Constraints", dcrConstraints);
-            coll.add(dcrConstraintsParam);
-
-            String fileName = currentPath + "/minedmodels/online/online_mining_" + eventlogNumber+
-                    "_map_" + maxTraces+ "_trace" + traceSize+
-                    "_" + java.time.LocalDate.now();
-            MinerParameterValue fileParam1 = new MinerParameterValue("filename", fileName);
-            coll.add(fileParam1);
-            MinerParameterValue fileParam2 = new MinerParameterValue("Stream Miner", "Sliding Window");
-            coll.add(fileParam2);
-            MinerParameterValue fileParam3 = new MinerParameterValue("Trace Window Size", traceSize);
-            coll.add(fileParam3);
-            MinerParameterValue fileParam4 = new MinerParameterValue("Max Traces", maxTraces);
-            coll.add(fileParam4);
-
-            sc.configure(coll);
             
+            DcrModel groundTruthModel = new DcrModel();
+            groundTruthModel.loadModel(groundTruthModelPath);
+    
             // simulate stream
             int currentObservedEvents = 0;
             int currentIteration = 1;
@@ -140,6 +116,7 @@ public class StreamDriftDetection {
             while(currentObservedEvents < totalObservations) {
                 for (Map.Entry<String, Integer> traceExecutionEntry : traceExecutionTime.entrySet()) {
                     String currentTraceId = traceExecutionEntry.getKey();
+//                    System.out.println(currentTraceId);
                     int currentTraceIndex = traceCurrentIndex.get(currentTraceId);
                     int numActivitiesInTrace = traceCollection.get(currentTraceId).size();
                     if (currentIteration % traceExecutionEntry.getValue() == 0 &&
@@ -150,27 +127,19 @@ public class StreamDriftDetection {
                         currentObservedEvents++;
                         if (currentObservedEvents % observationsBeforeEvaluation == 0) {
                             
-                            if (saveEventLogs){
-                                sc.saveCurrentWindowLog(currentPath + "/eventlogs/online/online_eventlog_graph"+eventlogNumber+
-                                        "maxtraces"+maxTraces +"_tracesize"+traceSize + "_obs" + currentObservedEvents);
-                            }
-                            
                             DcrModel discoveredModel = sc.getDcrModel();
+                            iterationModels.add(discoveredModel);
                             
+                            double simTrue = DcrSimilarity.graphEditDistanceSimilarityWithWeights(groundTruthModel, discoveredModel);
+                            
+//                            System.out.println("Similarity to true model: " + simTrue);
                             discoveredModels.add(discoveredModel);
-                            
-                            if (saveAsXml){
-                                new DcrModelXML(discoveredModel).toFile(fileName+"_obs"+currentObservedEvents);
-                            }
                         }
                     }
                 }
                 currentIteration++;
                 System.out.println(currentObservedEvents + " of " + totalObservations);
             }
-            
-            int drifts = DriftDetector.DBSCAN(discoveredModels, 0.15, 10, new WeightedGraphEditDistance());
-            System.out.println("Detected " + drifts + " drifts...");
             
             // Reset all trace indexes to 0 
             for (XLog traces : parsedXesFile){
@@ -180,8 +149,11 @@ public class StreamDriftDetection {
                 }
             }
         }
-        }
         
+        System.out.println(discoveredModels.size());
+        int drifts = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new WeightedGraphEditDistance());
+        System.out.println("Detected " + drifts + " drifts...");
+            /*
         String outputDirectoryPath =  currentPath + "/evaluations/"+ eventlogNumber +"/modelmodel";
 
         File outputDirectoryObject = new File(outputDirectoryPath);
@@ -203,7 +175,7 @@ public class StreamDriftDetection {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
+        */
         System.exit(0);
     }
 }
