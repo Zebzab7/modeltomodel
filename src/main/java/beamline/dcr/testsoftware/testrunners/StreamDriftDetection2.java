@@ -45,8 +45,8 @@ public class StreamDriftDetection2 {
         String[] transitiveReductionList = (" ").split(" ");
         int maxTraces = 10;
         int traceSize = 10;
-        double updatePercentage = 2.0;
-        int logs = 2;
+        double updatePercentage = 4.0;
+        int logs = 3;
         DRIFT driftType = DRIFT.SUDDEN;
         String[] dcrConstraints = ("Condition Response Include Exclude").split(" ");
         //
@@ -99,6 +99,9 @@ public class StreamDriftDetection2 {
             String activity = event.getRight();
             sc.consumeEvent(traceID, activity);
             if (i % observationsBeforeEvaluation == 0) {
+//                long startTime = System.nanoTime();    
+//                long estimatedTime = System.nanoTime() - startTime;
+//                System.out.println(estimatedTime);
                 DcrModel discoveredModel = sc.getDcrModel();
                 System.out.println(discoveredModel.getActivities().size());
                 discoveredModels.add(discoveredModel);
