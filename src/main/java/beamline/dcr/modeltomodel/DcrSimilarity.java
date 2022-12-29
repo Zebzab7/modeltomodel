@@ -1,17 +1,29 @@
 package beamline.dcr.modeltomodel;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.lang3.tuple.Triple;
+import org.xml.sax.SAXException;
 
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.DcrModel.RELATION;
+import beamline.dcr.modeltomodel.testrunners.TraceGenerator;
+import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 
 public class DcrSimilarity {
+    
+    static int traceLength = 10;
+    static double rMax = 1000;
+    static double rMin = 0;
     
     public static Map<DcrModel.RELATION, Double> constraintWeight = new HashMap<>(){{
         put(DcrModel.RELATION.CONDITION, 0.06);
@@ -25,6 +37,30 @@ public class DcrSimilarity {
         put(DcrModel.RELATION.SEQUENCE, 0.0);
     }};
     
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
+        String rootPath = System.getProperty("user.dir");
+        String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware/";
+        String modelPath = rootPath + "/src/main/java/beamline/dcr/testsoftware/groundtruthmodels/process101.xml";
+        String modelPath2 = rootPath + "/src/main/java/beamline/dcr/testsoftware/groundtruthmodels/process25.xml";
+        
+        DcrModel model1 = new DcrModel();
+        model1.loadModel(modelPath);
+        
+        ModelAdaption modelAdaption = new ModelAdaption(model1.getClone());
+        
+        modelAdaption.everyMutation(5);
+        
+        DcrModel model2 = modelAdaption.getModel();
+
+        System.out.println(model1.getActivities().size());
+        System.out.println(model2.getActivities().size());
+
+        System.out.println(longestCommonSubtraceSimilarity(model1, model2));
+    }
+    
+    /*
+     * Jaccard similarity from Burattin, el.
+     */
     public static double jaccardSimilarity(DcrModel modelA, DcrModel modelB) {
         ModelComparison modelComparison = new ModelComparison(modelA);
         modelComparison.loadComparativeModel(modelB);
@@ -89,20 +125,76 @@ public class DcrSimilarity {
         
         double relationsDist = 0.0;
         
-        double dist = activitiesDiff.size() + relationsDiffDist;
-        double sim = dist/(actA.size() + actB.size() + relationsDist);
+        double dist = (0.61*activitiesDiff.size()) + relationsDiffDist;
+        double sim = (0.61*dist)/(actA.size() + actB.size() + relationsDist);
         
         return 1-sim;
     }
     
+    public void setTraceLength(int traceLength) {
+        this.traceLength = traceLength;
+    }
     
+    public static double longestCommonSubtraceSimilarity(DcrModel modelA, DcrModel modelB) {
+        int numOfTraces = 10;
+        
+        ArrayList<ArrayList<String>> modelATraces = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String>> modelBTraces = new ArrayList<ArrayList<String>>();
+        
+        for (int i = 0; i < numOfTraces; i++) {
+            modelATraces.add(TraceGenerator.generateRandomTraceFromModel(modelA, traceLength));
+            modelBTraces.add(TraceGenerator.generateRandomTraceFromModel(modelB, traceLength));
+        }
+        
+        double complianceDegreeSum = 0;
+        double maturityDegreeSum = 0;
+        
+        for (ArrayList<String> traceB : modelBTraces) {
+            double max = 0;
+            for (ArrayList<String> traceA : modelATraces) {
+                int lcs = longestCommonSubSequence(traceA, traceB);
+                double complianceDegree = (double) lcs/traceB.size();
+                if (complianceDegree > max) max = complianceDegree;
+            }
+            complianceDegreeSum += max;
+        }
+        
+        for (ArrayList<String> traceA : modelATraces) {
+            double max = 0;
+            for (ArrayList<String> traceB : modelBTraces) {
+                int lcs = longestCommonSubSequence(traceA, traceB);
+                double maturityDegree = (double) lcs/traceA.size();
+                if (maturityDegree > max) max = maturityDegree;
+            }
+            maturityDegreeSum += max;
+        }
+        
+        double cd = complianceDegreeSum/modelBTraces.size();
+        double md = maturityDegreeSum/modelATraces.size();
+        
+        double avg = (cd+md)/2;
+        
+        return avg;
+    }
+    
+    public static double featureBasedSimilarity (DcrModel modelA, DcrModel modelB) {
+        
+        return 1.0;
+    }
+    
+    public static double causalFootprints(DcrModel modelA, DcrModel modelB) {
+        // Look back links
+        // Look ahead links
+        
+        return 1.0;
+    }
     
     /**
      * Helper functions
      */
     
-    /*
-     * Returns a set repsententing the union between two sets
+    /**
+     * Returns a set representing the union between two sets (shallow copy)
      */
     public static <T> Set<T> union(Set<T> set1, Set<T> set2) {
         Set<T> union = new HashSet<T>(set1);
@@ -110,7 +202,33 @@ public class DcrSimilarity {
         return union;
     }
     
-    /*
+    public static int longestCommonSubSequence(ArrayList<String> sequence1, ArrayList<String> sequence2) {
+        return longestCommonSubSequenceRecursive(sequence1, sequence2, sequence1.size()-1, sequence2.size()-1);
+    }
+    
+    private static int longestCommonSubSequenceRecursive(ArrayList<String> sequence1, ArrayList<String> sequence2, int m, int n) {
+        int L[][] = new int[m+1][n+1]; 
+          
+        /* Following steps build L[m+1][n+1] in bottom up fashion. Note 
+            that L[i][j] contains length of LCS of X[0..i-1] and Y[0..j-1] */
+        for (int i=0; i<=m; i++) { 
+            
+            for (int j=0; j<=n; j++) { 
+                
+                if (i == 0 || j == 0) 
+                    L[i][j] = 0; 
+                
+                else if (sequence1.get(i-1).equals(sequence2.get(j-1))) 
+                    L[i][j] = L[i-1][j-1] + 1; 
+                
+                else
+                    L[i][j] = Math.max(L[i-1][j], L[i][j-1]); 
+            } 
+        } 
+        return L[m][n]; 
+    } 
+    
+    /**
      * Returns a set representing the intersection between two sets
      */
     public static <T> Set<T> intersection(Set<T> set1, Set<T> set2) {
@@ -119,7 +237,7 @@ public class DcrSimilarity {
         return intersect;
     }
     
-    /*
+    /**
      * Returns a set which representing the symmetric difference between two sets.
      * Does not modify the input sets
      */

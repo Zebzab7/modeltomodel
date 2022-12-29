@@ -211,7 +211,7 @@ public class DcrModel {
 	
 	
 	
-	/*
+	/**
 	 * Returns a shallow copy of this DCR model
 	 */
 	public DcrModel getClone() {

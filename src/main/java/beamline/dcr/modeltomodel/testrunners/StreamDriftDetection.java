@@ -1,4 +1,4 @@
-package beamline.dcr.testsoftware.testrunners;
+package beamline.dcr.modeltomodel.testrunners;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,33 +21,38 @@ import beamline.dcr.miners.DFGBasedMiner;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.UnionRelationSet;
 import beamline.dcr.modeltomodel.DcrSimilarity;
-import beamline.dcr.modeltomodel.ModelRepository;
+import beamline.dcr.modeltomodel.DriftDetector;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;
+import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
+import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import beamline.dcr.view.DcrModelXML;
+import distancemetrics.GraphEditDistance;
+import distancemetrics.WeightedGraphEditDistance;
 
-public class BasicStreamDriftDetection {
+public class StreamDriftDetection {
     public static void main(String[] args) throws Exception {
-        //Test parameters
+      //Test parameters
         int eventlogNumber = 111;
         int relationsThreshold = 0;
-        double sigDiff = 0.9;
-        String[] patternList = ("Condition Response").split(" ");
+        double eps = 0.1;
+        int minPoints = 5;
+        String[] patternList = ("Condition Response Include Exclude").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
-        boolean saveAsXml = false;
-        boolean saveEventLogs = false;
         int maxTraces = 5;
         int traceSize = 5;
-        int observationsBeforeEvaluation = 5;
+        int observationsBeforeEvaluation = 2;
         int logs = 2;
-        String[] dcrConstraints = ("Condition Response").split(" ");
+        DRIFT driftType = DRIFT.SUDDEN;
+        String[] dcrConstraints = ("Condition Response Include Exclude").split(" ");
         //
-        ModelRepository repo = new ModelRepository();
+        
+        ArrayList<DcrModel> discoveredModels = new ArrayList<DcrModel>();
         
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-        
+
         DFGBasedMiner sc = new DFGBasedMiner();
         Collection<MinerParameterValue> coll = new ArrayList<>();
         
@@ -71,8 +75,11 @@ public class BasicStreamDriftDetection {
         sc.configure(coll);
         
         for (int i = 0; i < logs; i++) {
+            
+            ArrayList<DcrModel> iterationModels = new ArrayList<DcrModel>();
+            
             String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + (eventlogNumber+i) +".xml";
-            String streamPath = currentPath + "/eventlogs/eventlog_graph"+(eventlogNumber+i)+ ".xes";
+            String streamPath = currentPath + "/eventlogs/eventlog_graph"+ (eventlogNumber+i) + ".xes";
             
             File xesFile = new File(streamPath);
             
@@ -80,9 +87,9 @@ public class BasicStreamDriftDetection {
             List<XLog> parsedXesFile = xesParser.parse(xesFile);
             
             //Define test stream
-            Map<String, List<String>> traceCollection = new LinkedHashMap<String, List<String>>();
-            Map<String,Integer> traceExecutionTime= new LinkedHashMap<String, Integer>();
-            Map<String,Integer> traceCurrentIndex= new LinkedHashMap<String, Integer>();
+            Map<String, List<String>> traceCollection = new HashMap<String, List<String>>();
+            Map<String,Integer> traceExecutionTime= new HashMap<String, Integer>();
+            Map<String,Integer> traceCurrentIndex= new HashMap<String, Integer>();
             int counter = 1;
             int totalObservations = 0;
             for (XLog traces : parsedXesFile){
@@ -103,18 +110,12 @@ public class BasicStreamDriftDetection {
                 }
             }
             
-            DcrModel referenceModel = new DcrModel();
-            referenceModel.loadModel(groundTruthModelPath);
-            
             DcrModel groundTruthModel = new DcrModel();
             groundTruthModel.loadModel(groundTruthModelPath);
     
             // simulate stream
             int currentObservedEvents = 0;
             int currentIteration = 1;
-            
-            int comparisons = 0;
-            int drifts = 0;
             
             while(currentObservedEvents < totalObservations) {
                 for (Map.Entry<String, Integer> traceExecutionEntry : traceExecutionTime.entrySet()) {
@@ -128,34 +129,20 @@ public class BasicStreamDriftDetection {
                         traceCurrentIndex.replace(currentTraceId, currentTraceIndex + 1);
                         currentObservedEvents++;
                         if (currentObservedEvents % observationsBeforeEvaluation == 0) {
-                            
                             DcrModel discoveredModel = sc.getDcrModel();
-                            double simRef = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, discoveredModel);
+                            System.out.println(discoveredModel.getActivities().size());
+                            iterationModels.add(discoveredModel);
+                            
                             double simTrue = DcrSimilarity.graphEditDistanceSimilarityWithWeights(groundTruthModel, discoveredModel);
                             
-                            System.out.println("Similarity to reference: " + simRef);
-                            System.out.println("Similarity to true model: " + simTrue);
-                            
-                            boolean changeDetected = false;
-                            comparisons++;
-                            if (simRef < sigDiff) {
-                                drifts++;
-                                changeDetected = true;
-//                                System.out.println("A change is detected, updating model...");
-                                referenceModel = discoveredModel;
-                            } else {
-                                changeDetected = false;
-//                                System.out.println("Insignificant change...");
-                            }
-                            System.out.println();
+//                            System.out.println("Similarity to true model: " + simTrue);
+                            discoveredModels.add(discoveredModel);
                         }
                     }
                 }
                 currentIteration++;
-    //                System.out.println(currentObservedEvents + " of " + totalObservations);
+//                System.out.println(currentObservedEvents + " of " + totalObservations);
             }
-            
-            System.out.println(drifts + " drifts out of " + comparisons + " comparisons");
             
             // Reset all trace indexes to 0 
             for (XLog traces : parsedXesFile){
@@ -165,7 +152,11 @@ public class BasicStreamDriftDetection {
                 }
             }
         }
-        /*
+        
+        System.out.println(discoveredModels.size());
+        int drifts = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new WeightedGraphEditDistance());
+        System.out.println("Detected " + drifts + " drifts...");
+            /*
         String outputDirectoryPath =  currentPath + "/evaluations/"+ eventlogNumber +"/modelmodel";
 
         File outputDirectoryObject = new File(outputDirectoryPath);

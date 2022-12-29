@@ -164,6 +164,11 @@ public class ModelComparison {
         return jaccardString.toString();
     }
     
+    public String getLCSString() {
+        double sim = DcrSimilarity.longestCommonSubtraceSimilarity(originalDcrModel, comparativeDcrModel);
+        return ""+sim;
+    }
+    
     public String getGEDString() {
         double sim = DcrSimilarity.graphEditDistanceSimilarity(originalDcrModel, comparativeDcrModel);
         return ""+sim;

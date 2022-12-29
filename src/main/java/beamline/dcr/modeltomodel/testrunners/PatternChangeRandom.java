@@ -1,4 +1,4 @@
-package beamline.dcr.testsoftware.testrunners;
+package beamline.dcr.modeltomodel.testrunners;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,8 +21,8 @@ public class PatternChangeRandom {
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/groundtruthmodels";
         
-       StringBuilder modelComparisonString = new StringBuilder("sep=,\nmodel,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapAct," +
-            "GED, CNE, Jaccard\n");
+       StringBuilder modelComparisonString = new StringBuilder("sep=,\nmodel,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst," +
+            "GED\n" /*CNE, Jaccard\n"*/);
     
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
             paths
@@ -49,7 +49,8 @@ public class PatternChangeRandom {
         
         try {
             FileWriter myWriter 
-            = new FileWriter(currentPath + "/evaluations/randomMutations/" + "RANDOM-" + java.time.LocalDate.now() + ".csv"/*,true*/);
+            = new FileWriter(currentPath + "/evaluations/randomMutations/" + "RANDOM-" + java.time.LocalDate.now()
+               + System.currentTimeMillis() + ".csv"/*,true*/);
             myWriter.write(modelComparisonString.toString());
             myWriter.close();
             
@@ -65,6 +66,8 @@ public class PatternChangeRandom {
         
         ModelAdaption modelAdaption;
         ModelComparison modelComparison = new ModelComparison(modelPath);
+        int iteration = 0;
+        int totalIterations = (int) Math.pow(4, 7);
         
         for (int addActivitySerialInt = 0; addActivitySerialInt <= 3; addActivitySerialInt++){
             for (int addActivityParallelInt = 0; addActivityParallelInt <= 3; addActivityParallelInt++){
@@ -73,6 +76,10 @@ public class PatternChangeRandom {
                         for (int addConstraintInt = 0; addConstraintInt <= 3; addConstraintInt++){
                             for (int removeConstraintInt = 0; removeConstraintInt <= 3; removeConstraintInt++){
                                 for (int swapActivitiesInt = 0; swapActivitiesInt <= 3; swapActivitiesInt++){
+                                    
+                                    if(iteration % 10 == 0)
+                                    System.out.println("Iteration: " + iteration + " out of " + totalIterations);
+                                    iteration++;
 
                                     modelAdaption = new ModelAdaption(modelPath);
                                     if (!modelAdaption.insertActivitySerial(addActivitySerialInt) ||
@@ -86,15 +93,15 @@ public class PatternChangeRandom {
                                     }
                                     DcrModel adaptedModel  = modelAdaption.getModel();
                                     modelComparison.loadComparativeModel(adaptedModel);
-                                    String GEDString = modelComparison.getGEDWString();
-                                    String CNEString = modelComparison.getCNEString();
-                                    double jaccard = modelComparison.getJaccardSimilarity();
-                                    String jaccardSim = ""+jaccard;
+                                    String GEDString = modelComparison.getLCSString();
+//                                    String CNEString = modelComparison.getCNEString();
+//                                    double jaccard = modelComparison.getJaccardSimilarity();
+//                                    String jaccardSim = ""+jaccard;
 
                                     xmlString.append(filename +",").append(addActivitySerialInt + ",").append(addActivityParallelInt+ ",")
                                             .append(deleteActivityInt+ ",").append(replaceActivityInt+ ",").append(addConstraintInt+ ",")
                                             .append(removeConstraintInt+ ",").append(swapActivitiesInt +",");
-                                    xmlString.append(GEDString + ",").append(CNEString + ",").append(jaccardSim + "\n");
+                                    xmlString.append(GEDString + "\n")/*.append(CNEString + ",").append(jaccardSim + "\n")*/;
                                 }
                             }
                         }

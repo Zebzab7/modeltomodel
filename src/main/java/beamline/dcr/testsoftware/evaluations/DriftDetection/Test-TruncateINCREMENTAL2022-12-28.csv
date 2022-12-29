@@ -1,0 +1,5 @@
+Metric,MSE,Precision,Recall,F-measure
+GED,1.75,,,
+CNE,1.75,,,
+JaccardDist,1.1500000000000001,,,
+Weighted GED,1.0,,,

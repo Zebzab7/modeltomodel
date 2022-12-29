@@ -1,4 +1,4 @@
-package beamline.dcr.testsoftware.testrunners;
+package beamline.dcr.modeltomodel.testrunners;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +35,9 @@ import beamline.dcr.view.DcrModelXML;
 
 public class TraceGenerator {
     private static int eventLogNumber = 101;
-    private static int traceLength = 15;
+    private static int traceLength = 30;
     private static int traces = 20;
-    private static int modelVariations = 3;
+    private static int modelVariations = 1;
     private static int driftStrength = 10;
     private static int multiplier = 4;
     
@@ -87,35 +87,49 @@ public class TraceGenerator {
             DcrModel model = models.get(k);
             
             for (int i = 0; i < traces; i++) {
-                DcrModelExecution execution = new DcrModelExecution(model.getClone());
+                ArrayList<String> fullTrace = generateRandomTraceFromModel(model.getClone(), traceLength);
                 
-                int fullTraceLength = traceLength*multiplier;
-                for (int j = 0; j < fullTraceLength; j++) {
-                    ArrayList<String> executionOrder = new ArrayList<String>(model.getActivities());
-                    Collections.shuffle(executionOrder);
-                    
-                    for (int l = 0; l < executionOrder.size(); l++) {
-                        if (execution.executeActivity(executionOrder.get(l))) {
-                            break;
-                        }
-                    }
-                }
-                
-                int firstIndex = rand.nextInt(fullTraceLength-traceLength);
-                int lastIndex = firstIndex+traceLength;
-                
-                ArrayList<String> fullTrace = execution.getTrace();
-                ArrayList<String> subTrace = new ArrayList<String>();
-                
-                for (int j = firstIndex; j < lastIndex; j++) {
-                    subTrace.add(fullTrace.get(j));
-                }
-                
-                generatedTraces.put("Trace " + i + "-" + getUniqueID(), subTrace);
+                generatedTraces.put("Trace " + i + "-" + getUniqueID(), fullTrace);
+                System.out.println(fullTrace.toString());
             }
             saveLog(currentPath + "/eventlogs/eventlog_graph" + (eventLogNumber+k+10), generatedTraces);
         }
         return true;
+    }
+    
+    public static ArrayList<String> generateRandomTraceFromModel(DcrModel model, int traceLength) {
+        DcrModelExecution execution = new DcrModelExecution(model.getClone());
+        ArrayList<String> executionOrder = new ArrayList<String>(model.getActivities());
+        
+        
+        for (int j = 0; j < traceLength; j++) {
+            
+            Collections.shuffle(executionOrder);
+//            System.out.println(executionOrder);
+            boolean found = false;
+            
+            if (rand.nextDouble() < 0.95) {
+                for (int i = 0; i < executionOrder.size(); i++) {
+                    if (execution.isPending(executionOrder.get(i))) {
+                        if (execution.executeActivity(executionOrder.get(i))) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                for (int i = 0; i < executionOrder.size(); i++) {
+                    if (execution.executeActivity(executionOrder.get(i))) {
+                        break;
+                    }
+                }
+            }
+        }
+        
+        ArrayList<String> fullTrace = execution.getTrace();
+        
+        return fullTrace;
     }
     
     public static void saveLog(String fileName, Map<String, List<String>> observedActivitiesInTrace) {

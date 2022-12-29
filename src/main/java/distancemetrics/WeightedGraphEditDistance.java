@@ -1,4 +1,4 @@
-package metrics;
+package distancemetrics;
 
 import org.christopherfrantz.dbscan.DistanceMetric;
 

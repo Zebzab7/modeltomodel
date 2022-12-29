@@ -194,28 +194,30 @@ public class ModelAdaption {
         return true;
     }
     public boolean randomMutation(int numRepeatings) {
-        switch((new Random()).nextInt(7)) {
-            case 0:
-                insertActivitySerial(numRepeatings);
-                break;
-            case 1:
-                insertActivityParallel(numRepeatings);
-                break;
-            case 2:
-                deleteActivity(numRepeatings);
-                break;
-            case 3:
-                replaceActivity(numRepeatings);
-                break;
-            case 4:
-                addConstraint(numRepeatings);
-                break;
-            case 5:
-                removeConstraint(numRepeatings);
-                break;
-            case 6:
-                swapActivities(numRepeatings);
-                break;
+        for (int i = 0; i < numRepeatings; i++) {
+            switch((new Random()).nextInt(7)) {
+                case 0:
+                    insertActivitySerial(1);
+                    break;
+                case 1:
+                    insertActivityParallel(1);
+                    break;
+                case 2:
+                    deleteActivity(1);
+                    break;
+                case 3:
+                    replaceActivity(1);
+                    break;
+                case 4:
+                    addConstraint(1);
+                    break;
+                case 5:
+                    removeConstraint(1);
+                    break;
+                case 6:
+                    swapActivities(1);
+                    break;
+            }
         }
         return true;
     }

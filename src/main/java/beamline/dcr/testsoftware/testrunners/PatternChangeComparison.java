@@ -67,7 +67,6 @@ public class PatternChangeComparison {
                         e.printStackTrace();
                     }
                     
-                    
                 }});
             }
             
@@ -129,9 +128,6 @@ public class PatternChangeComparison {
         return xmlString.toString();
     }
     
-    /*
-     * Sudden drift should incorporate only one single and very significant drift
-     */
     public static ArrayList<DcrModel> suddenDriftMutations(DcrModel referenceModel) {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
@@ -169,7 +165,7 @@ public class PatternChangeComparison {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
-        int driftStrength = 1;
+        int driftStrength = 2;
         
         int divisor = 4;
         int temp = iterations/divisor;

@@ -1,4 +1,4 @@
-package beamline.dcr.testsoftware.testrunners;
+package beamline.dcr.modeltomodel.testrunners;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,10 +27,11 @@ import beamline.dcr.modeltomodel.DriftDetector;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;
+import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import beamline.dcr.view.DcrModelXML;
-import metrics.GraphEditDistance;
-import metrics.WeightedGraphEditDistance;
+import distancemetrics.GraphEditDistance;
+import distancemetrics.WeightedGraphEditDistance;
 
 public class StreamDriftDetection2 {
     static Random rand = new Random();
@@ -39,13 +40,13 @@ public class StreamDriftDetection2 {
       //Test parameters
         int eventlogNumber = 111;
         int relationsThreshold = 0;
-        double eps = 0.2;
-        int minPoints = 5;
+        double eps = 0.15;
+        int minPoints = 3;
         String[] patternList = ("Condition Response Include Exclude").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
         int maxTraces = 10;
         int traceSize = 10;
-        double updatePercentage = 4.0;
+        double updatePercentage = 2.0;
         int logs = 3;
         DRIFT driftType = DRIFT.SUDDEN;
         String[] dcrConstraints = ("Condition Response Include Exclude").split(" ");
@@ -103,14 +104,20 @@ public class StreamDriftDetection2 {
 //                long estimatedTime = System.nanoTime() - startTime;
 //                System.out.println(estimatedTime);
                 DcrModel discoveredModel = sc.getDcrModel();
-                System.out.println(discoveredModel.getActivities().size());
+//                System.out.println(discoveredModel.getActivities().size());
+                if (discoveredModels.size() > 1) {
+                    
+                    System.out.println(
+                            DcrSimilarity.graphEditDistanceSimilarity(
+                                    discoveredModel, discoveredModels.get(discoveredModels.size()-1)));
+                }
                 discoveredModels.add(discoveredModel);
             }
         }
          
         System.out.println("\n" + discoveredModels.size());
         System.out.println("Total: " + totalObservations);
-        int drifts = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new WeightedGraphEditDistance());
+        int drifts = DriftDetector.DBSCANWithTruncation(discoveredModels, eps, minPoints, new WeightedGraphEditDistance());
         System.out.println("Detected " + drifts + " drifts...");
         System.exit(0);
     }

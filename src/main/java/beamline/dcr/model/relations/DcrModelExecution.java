@@ -14,6 +14,7 @@ public class DcrModelExecution {
     
     ArrayList<String> executionTrace = new ArrayList<String>();
     
+    // Marking = (Executed, Pending, Included)
     Triple<ArrayList<String>, ArrayList<String>, ArrayList<String>> marking 
         = new MutableTriple<ArrayList<String>, ArrayList<String>, ArrayList<String>>
             (new ArrayList<String>(),new ArrayList<String>(),new ArrayList<String>());
@@ -85,6 +86,16 @@ public class DcrModelExecution {
             executionTrace.add(activity);
             return true;
         }
+        return false;
+    }
+    
+    /**
+     * Determines if a given activity is pending in the current state of execution
+     * @param activity
+     * @return
+     */
+    public boolean isPending(String activity) {
+        if (marking.getMiddle().contains(activity)) return true;
         return false;
     }
     
