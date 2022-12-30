@@ -1,6 +1,6 @@
 1. First list item
-   - First nested list item
-     - Second nested list item
+   * First nested list item
+     * Second nested list item
 
 # DCR miner test
 This miner is constructed as a product of the thesis Online Discovery and Model-to-Model Comparison of DCR Models from Event Streams by Lasse Helm Trige Starklit.
