@@ -1,4 +1,4 @@
-package beamline.dcr.modeltomodel.testrunners;
+package helper;
 
 public class Pair<L, R> {
     private final L left;

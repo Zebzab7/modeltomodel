@@ -2,6 +2,7 @@ package beamline.dcr.testsoftware;
 
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.DcrModel.RELATION;
+import beamline.dcr.modeltomodel.DcrSimilarity;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.xml.sax.SAXException;
@@ -193,6 +194,34 @@ public class ModelAdaption {
         }
         return true;
     }
+    
+    public boolean applyNoise() {
+        switch((new Random()).nextInt(6)) {
+            case 0:
+                insertActivitySerial(1);
+                break;
+            case 1:
+                insertActivityParallel(1);
+                break;
+            case 2:
+                deleteActivity(1);
+                break;
+            case 3:
+                replaceActivity(1);
+                break;
+            case 4:
+                addConstraint(1);
+                break;
+            case 5:
+                removeConstraint(1);
+                break;
+            case 6:
+                swapActivities(1);
+                break;
+        }
+        return true;
+    }
+    
     public boolean randomMutation(int numRepeatings) {
         for (int i = 0; i < numRepeatings; i++) {
             switch((new Random()).nextInt(7)) {

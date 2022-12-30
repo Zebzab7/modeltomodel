@@ -31,19 +31,18 @@ import beamline.dcr.view.DcrModelXML;
 public class BasicStreamDriftDetection {
     public static void main(String[] args) throws Exception {
         //Test parameters
-        int eventlogNumber = 111;
+        int eventlogNumber = 101;
         int relationsThreshold = 0;
         double sigDiff = 0.9;
         String[] patternList = ("Condition Response").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
-        boolean saveAsXml = false;
-        boolean saveEventLogs = false;
-        int maxTraces = 5;
-        int traceSize = 5;
-        int observationsBeforeEvaluation = 5;
-        int logs = 2;
+        int maxTraces = 10;
+        int traceSize = 10;
+        int observationsBeforeEvaluation = 2;
+        int logs = 1;
         String[] dcrConstraints = ("Condition Response").split(" ");
         //
+        
         ModelRepository repo = new ModelRepository();
         
         String rootPath = System.getProperty("user.dir");
@@ -97,7 +96,6 @@ public class BasicStreamDriftDetection {
                     for (XEvent event : trace ){
                         totalObservations++;
                         String activity = event.getAttributes().get("concept:name").toString();
-                        //String activity = event.getAttributes().get("EventName").toString(); // Dreyer's fond
                         traceCollection.get(traceId).add(activity);
                     }
                 }
@@ -116,6 +114,7 @@ public class BasicStreamDriftDetection {
             int comparisons = 0;
             int drifts = 0;
             
+            
             while(currentObservedEvents < totalObservations) {
                 for (Map.Entry<String, Integer> traceExecutionEntry : traceExecutionTime.entrySet()) {
                     String currentTraceId = traceExecutionEntry.getKey();
@@ -130,8 +129,8 @@ public class BasicStreamDriftDetection {
                         if (currentObservedEvents % observationsBeforeEvaluation == 0) {
                             
                             DcrModel discoveredModel = sc.getDcrModel();
-                            double simRef = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, discoveredModel);
-                            double simTrue = DcrSimilarity.graphEditDistanceSimilarityWithWeights(groundTruthModel, discoveredModel);
+                            double simRef = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, discoveredModel);
+                            double simTrue = DcrSimilarity.graphEditDistanceSimilarity(groundTruthModel, discoveredModel);
                             
                             System.out.println("Similarity to reference: " + simRef);
                             System.out.println("Similarity to true model: " + simTrue);
@@ -141,20 +140,17 @@ public class BasicStreamDriftDetection {
                             if (simRef < sigDiff) {
                                 drifts++;
                                 changeDetected = true;
-//                                System.out.println("A change is detected, updating model...");
                                 referenceModel = discoveredModel;
                             } else {
                                 changeDetected = false;
-//                                System.out.println("Insignificant change...");
                             }
                             System.out.println();
                         }
                     }
                 }
                 currentIteration++;
-    //                System.out.println(currentObservedEvents + " of " + totalObservations);
+//                System.out.println(currentObservedEvents + " of " + totalObservations);
             }
-            
             System.out.println(drifts + " drifts out of " + comparisons + " comparisons");
             
             // Reset all trace indexes to 0 
@@ -165,29 +161,7 @@ public class BasicStreamDriftDetection {
                 }
             }
         }
-        /*
-        String outputDirectoryPath =  currentPath + "/evaluations/"+ eventlogNumber +"/modelmodel";
 
-        File outputDirectoryObject = new File(outputDirectoryPath);
-        if (!outputDirectoryObject.exists()){
-            outputDirectoryObject.mkdirs();
-        }
-        String filePath = outputDirectoryPath + "/results_" + "GEDW" + observationsBeforeEvaluation+ ".csv";
-        File myObj = new File(filePath);
-
-        myObj.createNewFile();
-        try {
-            FileWriter myWriter = new FileWriter(filePath);
-            String columnTitles ="maxTraces,traceSize,observed,change_detected,sigDiff,GEDWRef,GEDWTrue\n";
-
-            myWriter.write(columnTitles+csvResults);
-            myWriter.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        */
         System.exit(0);
     }
 }

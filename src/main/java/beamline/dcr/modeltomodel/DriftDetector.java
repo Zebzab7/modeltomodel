@@ -14,13 +14,14 @@ import org.christopherfrantz.dbscan.DistanceMetric;
 import org.xml.sax.SAXException;
 
 import beamline.dcr.model.relations.DcrModel;
-import beamline.dcr.modeltomodel.testrunners.LinearRegression;
+import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import distancemetrics.CommonNodesAndEdges;
 import distancemetrics.GraphEditDistance;
 import distancemetrics.JaccardDistance;
 import distancemetrics.WeightedGraphEditDistance;
+import helper.LinearRegression;
 
 public class DriftDetector {
 
@@ -35,172 +36,76 @@ public class DriftDetector {
         DriftDetector.minPoints = minPoints;
     }
     
-    static ArrayList<DistanceMetric<DcrModel>> metrics = new ArrayList<DistanceMetric<DcrModel>>
-        (Arrays.asList(new GraphEditDistance(), new CommonNodesAndEdges(), new JaccardDistance(), new WeightedGraphEditDistance()));
-
-    public static void addDistanceMetric(DistanceMetric<DcrModel> newMetric) {
-        metrics.add(newMetric);
+    public static double getEps() {
+        return eps;
     }
     
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, DBSCANClusteringException {
-        String rootPath = System.getProperty("user.dir");
-        String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware/";
-        String modelPath = rootPath + "/src/main/java/beamline/dcr/testsoftware/groundtruthmodels/process101.xml";
-
-        DcrModel referenceModel = new DcrModel();
-        referenceModel.loadModel(modelPath);
-        
-        // Initialize expected values and simulate data sets of process models
-        int iterations = 1;
-        int[] predictedVals = new int[iterations];
-        int[] expectedVals = new int[iterations];
-        for (int i = 0; i < iterations; i++) {
-            expectedVals[i] = 1;
-        }
-        for (DRIFT driftType : DRIFT.values()) {
-            
-            System.out.println("DRIFT: " + driftType.toString());
-            
-            StringBuilder outputString
-                = new StringBuilder("Metric,MSE,Precision,Recall,F-measure\n");
-            
-            FileWriter myWriter 
-                = new FileWriter(currentPath + "/evaluations/DriftDetection/Test-Truncate" 
-                        + driftType.toString() + java.time.LocalDate.now() + ".csv"/*,true*/);
-            ArrayList<ArrayList<DcrModel>> modelSeries = new ArrayList<ArrayList<DcrModel>>();
-            switch (driftType) {
-                case SUDDEN:
-                    for (int i = 0; i < iterations; i++) {
-                        modelSeries.add(PatternChangeComparison.suddenDriftMutations(referenceModel));
-                    }
-                    break;
-                case GRADUAL:
-                    for (int i = 0; i < iterations; i++) {
-                        modelSeries.add(PatternChangeComparison.gradualDriftMutations(referenceModel));
-                    }
-                    break;
-                case SEASONAL:
-                    for (int i = 0; i < iterations; i++) {
-                        modelSeries.add(PatternChangeComparison.seasonalDriftMutations(referenceModel));
-                    }
-                    break;
-                case INCREMENTAL:
-                    for (int i = 0; i < iterations; i++) {
-                        modelSeries.add(PatternChangeComparison.incrementalDriftMutations(referenceModel));
-                    }
-                    break;
-            }
-                
-            for (DistanceMetric<DcrModel> metric : metrics) {
-                for (int i = 0; i < iterations; i++) {
-//                    predictedVals[i] = DBSCAN(modelSeries.get(i), eps, minPoints, metric);
-                    predictedVals[i] = DBSCANChangeRate(modelSeries.get(i), referenceModel, eps, minPoints, metric);
-                }
-                
-                double MSE = getMeanSquareError(predictedVals, expectedVals);
-                // FScore
-                // R-Squared score
-                
-                outputString.append(metric.toString() + ",").append(MSE + ",").append(",").append(",").append("\n");
-            }
-            System.out.println(driftType.toString() + " drift type evaluation finished");
-            myWriter.write(outputString.toString());
-            myWriter.close();
-        }
-    }
-  
-    /**
-     * Returns the number of concept drifts that have been detected from the models
-     * @throws DBSCANClusteringException 
-     */
-    public static int DBSCANWithTruncation(ArrayList<DcrModel> models, double eps, 
-                int minPoints, DistanceMetric<DcrModel> metric) throws DBSCANClusteringException {
-        
-        System.out.println(models.size());
-        
-        double sigDiff = 0.95;
-        int index = 0;
-        while (index < models.size()) {
-            DcrModel model = models.get(index);
-            double nextSim = 1;
-            double prevSim = 1;
-            if (!(index == models.size()-1)) {
-                nextSim 
-                = DcrSimilarity.graphEditDistanceSimilarity(models.get(index), models.get(index+1));
-            }
-            if (!(index==0)) {
-                prevSim 
-                = DcrSimilarity.graphEditDistanceSimilarity(models.get(index-1), models.get(index));
-            }
-            
-            if (nextSim < sigDiff || prevSim < sigDiff) {
-                models.remove(model);
-            } else {
-                System.out.println("next: " + nextSim);
-                System.out.println("prev: " + prevSim);
-            }
-            index++;
-        }
-        System.out.println(models.size());
-        
-        DBSCANClusterer<DcrModel> scanner = new DBSCANClusterer<DcrModel>(models, minPoints, eps, metric);
-        ArrayList<ArrayList<DcrModel>> list = new ArrayList<ArrayList<DcrModel>>();
-        try {
-            list = scanner.performClustering();
-        } catch (DBSCANClusteringException e) {
-            System.out.println("There was some kind of error with clustering data...");
-        }
-        
-        return list.size()-1;
+    public static int getMinPoints() {
+        return minPoints;
     }
     
     /**
      * Returns the number of concept drifts that have been detected from the models
      * @throws DBSCANClusteringException 
      */
-    public static int DBSCANChangeRate(ArrayList<DcrModel> models, DcrModel referenceModel, double eps, 
-                int minPoints, DistanceMetric<DcrModel> metric) throws DBSCANClusteringException {
+    public static ArrayList<DcrModel> removeAndReplaceBoundaryElements(ArrayList<DcrModel> models, DcrModel referenceModel,
+            DistanceMetric<DcrModel> metric) throws DBSCANClusteringException {
         
-        double sensitivity = 0.005;
+        ArrayList<DcrModel> newList = new ArrayList<DcrModel>(models);
+       
+        boolean[] elementRemoved = new boolean[models.size()];
+        double[] similarityScore = new double[models.size()];
         
-        System.out.println("Size before: " + models.size());
+        for (int i = 0; i < models.size(); i++) {
+            similarityScore[i] = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, models.get(i));
+        }
         
-        int strictness = 10;
+        //TODO Remove outliers before proceeding to improve function
+        
+        int strictness = 30;
         int index = strictness/2;
+        double sensitivity = 0.01;
         
-        ArrayList<DcrModel> trimmedModels = new ArrayList<DcrModel>(models);
+        int n = models.size();
         
-        while (index < trimmedModels.size()-(strictness/2)) {
+        while (index < n-(strictness/2)) {
             
             double[] yVals = new double[strictness];
             double[] xVals = new double[strictness];
             
             for (int i = 0; i < strictness; ++i) {
                 xVals[i] = index-(strictness/2)+i;
-                yVals[i] = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, trimmedModels.get(index-(strictness/2)+i));
+                yVals[i] = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, models.get(index-(strictness/2)+i));
             }
             
             LinearRegression lg = new LinearRegression(xVals, yVals);
             
-            System.out.println("Iteration: " + index + " Slope: " + String.format("%.5g%n", Math.abs(lg.getSlope())));
+//            System.out.println("Iteration: " + index + " Slope: " + String.format("%.5g%n", Math.abs(lg.getSlope())));
             if (Math.abs(lg.getSlope()) > sensitivity) {
-                System.out.println("Stripping point");
-                trimmedModels.remove(index);
+//                System.out.println("Stripping point");
+                elementRemoved[index] = true;
             }
-            
             index++;
         }
-        System.out.println("Size after: " + trimmedModels.size());
         
-        DBSCANClusterer<DcrModel> scanner = new DBSCANClusterer<DcrModel>(models, minPoints, eps, metric);
-        ArrayList<ArrayList<DcrModel>> list = new ArrayList<ArrayList<DcrModel>>();
-        try {
-            list = scanner.performClustering();
-        } catch (DBSCANClusteringException e) {
-            System.out.println("There was some kind of error with clustering data...");
+        for (int i = 0; i < n; i++) {
+            if (elementRemoved[i] == true) {
+                if (i != n && elementRemoved[i+1] == false) {
+                    int tempIndex = i;
+                    while (tempIndex >= 0 && elementRemoved[tempIndex] == true) {
+                        newList.set(tempIndex, models.get(i+1).getClone());
+                        tempIndex--;
+                    }
+                } else if (i != 0 && elementRemoved[i-1] == false) {
+                    int tempIndex = i;
+                    while (tempIndex <= n && elementRemoved[tempIndex] == true) {
+                        newList.set(tempIndex, models.get(i-1).getClone());
+                        tempIndex++;
+                    }
+                }
+            }
         }
-        
-        return list.size()-1;
+        return newList;
     }
     
     /**
@@ -217,21 +122,6 @@ public class DriftDetector {
         } catch (DBSCANClusteringException e) {
             System.out.println("There was some kind of error with clustering data...");
         }
-        return list.size()-1;
-    }
-    
-    public static int iterativeDBSCAN(ArrayList<DcrModel> models, double eps, 
-            int minPoints, DistanceMetric<DcrModel> metric) throws DBSCANClusteringException {
-    
-        DBSCANClusterer<DcrModel> scanner = new DBSCANClusterer<DcrModel>(models, minPoints, eps, metric);
-    
-        ArrayList<ArrayList<DcrModel>> list = new ArrayList<ArrayList<DcrModel>>();
-        try {
-            list = scanner.performClustering();
-        } catch (DBSCANClusteringException e) {
-            System.out.println("There was some kind of error with clustering data...");
-        }
-       
         return list.size()-1;
     }
     
@@ -273,10 +163,6 @@ public class DriftDetector {
         if (similarity < sigDiff) return true;
         return false;
     }
-//    
-//    public static double getFScore(int[] predictedVals, int[] expectedVals) {
-//        
-//    }
     
     /**
      * @param predictedVals

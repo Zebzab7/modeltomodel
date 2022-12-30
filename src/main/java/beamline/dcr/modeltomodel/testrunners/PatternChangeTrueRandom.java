@@ -19,7 +19,7 @@ import beamline.dcr.modeltomodel.DcrSimilarity;
 import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 
-public class PatternChangeRandom2 {
+public class PatternChangeTrueRandom {
     
     public static void main(String[] args) throws IOException {
         String rootPath = System.getProperty("user.dir");
@@ -55,7 +55,7 @@ public class PatternChangeRandom2 {
         
         try {
             FileWriter myWriter 
-            = new FileWriter(currentPath + "/evaluations/randomMutations/" + "RANDOM-" + java.time.LocalDate.now()
+            = new FileWriter(currentPath + "/evaluations/randomMutations/TrueRandom/" + "RANDOM-" + java.time.LocalDate.now()
                + System.currentTimeMillis() + ".csv"/*,true*/);
             myWriter.write(modelComparisonString.toString());
             myWriter.close();

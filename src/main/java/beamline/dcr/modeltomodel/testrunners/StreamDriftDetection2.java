@@ -32,6 +32,7 @@ import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import beamline.dcr.view.DcrModelXML;
 import distancemetrics.GraphEditDistance;
 import distancemetrics.WeightedGraphEditDistance;
+import helper.Pair;
 
 public class StreamDriftDetection2 {
     static Random rand = new Random();
@@ -47,7 +48,7 @@ public class StreamDriftDetection2 {
         int maxTraces = 10;
         int traceSize = 10;
         double updatePercentage = 2.0;
-        int logs = 3;
+        int logs = 2;
         DRIFT driftType = DRIFT.SUDDEN;
         String[] dcrConstraints = ("Condition Response Include Exclude").split(" ");
         //
@@ -90,6 +91,9 @@ public class StreamDriftDetection2 {
             traceLogs.addAll(parsedXesFile);
         }
         
+        DcrModel baseline = new DcrModel();
+        baseline.loadModel(currentPath + "/groundtruthmodels/Process" + (eventlogNumber) +".xml");
+        
         ArrayList<Pair<String, String>> traceExecutionOrder = getExecutionOrder(traceLogs, driftType);
         
         int observationsBeforeEvaluation = (int) (traceExecutionOrder.size()*(updatePercentage/100));
@@ -106,7 +110,6 @@ public class StreamDriftDetection2 {
                 DcrModel discoveredModel = sc.getDcrModel();
 //                System.out.println(discoveredModel.getActivities().size());
                 if (discoveredModels.size() > 1) {
-                    
                     System.out.println(
                             DcrSimilarity.graphEditDistanceSimilarity(
                                     discoveredModel, discoveredModels.get(discoveredModels.size()-1)));
@@ -114,10 +117,14 @@ public class StreamDriftDetection2 {
                 discoveredModels.add(discoveredModel);
             }
         }
-         
+        
         System.out.println("\n" + discoveredModels.size());
         System.out.println("Total: " + totalObservations);
-        int drifts = DriftDetector.DBSCANWithTruncation(discoveredModels, eps, minPoints, new WeightedGraphEditDistance());
+        
+        ArrayList<DcrModel> trimmedModels 
+            = DriftDetector.removeAndReplaceBoundaryElements(discoveredModels, baseline, new WeightedGraphEditDistance());
+        
+        int drifts = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new WeightedGraphEditDistance());
         System.out.println("Detected " + drifts + " drifts...");
         System.exit(0);
     }
@@ -158,11 +165,11 @@ public class StreamDriftDetection2 {
                     
                     int count = 0;
                     XLog currentLog = traceLogs.get(i);
-                    int currentLogSize = currentLog.size();
+                    int logSize = currentLog.size();
                     
                     while (count < subDivision) {
                         
-                        int num = rand.nextInt(currentLogSize);
+                        int num = rand.nextInt(logSize);
                         int currentIndex = traceSize;
                         XTrace trace = currentLog.get(num);
                         String traceId = trace.getAttributes().get("concept:name").toString();
@@ -171,7 +178,7 @@ public class StreamDriftDetection2 {
                             trace = currentLog.get(num);
                             traceId = trace.getAttributes().get("concept:name").toString();
                             currentIndex = traceCurrentIndex.get(traceId);
-                            num = (num+1)%currentLogSize;
+                            num = (num+1)%logSize;
                         }
                         
                         String activity = trace.get(currentIndex)

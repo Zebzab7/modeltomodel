@@ -1,4 +1,4 @@
-package beamline.dcr.modeltomodel.testrunners;
+package helper;
 
 public class LinearRegression {
     private final double intercept, slope;
@@ -52,6 +52,7 @@ public class LinearRegression {
         double svar  = rss / degreesOfFreedom;
         svar1 = svar / xxbar;
         svar0 = svar/n + xbar*xbar*svar1;
+        
     }
 
 

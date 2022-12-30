@@ -12,17 +12,18 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import beamline.dcr.model.relations.DcrModel;
+import beamline.dcr.modeltomodel.DcrSimilarity;
 import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 
-public class PatternChangeRandom {
+public class PatternChangeSystematicRandom {
     public static void main(String[] args) throws IOException {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/groundtruthmodels";
         
-       StringBuilder modelComparisonString = new StringBuilder("sep=,\nmodel,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst," +
-            "GED\n" /*CNE, Jaccard\n"*/);
+       StringBuilder modelComparisonString = new StringBuilder("sep=,\nmodel,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapActivities," +
+            "GED,CNE,Jaccard,W-GED,LCS");
     
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
             paths
@@ -49,7 +50,7 @@ public class PatternChangeRandom {
         
         try {
             FileWriter myWriter 
-            = new FileWriter(currentPath + "/evaluations/randomMutations/" + "RANDOM-" + java.time.LocalDate.now()
+            = new FileWriter(currentPath + "/evaluations/randomMutations/SystematicRandom/" + java.time.LocalDate.now()
                + System.currentTimeMillis() + ".csv"/*,true*/);
             myWriter.write(modelComparisonString.toString());
             myWriter.close();
@@ -65,9 +66,11 @@ public class PatternChangeRandom {
         StringBuilder xmlString = new StringBuilder();
         
         ModelAdaption modelAdaption;
-        ModelComparison modelComparison = new ModelComparison(modelPath);
         int iteration = 0;
         int totalIterations = (int) Math.pow(4, 7);
+        
+        DcrModel referenceModel = new DcrModel();
+        referenceModel.loadModel(modelPath);
         
         for (int addActivitySerialInt = 0; addActivitySerialInt <= 3; addActivitySerialInt++){
             for (int addActivityParallelInt = 0; addActivityParallelInt <= 3; addActivityParallelInt++){
@@ -91,17 +94,19 @@ public class PatternChangeRandom {
                                     ! modelAdaption.swapActivities(swapActivitiesInt)){
                                         continue;
                                     }
-                                    DcrModel adaptedModel  = modelAdaption.getModel();
-                                    modelComparison.loadComparativeModel(adaptedModel);
-                                    String GEDString = modelComparison.getLCSString();
-//                                    String CNEString = modelComparison.getCNEString();
-//                                    double jaccard = modelComparison.getJaccardSimilarity();
-//                                    String jaccardSim = ""+jaccard;
-
+                                    
                                     xmlString.append(filename +",").append(addActivitySerialInt + ",").append(addActivityParallelInt+ ",")
-                                            .append(deleteActivityInt+ ",").append(replaceActivityInt+ ",").append(addConstraintInt+ ",")
-                                            .append(removeConstraintInt+ ",").append(swapActivitiesInt +",");
-                                    xmlString.append(GEDString + "\n")/*.append(CNEString + ",").append(jaccardSim + "\n")*/;
+                                    .append(deleteActivityInt+ ",").append(replaceActivityInt+ ",").append(addConstraintInt+ ",")
+                                    .append(removeConstraintInt+ ",").append(swapActivitiesInt +",");
+                                    
+                                    DcrModel adaptedModel  = modelAdaption.getModel();
+                                    double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, adaptedModel);
+                                    double CNEScore = DcrSimilarity.commonNodesAndEdgesSimilarity(referenceModel, adaptedModel);
+                                    double JaccardScore = DcrSimilarity.jaccardSimilarity(referenceModel, adaptedModel);
+                                    double WGEDScore = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, adaptedModel);
+                                    double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(referenceModel, adaptedModel);
+                                    
+                                    xmlString.append(GEDScore + "," + CNEScore + "," + JaccardScore + "," + WGEDScore + "," + LCSScore + "\n");
                                 }
                             }
                         }

@@ -2,9 +2,13 @@ package beamline.dcr.testsoftware.testrunners;
 
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.modeltomodel.DcrSimilarity;
+import beamline.dcr.modeltomodel.DriftDetector;
 import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.view.DcrModelXML;
+import distancemetrics.GraphEditDistance;
+
+import org.christopherfrantz.dbscan.DBSCANClusteringException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,12 +45,12 @@ public class PatternChangeComparison {
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/groundtruthmodels";
         String noiseString = "Noise";
-        
+
         if (!applyNoise) noiseString = "NoNoise";
 
         for (DRIFT driftType : DRIFT.values()) {
             StringBuilder modelComparisonString 
-            = new StringBuilder("sep=,\nmodel,GED,CNE,Jaccard\n");
+            = new StringBuilder("sep=,\nmodel,GED,CNE,Jaccard,W-GED,LCS,GED-T,CNE-T,Jaccard-T,W-GED-T,LCS-T\n");
             
             try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
                 paths
@@ -64,6 +68,8 @@ public class PatternChangeComparison {
                     } catch (SAXException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (DBSCANClusteringException e) {
                         e.printStackTrace();
                     }
                     
@@ -87,7 +93,7 @@ public class PatternChangeComparison {
     /*
      * Creates an output string for a csv file.
      */
-    public static String createSimulationString(String modelPath, String filename, DRIFT driftType) throws ParserConfigurationException, SAXException, IOException {
+    public static String createSimulationString(String modelPath, String filename, DRIFT driftType) throws ParserConfigurationException, SAXException, IOException, DBSCANClusteringException {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         StringBuilder xmlString = new StringBuilder();
@@ -113,16 +119,31 @@ public class PatternChangeComparison {
                 break;
         }
         
+        ArrayList<DcrModel> trimmedModels = DriftDetector.removeAndReplaceBoundaryElements(models, referenceModel, new GraphEditDistance());
+        
         ModelComparison modelComparison = new ModelComparison(referenceModel);
+        
         for (int i = 0; i < models.size(); i++) {
+            modelComparison.loadComparativeModel(trimmedModels.get(i));
+            
+            double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, models.get(i));
+            double CNEScore = DcrSimilarity.commonNodesAndEdgesSimilarity(referenceModel, models.get(i));
+            double JaccardScore = DcrSimilarity.jaccardSimilarity(referenceModel, models.get(i));
+            double WGEDScore = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, models.get(i));
+            double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(referenceModel, models.get(i));
+            
+            xmlString.append(filename + ",");
+            xmlString.append(GEDScore+ "," + CNEScore + "," + JaccardScore + "," + WGEDScore + "," + LCSScore + ",");
+            
             modelComparison.loadComparativeModel(models.get(i));
             
-            String GEDString = modelComparison.getGEDWString();
-            String CNEString = modelComparison.getCNEString();
-            String jaccardSim = modelComparison.getJaccardSimilarity() + "";
+            GEDScore = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, trimmedModels.get(i));
+            CNEScore = DcrSimilarity.commonNodesAndEdgesSimilarity(referenceModel, trimmedModels.get(i));
+            JaccardScore = DcrSimilarity.jaccardSimilarity(referenceModel, trimmedModels.get(i));
+            WGEDScore = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, trimmedModels.get(i));
+            LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(referenceModel, trimmedModels.get(i));
             
-            xmlString.append(filename +",");
-            xmlString.append(GEDString + ",").append(CNEString + ",").append(jaccardSim + "\n");
+            xmlString.append(GEDScore+ "," + CNEScore + "," + JaccardScore + "," + WGEDScore + "," + LCSScore + "\n");
         }
         
         return xmlString.toString();
@@ -149,7 +170,7 @@ public class PatternChangeComparison {
                 DcrModel nextModel = modelAdaption.getModel().getClone();
                 if (applyNoise) {
                     nextModel = modelAdaption.getModel().getClone();
-                    if (!modelAdaption.randomMutation(1)) {
+                    if (!modelAdaption.applyNoise()) {
                         System.out.println("Noise mutation was unsuccessful");
                     }
                 } 
@@ -165,7 +186,7 @@ public class PatternChangeComparison {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
-        int driftStrength = 2;
+        int driftStrength = 1;
         
         int divisor = 4;
         int temp = iterations/divisor;
@@ -179,7 +200,7 @@ public class PatternChangeComparison {
                 DcrModel nextModel = modelAdaption.getModel().getClone();
                 if (applyNoise) {
                     nextModel = modelAdaption.getModel().getClone();
-                    if (!modelAdaption.randomMutation(1)) {
+                    if (!modelAdaption.applyNoise()) {
                         System.out.println("Noise mutation was unsuccessful");
                     }
                 } 
@@ -220,7 +241,7 @@ public class PatternChangeComparison {
                 DcrModel nextModel = modelAdaption.getModel().getClone();
                 if (applyNoise) {
                     nextModel = modelAdaption.getModel().getClone();
-                    if (!modelAdaption.randomMutation(1)) {
+                    if (!modelAdaption.applyNoise()) {
                         System.out.println("Noise mutation was unsuccessful");
                     }
                 } 
@@ -236,16 +257,13 @@ public class PatternChangeComparison {
 
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
-        int driftStrength = 1;
-        
-        int increments = 4;
-        int incrementSize = iterations/increments;
+        int driftStrength = 9;
         
         ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
         
         for (int i = 0; i < iterations; i++) {
-            if (i != 0 && i != iterations && (i%incrementSize) == 0) {
-                if (!modelAdaption.everyMutation(driftStrength)) {
+            if (i == 40 || i == 50 || i == 60) {
+                if (!modelAdaption.randomMutation(driftStrength)) {
                     System.out.println("Mutation operation was unsuccessful");
                 } 
                 models.add(modelAdaption.getModel());
@@ -254,7 +272,7 @@ public class PatternChangeComparison {
                 DcrModel nextModel = modelAdaption.getModel().getClone();
                 if (applyNoise) {
                     nextModel = modelAdaption.getModel().getClone();
-                    if (!modelAdaption.randomMutation(1)) {
+                    if (!modelAdaption.applyNoise()) {
                         System.out.println("Noise mutation was unsuccessful");
                     }
                 } 
