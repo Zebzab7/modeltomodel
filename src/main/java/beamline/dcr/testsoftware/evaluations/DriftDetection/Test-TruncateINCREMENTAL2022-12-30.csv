@@ -1,5 +1,5 @@
 Metric,MSE,MSE-T,F-measure
-GED,1.0,1.0
-CNE,1.0,1.0
-JaccardDist,1.0,1.0
+GED,3.6,0.7000000000000001
+CNE,3.6,0.7000000000000001
+JaccardDist,2.5,0.8
 Weighted GED,1.0,1.0

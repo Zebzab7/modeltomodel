@@ -38,7 +38,7 @@ public class DriftDetectionTester {
         int minPoints = DriftDetector.getMinPoints();
         
         // Initialize expected values and simulate data sets of process models
-        int iterations = 1;
+        int iterations = 10;
         int[] predictedVals = new int[iterations];
         int[] expectedVals = new int[iterations];
         for (int i = 0; i < iterations; i++) {

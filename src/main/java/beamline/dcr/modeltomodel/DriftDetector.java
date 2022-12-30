@@ -62,7 +62,7 @@ public class DriftDetector {
         
         //TODO Remove outliers before proceeding to improve function
         
-        int strictness = 30;
+        int strictness = 25;
         int index = strictness/2;
         double sensitivity = 0.01;
         

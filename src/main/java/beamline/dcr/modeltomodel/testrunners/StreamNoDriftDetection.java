@@ -39,13 +39,14 @@ public class StreamNoDriftDetection {
       //Test parameters
         int eventlogNumber = 101;
         int relationsThreshold = 0;
-        double eps = 0.15;
+        double eps = 0.1;
         int minPoints = 5;
         String[] patternList = ("Condition Response").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
         int maxTraces = 10;
         int traceSize = 10;
-        int observationsBeforeEvaluation = 2;
+        int observationsBeforeEvaluation = 3
+                ;
         String[] dcrConstraints = ("Condition Response").split(" ");
         //
         

@@ -34,7 +34,7 @@ import distancemetrics.GraphEditDistance;
 import distancemetrics.WeightedGraphEditDistance;
 import helper.Pair;
 
-public class StreamDriftDetection2 {
+public class StreamDriftDetection {
     static Random rand = new Random();
     
     public static void main(String[] args) throws Exception {
@@ -104,11 +104,7 @@ public class StreamDriftDetection2 {
             String activity = event.getRight();
             sc.consumeEvent(traceID, activity);
             if (i % observationsBeforeEvaluation == 0) {
-//                long startTime = System.nanoTime();    
-//                long estimatedTime = System.nanoTime() - startTime;
-//                System.out.println(estimatedTime);
                 DcrModel discoveredModel = sc.getDcrModel();
-//                System.out.println(discoveredModel.getActivities().size());
                 if (discoveredModels.size() > 1) {
                     System.out.println(
                             DcrSimilarity.graphEditDistanceSimilarity(
