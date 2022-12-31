@@ -37,7 +37,7 @@ public class TraceGenerator {
     private static int eventLogNumber = 101;
     private static int traceLength = 30;
     private static int traces = 20;
-    private static int modelVariations = 1;
+    private static int modelVariations = 2;
     private static int driftStrength = 10;
     private static int multiplier = 4;
     

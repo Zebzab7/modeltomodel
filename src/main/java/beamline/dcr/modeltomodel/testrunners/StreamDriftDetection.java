@@ -24,6 +24,7 @@ import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.UnionRelationSet;
 import beamline.dcr.modeltomodel.DcrSimilarity;
 import beamline.dcr.modeltomodel.DriftDetector;
+import beamline.dcr.modeltomodel.ModelRepository;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;
@@ -41,22 +42,23 @@ public class StreamDriftDetection {
       //Test parameters
         int eventlogNumber = 111;
         int relationsThreshold = 0;
-        double eps = 0.15;
-        int minPoints = 3;
-        String[] patternList = ("Condition Response Include Exclude").split(" ");
+        double eps = 0.2;
+        int minPoints = 8;
+        String[] patternList = ("Condition Response").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
         int maxTraces = 10;
         int traceSize = 10;
         double updatePercentage = 2.0;
-        int logs = 2;
+        int logs = 1;
         DRIFT driftType = DRIFT.SUDDEN;
-        String[] dcrConstraints = ("Condition Response Include Exclude").split(" ");
+        String[] dcrConstraints = ("Condition Response").split(" ");
         //
         
         ArrayList<DcrModel> discoveredModels = new ArrayList<DcrModel>();
         
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
+        
 
         DFGBasedMiner sc = new DFGBasedMiner();
         Collection<MinerParameterValue> coll = new ArrayList<>();
@@ -91,41 +93,62 @@ public class StreamDriftDetection {
             traceLogs.addAll(parsedXesFile);
         }
         
+        StringBuilder outputString 
+            = new StringBuilder("baseline-sim, discover-sim\n");
+        
         DcrModel baseline = new DcrModel();
         baseline.loadModel(currentPath + "/groundtruthmodels/Process" + (eventlogNumber) +".xml");
         
-        ArrayList<Pair<String, String>> traceExecutionOrder = getExecutionOrder(traceLogs, driftType);
-        
+        ArrayList<Pair<String, String>> traceExecutionOrder = getExecutionOrderFromDriftType(traceLogs, driftType);
+
         int observationsBeforeEvaluation = (int) (traceExecutionOrder.size()*(updatePercentage/100));
         int totalObservations = traceExecutionOrder.size();
         for (int i = 0; i < totalObservations; i++) {
             Pair<String, String> event = traceExecutionOrder.get(i);
             String traceID = event.getLeft();
             String activity = event.getRight();
+            System.out.println("trace: " + traceID);
+            System.out.println("activity: " + activity);
             sc.consumeEvent(traceID, activity);
             if (i % observationsBeforeEvaluation == 0) {
                 DcrModel discoveredModel = sc.getDcrModel();
                 if (discoveredModels.size() > 1) {
-                    System.out.println(
-                            DcrSimilarity.graphEditDistanceSimilarity(
-                                    discoveredModel, discoveredModels.get(discoveredModels.size()-1)));
+                    
+                    double discoveredSimilarityScore = DcrSimilarity.jaccardSimilarity
+                                (discoveredModel, discoveredModels.get(discoveredModels.size()-1));
+                    
+                    double baselineSimilarityScore = DcrSimilarity.graphEditDistanceSimilarity(discoveredModel, baseline);
+                    outputString.append(baselineSimilarityScore + "," + discoveredSimilarityScore + "\n");
                 }
                 discoveredModels.add(discoveredModel);
             }
+            System.out.println("Observed " + i + " out of " + totalObservations + " observations");
         }
         
-        System.out.println("\n" + discoveredModels.size());
-        System.out.println("Total: " + totalObservations);
+        System.out.println(discoveredModels.size() + " models were added");
+        System.out.println("Total observations: " + totalObservations);
         
         ArrayList<DcrModel> trimmedModels 
-            = DriftDetector.removeAndReplaceBoundaryElements(discoveredModels, baseline, new WeightedGraphEditDistance());
+            = DriftDetector.removeAndReplaceBoundaryElements(discoveredModels, baseline, new GraphEditDistance());
         
-        int drifts = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new WeightedGraphEditDistance());
+        int drifts = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new GraphEditDistance()).getLeft();
         System.out.println("Detected " + drifts + " drifts...");
+        outputString.append("Drifts detected: ," + drifts + "\n");
+
+        FileWriter myWriter 
+            = new FileWriter(currentPath + "/evaluations/StreamDriftTest/" + "StreamDriftTest-" 
+                    + driftType + "-" + java.time.LocalDate.now() + ".csv"/*,true*/);
+        myWriter.write(outputString.toString());
+        myWriter.close();
+        
         System.exit(0);
     }
     
-    public static ArrayList<Pair<String, String>> getExecutionOrder(ArrayList<XLog> traceLogs, DRIFT driftType) {
+    /**
+     * Returns a randomized execution list that conforms to the type of drift
+     * from a given list of trace logs generated from a number of process models
+     */
+    public static ArrayList<Pair<String, String>> getExecutionOrderFromDriftType(ArrayList<XLog> traceLogs, DRIFT driftType) {
         ArrayList<Pair<String, String>> order = new ArrayList<Pair<String, String>>();
         
         int logs = traceLogs.size();
@@ -140,7 +163,6 @@ public class StreamDriftDetection {
         Map<String,Integer> traceCurrentIndex= new HashMap<String, Integer>();
         
         for (int i = 0; i < logs; i++){
-            
             XLog traceLog = traceLogs.get(i);
             for (int j = 0; j < traceLog.size(); j++){
                 
@@ -152,43 +174,128 @@ public class StreamDriftDetection {
         
         switch (driftType) {
             case GRADUAL:
-                break;
-            case INCREMENTAL:
+                if (logs < 2) throw new IllegalArgumentException("Gradual drift not supported for less than 2 graphs");
+                ArrayList<ArrayList<Pair<String, String>>> orders = new ArrayList<ArrayList<Pair<String, String>>>();
+                
+                for (int i = 0; i < logs; i++) {
+                    orders.add(getRandomExecutionOrderFromLog(traceLogs.get(i), traceCurrentIndex));
+                }
+                
+                int trimPercentage = 10;
+                int numOfElementsTrimmed = orders.get(0).size()/trimPercentage;
+                
+                for (int i = 0; i < orders.size()-1; i++) {
+                    ArrayList<Pair<String, String>> combination 
+                        = getGradualCombinationOfEvents(orders.get(i), orders.get(i+1), numOfElementsTrimmed);
+                    order.addAll(combination);
+                }
                 break;
             default:
-                int subDivision = numOfEvents/logs;
+                /*
+                 * Observe randomly and uniformly events from log1, then log2, then log3 etc.
+                 */                
                 for (int i = 0; i < logs; i++) {
-                    
-                    int count = 0;
                     XLog currentLog = traceLogs.get(i);
-                    int logSize = currentLog.size();
-                    
-                    while (count < subDivision) {
-                        
-                        int num = rand.nextInt(logSize);
-                        int currentIndex = traceSize;
-                        XTrace trace = currentLog.get(num);
-                        String traceId = trace.getAttributes().get("concept:name").toString();
-                        
-                        while (currentIndex == traceSize) {
-                            trace = currentLog.get(num);
-                            traceId = trace.getAttributes().get("concept:name").toString();
-                            currentIndex = traceCurrentIndex.get(traceId);
-                            num = (num+1)%logSize;
-                        }
-                        
-                        String activity = trace.get(currentIndex)
-                                    .getAttributes().get("concept:name").toString();
-                        order.add(new Pair<String,String>(traceId, activity));
-                        traceCurrentIndex.replace(traceId, (currentIndex+1));
-                        count++;
-                    }
+                    order.addAll(getRandomExecutionOrderFromLog(currentLog, traceCurrentIndex));
                 }
                 break;
         }
         return order;
     }
+    
+    public static <V> ArrayList<V> getGradualCombinationOfEvents(ArrayList<V> list1, ArrayList<V> list2, int numOfElementsTrimmed) {
+        ArrayList<V> executionOrdersTrimmedA 
+            = getSubArray(list1, (list1.size()-1)-numOfElementsTrimmed, list1.size()-1);
+        ArrayList<V> executionOrdersTrimmedB 
+            = getSubArray(list2, 0, numOfElementsTrimmed-1);
+        
+        list1.removeAll(executionOrdersTrimmedA);
+        list2.removeAll(executionOrdersTrimmedB);
+        
+        ArrayList<V> boundaryExecutionOrder = new ArrayList<V>();
+        
+        int sumElements = executionOrdersTrimmedA.size() + executionOrdersTrimmedB.size();
+        
+        int indexA = 0;
+        int indexB = 0;
+        int sizeA = list1.size();
+        int sizeB = list2.size();
+        for (int j = 0; j < sumElements; j++) {
+            double probability = 0.0;
+            if (j % (sumElements/20) == 0 && probability < 1.0) probability += 0.05;
+            
+            if (indexA == sizeA) {
+                boundaryExecutionOrder.add(list2.get(indexB));
+                indexB++;
+            }
+            if (indexB == sizeB) {
+                boundaryExecutionOrder.add(list1.get(indexA));
+                indexA++;
+            }
+            
+            if (rand.nextDouble() > probability) {
+                boundaryExecutionOrder.add(list1.get(indexA));
+                indexA++;
+            } else  {
+                boundaryExecutionOrder.add(list2.get(indexB));
+                indexB++;
+            }
+        }
+        list1.addAll(boundaryExecutionOrder);
+        list1.addAll(list2);
+        
+        return list1;
+    }
+    
+    /**
+     * Returns the subarray between indices as an arraylist
+     */
+    public static <V> ArrayList<V> getSubArray(ArrayList<V> fullList, int startIndex, int endIndex) {
+        ArrayList<V> trimmedList = new ArrayList<V>();
+        
+        for (int i = startIndex; i < endIndex; i++) {
+            trimmedList.add(fullList.get(i));
+        }
+        return trimmedList;
+    }
+    
+    /**
+     * returns a list of events randomly shuffled as a mapping from the traceID to the event name
+     */
+    public static ArrayList<Pair<String, String>> getRandomExecutionOrderFromLog(XLog traceLog, Map<String,Integer> traceCurrentIndex) {
+        ArrayList<Pair<String, String>> order = new ArrayList<Pair<String, String>>();
+        
+        int logSize = traceLog.size();
+        int num = rand.nextInt(logSize);
+        int totalEvents = 0;
+        int traceSize = traceLog.get(0).size();
+        
+        for (int i = 0; i < traceLog.size(); i++) {
+            for (XEvent event : traceLog.get(i)) totalEvents++;
+        }
+        
+        for (int i = 0; i < totalEvents;) {
+            
+            XTrace trace = traceLog.get(num);
+            String traceId = trace.getAttributes().get("concept:name").toString();
+            int currentIndex = traceCurrentIndex.get(traceId);
+            
+            if (currentIndex == traceSize) {
+                num = (num+1)%logSize;
+                continue;
+            } else {
+                num = rand.nextInt(logSize);
+                String activity = trace.get(currentIndex)
+                        .getAttributes().get("concept:name").toString();
+                order.add(new Pair<String,String>(traceId, activity));
+                traceCurrentIndex.replace(traceId, (currentIndex+1));
+                i++;
+            }
+        }
+        return order;
+    }
 }
+
 
 
 

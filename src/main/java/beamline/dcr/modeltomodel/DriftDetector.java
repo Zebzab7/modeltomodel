@@ -22,6 +22,7 @@ import distancemetrics.GraphEditDistance;
 import distancemetrics.JaccardDistance;
 import distancemetrics.WeightedGraphEditDistance;
 import helper.LinearRegression;
+import helper.Pair;
 
 public class DriftDetector {
 
@@ -112,9 +113,8 @@ public class DriftDetector {
      * Returns the number of concept drifts that have been detected from the models
      * @throws DBSCANClusteringException 
      */
-    public static int DBSCAN(ArrayList<DcrModel> models, double eps, 
+    public static Pair<Integer,ArrayList<Integer>> DBSCAN(ArrayList<DcrModel> models, double eps, 
                 int minPoints, DistanceMetric<DcrModel> metric) throws DBSCANClusteringException {
-        
         DBSCANClusterer<DcrModel> scanner = new DBSCANClusterer<DcrModel>(models, minPoints, eps, metric);
         ArrayList<ArrayList<DcrModel>> list = new ArrayList<ArrayList<DcrModel>>();
         try {
@@ -122,7 +122,15 @@ public class DriftDetector {
         } catch (DBSCANClusteringException e) {
             System.out.println("There was some kind of error with clustering data...");
         }
-        return list.size()-1;
+        
+        ArrayList<Integer> driftIndices = new ArrayList<Integer>();
+        
+        for (int i = 0; i < list.size(); i++) {
+            driftIndices.add(list.get(i).size()-1);
+        }
+        
+        Pair<Integer, ArrayList<Integer>> returnValues = new Pair<Integer, ArrayList<Integer>>(list.size()-1, driftIndices);
+        return returnValues;
     }
     
     /**

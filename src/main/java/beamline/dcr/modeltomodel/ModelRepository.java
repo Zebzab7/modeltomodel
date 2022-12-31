@@ -15,27 +15,39 @@ public class ModelRepository {
         CNE
     }
     
-    private static METRIC metric = METRIC.GED;
+    private static METRIC metric = METRIC.Jaccard;
     private static double sigDiff = 0.9;
     
+    public static void setMetric(METRIC metric) {
+        ModelRepository.metric = metric;
+    }
+    
     // Returns 0 if successful, otherwise -1
-    public int addModelToRep(DcrModel model) {
+    public boolean addModelToRep(DcrModel model) {
         boolean unique = true;
         
         for (DcrModel repModel : repository) {
-            if (similarity(repModel, model, metric) < sigDiff) unique = false;
+            if (isSimilar(repModel, model, sigDiff, metric)) unique = false;
         }
         
         if (unique) {
             System.out.println("Addition sucessful");
             repository.add(model);
-            return 0; 
+            return true; 
         }
         System.out.println("Addition not succesful");
-        return -1;
+        return false;
     }
     
-    public static double similarity(DcrModel modelA, DcrModel modelB, METRIC metric) {
+    public int size() {
+        return repository.size();
+    }
+    
+    public DcrModel getModelAt(int index) {
+        return repository.get(index);
+    }
+    
+    private static double similarity(DcrModel modelA, DcrModel modelB, METRIC metric) {
         switch (metric) {
             case GED:
                 return DcrSimilarity.graphEditDistanceSimilarity(modelA, modelB);

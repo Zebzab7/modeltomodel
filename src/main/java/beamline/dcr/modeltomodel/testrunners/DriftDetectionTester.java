@@ -80,7 +80,7 @@ public class DriftDetectionTester {
                 
             for (DistanceMetric<DcrModel> metric : metrics) {
                 for (int i = 0; i < iterations; i++) {
-                    predictedVals[i] = DriftDetector.DBSCAN(modelSeries.get(i), eps, minPoints, metric);
+                    predictedVals[i] = DriftDetector.DBSCAN(modelSeries.get(i), eps, minPoints, metric).getLeft();
                 }
                 
                 double MSE = DriftDetector.getMeanSquareError(predictedVals, expectedVals);
@@ -90,7 +90,7 @@ public class DriftDetectionTester {
                 for (int i = 0; i < iterations; i++) {
                     ArrayList<DcrModel> trimmedModels 
                         = DriftDetector.removeAndReplaceBoundaryElements(modelSeries.get(i), referenceModel, metric);
-                    predictedVals[i] = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, metric);
+                    predictedVals[i] = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, metric).getLeft();
                 }
                 MSE = DriftDetector.getMeanSquareError(predictedVals, expectedVals);
                 outputString.append(MSE + "\n");

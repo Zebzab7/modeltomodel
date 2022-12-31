@@ -69,6 +69,12 @@ public class BasicStreamDriftDetection {
         
         sc.configure(coll);
         
+        DcrModel model101 = new DcrModel();
+        model101.loadModel(currentPath + "/groundtruthmodels/Process" + eventlogNumber +".xml");
+        repo.addModelToRep(model101);
+        repo.addModelToRep(model101.getClone());
+        
+        
         for (int i = 0; i < logs; i++) {
             String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + (eventlogNumber+i) +".xml";
             String streamPath = currentPath + "/eventlogs/eventlog_graph"+(eventlogNumber+i)+ ".xes";

@@ -39,14 +39,13 @@ public class StreamNoDriftDetection {
       //Test parameters
         int eventlogNumber = 101;
         int relationsThreshold = 0;
-        double eps = 0.1;
-        int minPoints = 5;
+        double eps = 0.2;
+        int minPoints = 10;
         String[] patternList = ("Condition Response").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
         int maxTraces = 10;
         int traceSize = 10;
-        int observationsBeforeEvaluation = 3
-                ;
+        int observationsBeforeEvaluation = 2;
         String[] dcrConstraints = ("Condition Response").split(" ");
         //
         
@@ -151,8 +150,8 @@ public class StreamNoDriftDetection {
         
         ArrayList<DcrModel> trimmedModels 
             = DriftDetector.removeAndReplaceBoundaryElements(discoveredModels, groundTruthModel, new JaccardDistance());
-        int driftsTruncated = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new JaccardDistance());
-        int driftsNoTruncation = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new JaccardDistance());
+        int driftsTruncated = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new JaccardDistance()).getLeft();
+        int driftsNoTruncation = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new JaccardDistance()).getLeft();
         System.out.println("With truncation: " + driftsTruncated + " drifts detected.");
         System.out.println("Without truncation: " + driftsNoTruncation + " drifts detected.");
         System.exit(0);
