@@ -1,0 +1,5 @@
+Metric,MSE,MSE-T,Precision, precision-T
+GED,0.1,0.1
+CNE,0.1,0.1
+JaccardDist,0.1,0.1
+Weighted GED,0.1,0.1

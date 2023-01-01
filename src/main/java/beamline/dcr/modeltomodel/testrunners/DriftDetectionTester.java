@@ -49,7 +49,7 @@ public class DriftDetectionTester {
             System.out.println("DRIFT: " + driftType.toString());
             
             StringBuilder outputString
-                = new StringBuilder("Metric,MSE,MSE-T,F-measure\n");
+                = new StringBuilder("Metric,MSE,MSE-T,Precision, precision-T\n");
             
             FileWriter myWriter 
                 = new FileWriter(currentPath + "/evaluations/DriftDetection/Test-Truncate" 
@@ -89,7 +89,7 @@ public class DriftDetectionTester {
                 outputString.append(metric.toString() + ",").append(MSE + ",");
                 for (int i = 0; i < iterations; i++) {
                     ArrayList<DcrModel> trimmedModels 
-                        = DriftDetector.removeAndReplaceBoundaryElements(modelSeries.get(i), referenceModel, metric);
+                        = DriftDetector.trimModels(modelSeries.get(i), referenceModel, metric, true);
                     predictedVals[i] = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, metric).getLeft();
                 }
                 MSE = DriftDetector.getMeanSquareError(predictedVals, expectedVals);

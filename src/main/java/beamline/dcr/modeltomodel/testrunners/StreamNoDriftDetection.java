@@ -149,7 +149,7 @@ public class StreamNoDriftDetection {
         }
         
         ArrayList<DcrModel> trimmedModels 
-            = DriftDetector.removeAndReplaceBoundaryElements(discoveredModels, groundTruthModel, new JaccardDistance());
+            = DriftDetector.trimModels(discoveredModels, groundTruthModel, new JaccardDistance(), true);
         int driftsTruncated = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new JaccardDistance()).getLeft();
         int driftsNoTruncation = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new JaccardDistance()).getLeft();
         System.out.println("With truncation: " + driftsTruncated + " drifts detected.");

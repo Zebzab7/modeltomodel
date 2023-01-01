@@ -49,8 +49,8 @@ public class DriftDetector {
      * Returns the number of concept drifts that have been detected from the models
      * @throws DBSCANClusteringException 
      */
-    public static ArrayList<DcrModel> removeAndReplaceBoundaryElements(ArrayList<DcrModel> models, DcrModel referenceModel,
-            DistanceMetric<DcrModel> metric) throws DBSCANClusteringException {
+    public static ArrayList<DcrModel> trimModels(ArrayList<DcrModel> models, DcrModel referenceModel,
+            DistanceMetric<DcrModel> metric, boolean replace) throws DBSCANClusteringException {
         
         ArrayList<DcrModel> newList = new ArrayList<DcrModel>(models);
        
@@ -58,7 +58,7 @@ public class DriftDetector {
         double[] similarityScore = new double[models.size()];
         
         for (int i = 0; i < models.size(); i++) {
-            similarityScore[i] = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, models.get(i));
+            similarityScore[i] = DcrSimilarity.jaccardSimilarity(referenceModel, models.get(i));
         }
         
         //TODO Remove outliers before proceeding to improve function
@@ -70,7 +70,6 @@ public class DriftDetector {
         int n = models.size();
         
         while (index < n-(strictness/2)) {
-            
             double[] yVals = new double[strictness];
             double[] xVals = new double[strictness];
             

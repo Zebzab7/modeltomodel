@@ -119,7 +119,7 @@ public class PatternChangeComparison {
                 break;
         }
         
-        ArrayList<DcrModel> trimmedModels = DriftDetector.removeAndReplaceBoundaryElements(models, referenceModel, new GraphEditDistance());
+        ArrayList<DcrModel> trimmedModels = DriftDetector.trimModels(models, referenceModel, new GraphEditDistance(), true);
         
         ModelComparison modelComparison = new ModelComparison(referenceModel);
         
@@ -154,7 +154,7 @@ public class PatternChangeComparison {
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
         int driftStrength = 10;
-        int driftIteration = rand.nextInt(iterations);
+        int driftIteration = iterations/2;
         
         ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());
         
