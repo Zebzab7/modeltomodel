@@ -262,6 +262,35 @@ public class ModelAdaption {
         } 
         return true;
     }
+
+    public boolean addConditionOrResponse(int numRepeatings) {
+        for (int i = 0; i < numRepeatings; i++) {
+            String source = getRandomExistingActivity(model.getRelations());
+            if(source==null){
+                return false;
+            }
+            Set<Triple<String,String, DcrModel.RELATION>> relationsWithSource = model.getDcrRelationsWithSource(source);
+            while (relationsWithSource.size()==0){
+                source = getRandomExistingActivity(model.getRelations());
+                relationsWithSource = model.getDcrRelationsWithSource(source);
+            }
+
+            String target = getRandomExistingActivity(relationsWithSource);
+            List<DcrModel.RELATION> constraints =
+                    Collections.unmodifiableList(Arrays.asList(DcrModel.RELATION.values()));
+            int size = constraints.size();
+            Random random = new Random();
+
+            DcrModel.RELATION randomConstraint = constraints.get(random.nextInt(size));
+            while (!(randomConstraint.equals(RELATION.CONDITION) ||randomConstraint.equals(RELATION.RESPONSE))) {
+                randomConstraint = constraints.get(random.nextInt(size));
+            }
+
+            model.addRelation(Triple.of(source, target, randomConstraint));
+        }
+        return true;
+    }
+    
     public DcrModel getModel(){
         return model;
     }

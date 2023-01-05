@@ -32,23 +32,27 @@ import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import beamline.dcr.view.DcrModelXML;
 import distancemetrics.GraphEditDistance;
-import distancemetrics.JaccardDistance;
+import distancemetrics.JaccardDistance1D;
 import distancemetrics.WeightedGraphEditDistance;
 import helper.Pair;
 
 public class StreamDriftDetection {
     static Random rand = new Random();
     
+    static ArrayList<Integer> updateIndices = new ArrayList<Integer>();
+    
     public static void main(String[] args) throws Exception {
-        int eventlogNumber = 111;
-        double eps = 0.2;
-        int minPoints = 8;
-        int observationsBeforeEvaluation = 2;
+        updateIndices = new ArrayList<Integer>();
+        int eventlogNumber = 121;
+        double eps = 0.1;
+        int minPoints = 5;
+        int observationsBeforeEvaluation = 5;
         int logs = 2;
-        String patterns = "Condition Response";
+        String patterns = "Condition Response Include Exclude";
         DRIFT driftType = DRIFT.SUDDEN;
+        double sensitivity = 0.05;
         
-        boolean trimModels = true;
+        boolean replace = false;
         
         int iterations = 10;
         
@@ -56,43 +60,39 @@ public class StreamDriftDetection {
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         
         StringBuilder outputString 
-            = new StringBuilder(", discover-sim\n");
+            = new StringBuilder("MSE, RMSE, Accuracy\n");
         
         int[] expectedVals = new int[iterations];
         int[] predictedVals = new int[iterations];
         
         for (int i = 0; i < iterations; i++) {
             int drifts = simulateDrift(eventlogNumber, eps, minPoints, 
-                    patterns, observationsBeforeEvaluation, logs, driftType, trimModels);
+                    patterns, observationsBeforeEvaluation, logs, driftType, replace, sensitivity);
             expectedVals[i] = logs-1;
             predictedVals[i] = drifts;
         }
 
         double MSE = DriftDetector.getMeanSquareError(predictedVals, expectedVals);
+        double RMSE = DriftDetector.getRootMeanSquareError(predictedVals, expectedVals);
+        double accuracy = 100.0*DriftDetector.getAccuracy(predictedVals, expectedVals);
         
-        for (int i = 0; i < predictedVals.length; i++) {
-            System.out.println(predictedVals[i]);
-        }
-            
         System.out.println("MSE: " + MSE);
+        System.out.println("RMSE: " + RMSE);
+        System.out.println("Accuracy: " + accuracy);
         
-//        FileWriter myWriter 
-//        = new FileWriter(currentPath + "/evaluations/StreamDriftTest/" + "StreamDriftTest-" 
-//                + driftType + "-" + java.time.LocalDate.now() + ".csv"/*,true*/);
-//        myWriter.write(outputString.toString());
-//        myWriter.close();
+        outputString.append(MSE + "," + RMSE + "," + accuracy + "\n");
     }
     
     public static int simulateDrift(int eventlogNumber, double eps, int minPoints, 
-                String patterns, int observationsBeforeEvaluation, int logs, DRIFT driftType, boolean trimModels) throws Exception {
+                String patterns, int observationsBeforeEvaluation, int logs, DRIFT driftType, boolean replace, double sensitivity) throws Exception {
         int relationsThreshold = 0;
         // Test parameters
 
         String[] patternList = patterns.split(" ");
         String[] transitiveReductionList = (" ").split(" ");
         String[] dcrConstraints = patterns.split(" ");
-        int maxTraces = 10;
-        int traceSize = 10;
+        int maxTraces = 5;
+        int traceSize = 5;
         //
         
         ArrayList<DcrModel> discoveredModels = new ArrayList<DcrModel>();
@@ -119,7 +119,6 @@ public class StreamDriftDetection {
         MinerParameterValue fileParam4 = new MinerParameterValue("Max Traces", maxTraces);
         coll.add(fileParam4);
         
-        
         sc.configure(coll);
         XesXmlParser xesParser = new XesXmlParser();
         ArrayList<XLog> traceLogs = new ArrayList<XLog>();
@@ -139,9 +138,14 @@ public class StreamDriftDetection {
         DcrModel baseline = new DcrModel();
         baseline.loadModel(currentPath + "/groundtruthmodels/Process" + (eventlogNumber) +".xml");
         
+        DcrModel groundTruthModel = new DcrModel();
+        groundTruthModel.loadModel(currentPath + "/groundtruthmodels/Process" + (eventlogNumber) +".xml");
+        
         ArrayList<Pair<String, String>> traceExecutionOrder = getExecutionOrderFromDriftType(traceLogs, driftType);
 
         int drifts = 0;
+        
+        int comparisons = 0;
         
         int totalObservations = traceExecutionOrder.size();
         for (int i = 0; i < totalObservations; i++) {
@@ -154,17 +158,27 @@ public class StreamDriftDetection {
             if (i % observationsBeforeEvaluation == 0) {
                 DcrModel discoveredModel = sc.getDcrModel();
                 discoveredModels.add(discoveredModel);
+                
+                double simRef = DcrSimilarity.jaccardSimilarity(baseline, discoveredModel);
+                double simTrue = DcrSimilarity.jaccardSimilarity(groundTruthModel, discoveredModel);
 
+                outputString.append(simRef + "," + simTrue + "\n");
+                
+                comparisons++;
+                
                 // Determine if we should look for drifts
                 if (discoveredModels.size() == 100) {
                     
                     // Trim models
                     ArrayList<DcrModel> trimmedModels 
-                        = DriftDetector.trimModels(discoveredModels, baseline.getClone(), new JaccardDistance(), true);
-                    int discoveredDrifts = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new JaccardDistance()).getLeft();
+                        = DriftDetector.transformData(discoveredModels, baseline, new JaccardDistance1D(), replace, sensitivity);
+                    Pair<Integer, ArrayList<Integer>> pair = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new JaccardDistance1D());
+                    
+                    int discoveredDrifts = pair.getLeft();
                     
                     // If we detect a drift its time to update model
                     if (discoveredDrifts > 0) {
+                        updateIndices.add(comparisons);
                         baseline = discoveredModel;
                         drifts += discoveredDrifts;
                         System.out.println("Drift detected, updating model");
@@ -178,19 +192,29 @@ public class StreamDriftDetection {
                     
                 }
             }
-//            System.out.println("Observed " + i + " out of " + totalObservations + " observations");
+            System.out.println("Observed " + i + " out of " + totalObservations + " observations");
         }
         
         System.out.println("Total observations: " + totalObservations);
         
-//        FileWriter myWriter 
-//            = new FileWriter(currentPath + "/evaluations/StreamDriftTest/" + "StreamDriftTest-" 
-//                    + driftType + "-" + java.time.LocalDate.now() + ".csv"/*,true*/);
-//        myWriter.write(outputString.toString());
-//        myWriter.close();
+        FileWriter myWriter 
+        = new FileWriter(currentPath + "/evaluations/StreamDriftTest/" + "StreamDriftTest-" 
+                + java.time.LocalDate.now() + ".csv"/*,true*/);
+        myWriter.write(outputString.toString());
+        myWriter.close();
+        
+        StringBuilder outputStringIndices = new StringBuilder("Index\n");
+        for (int j = 0; j < updateIndices.size(); j++) {
+            outputStringIndices.append(updateIndices.get(j) + "\n");
+        }
+        
+        myWriter 
+            = new FileWriter(currentPath + "/evaluations/StreamDriftTest/" + "DriftIndices-" 
+                + java.time.LocalDate.now() + ".csv"/*,true*/);
+        myWriter.write(outputStringIndices.toString());
+        myWriter.close();
         
         return drifts;
-//        System.exit(0);
     }
     
     /**
@@ -223,17 +247,12 @@ public class StreamDriftDetection {
                     orders.add(getRandomExecutionOrderFromLog(traceLogs.get(i), traceCurrentIndex));
                 }
                 
-                double trimPercentage = 15;
+                double trimPercentage = 20;
                 int numOfElementsTrimmed = (int) (orders.get(0).size()*(trimPercentage/100.0));
                 
                 for (int i = 0; i < orders.size()-1; i++) {
                     ArrayList<Pair<String, String>> combination 
                         = getGradualCombinationOfEvents(orders.get(i), orders.get(i+1), numOfElementsTrimmed);
-                    
-                    for (Pair<String,String> pair : combination) {
-                        System.out.println(pair.toString());
-                    }
-                    
                     order.addAll(combination);
                 }
                 break;

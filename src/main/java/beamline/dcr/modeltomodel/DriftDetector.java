@@ -19,7 +19,7 @@ import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import distancemetrics.CommonNodesAndEdges;
 import distancemetrics.GraphEditDistance;
-import distancemetrics.JaccardDistance;
+import distancemetrics.JaccardDistance1D;
 import distancemetrics.WeightedGraphEditDistance;
 import helper.LinearRegression;
 import helper.Pair;
@@ -45,15 +45,12 @@ public class DriftDetector {
         return minPoints;
     }
     
-    /**
-     * Returns the number of concept drifts that have been detected from the models
-     * @throws DBSCANClusteringException 
-     */
-    public static ArrayList<DcrModel> trimModels(ArrayList<DcrModel> models, DcrModel referenceModel,
-            DistanceMetric<DcrModel> metric, boolean replace) throws DBSCANClusteringException {
+    public static ArrayList<DcrModel> transformData(ArrayList<DcrModel> models, DcrModel referenceModel,
+            DistanceMetric<DcrModel> metric, boolean replace, double sensitivityInput) throws DBSCANClusteringException {
+        int strictness = 20;
+        int index = strictness/2;
+        double sensitivity = sensitivityInput;
         
-        ArrayList<DcrModel> newList = new ArrayList<DcrModel>(models);
-       
         boolean[] elementRemoved = new boolean[models.size()];
         double[] similarityScore = new double[models.size()];
         
@@ -63,10 +60,6 @@ public class DriftDetector {
         
         //TODO Remove outliers before proceeding to improve function
         
-        int strictness = 25;
-        int index = strictness/2;
-        double sensitivity = 0.01;
-        
         int n = models.size();
         
         while (index < n-(strictness/2)) {
@@ -75,19 +68,32 @@ public class DriftDetector {
             
             for (int i = 0; i < strictness; ++i) {
                 xVals[i] = index-(strictness/2)+i;
-                yVals[i] = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, models.get(index-(strictness/2)+i));
+                yVals[i] = DcrSimilarity.jaccardSimilarity(referenceModel, models.get(index-(strictness/2)+i));
             }
             
             LinearRegression lg = new LinearRegression(xVals, yVals);
             
-//            System.out.println("Iteration: " + index + " Slope: " + String.format("%.5g%n", Math.abs(lg.getSlope())));
             if (Math.abs(lg.getSlope()) > sensitivity) {
-//                System.out.println("Stripping point");
                 elementRemoved[index] = true;
             }
             index++;
         }
-        
+        ArrayList<DcrModel> newList = new ArrayList<DcrModel>();
+        if (replace) {
+            newList = replace(models, elementRemoved);
+        } else {
+            for (int i = strictness/2; i < (elementRemoved.length-strictness/2); i++) {
+                if (elementRemoved[i] == false) {
+                    newList.add(models.get(i));
+                }
+            }
+        }
+        return newList;
+    }
+    
+    public static ArrayList<DcrModel> replace(ArrayList<DcrModel> models, boolean[] elementRemoved) {
+        ArrayList<DcrModel> newList = new ArrayList<DcrModel>(models);
+        int n = models.size();
         for (int i = 0; i < n; i++) {
             if (elementRemoved[i] == true) {
                 if (i != n && elementRemoved[i+1] == false) {
@@ -104,7 +110,7 @@ public class DriftDetector {
                     }
                 }
             }
-        }
+        } 
         return newList;
     }
     
@@ -171,10 +177,16 @@ public class DriftDetector {
         return false;
     }
     
-    /**
-     * @param predictedVals
-     * @param expectedVals
-     */
+    
+    public static double getAccuracy(int[] predictedVals, int[] expectedVals) {
+        int num = 0;
+        for (int i = 0; i < expectedVals.length; i++) {
+            if (predictedVals[i] == expectedVals[i]) num++;
+        }
+        return (double) num/expectedVals.length;
+    }
+
+    
     public static double getRootMeanSquareError(int[] predictedVals, int[] expectedVals) {
         return Math.sqrt(getMeanSquareError(predictedVals, expectedVals));
     }

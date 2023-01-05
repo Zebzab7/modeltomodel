@@ -1,5 +1,0 @@
-Metric,MSE,MSE-T,Precision, precision-T
-GED,1.2000000000000002,0.2
-CNE,1.2000000000000002,0.2
-JaccardDist,1.0,0.1
-Weighted GED,1.0,1.0

@@ -95,17 +95,29 @@ public class ModelComparison {
         return 2*precision*recall/(recall+precision);
     }
     public double getJaccardSimilarity(){
+//        Map<DcrModel.RELATION, Double> constraintWeight = new HashMap<>(){{
+//            put(DcrModel.RELATION.CONDITION, 0.15);
+//            put(DcrModel.RELATION.RESPONSE, 0.05);
+//            put(DcrModel.RELATION.PRECONDITION, 0.0);
+//            put(DcrModel.RELATION.MILESTONE, 0.0);
+//            put(DcrModel.RELATION.INCLUDE, 0.0);
+//            put(DcrModel.RELATION.EXCLUDE, 0.0);
+//            put(DcrModel.RELATION.NORESPONSE, 0.0);
+//            put(DcrModel.RELATION.SPAWN, 0.0);
+//        }};
         Map<DcrModel.RELATION, Double> constraintWeight = new HashMap<>(){{
-            put(DcrModel.RELATION.CONDITION, 0.15);
-            put(DcrModel.RELATION.RESPONSE, 0.05);
+            put(DcrModel.RELATION.CONDITION, 0.06);
+            put(DcrModel.RELATION.RESPONSE, 0.07);
             put(DcrModel.RELATION.PRECONDITION, 0.0);
             put(DcrModel.RELATION.MILESTONE, 0.0);
-            put(DcrModel.RELATION.INCLUDE, 0.0);
-            put(DcrModel.RELATION.EXCLUDE, 0.0);
+            put(DcrModel.RELATION.INCLUDE, 0.07);
+            put(DcrModel.RELATION.EXCLUDE, 0.13);
             put(DcrModel.RELATION.NORESPONSE, 0.0);
             put(DcrModel.RELATION.SPAWN, 0.0);
+            put(DcrModel.RELATION.SEQUENCE, 0.0);
         }};
-        double activityWeight = 0.8;
+        
+        double activityWeight = 0.67;
 
         double intersection;
         double union;

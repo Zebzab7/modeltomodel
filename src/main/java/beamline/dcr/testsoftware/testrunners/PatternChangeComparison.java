@@ -98,6 +98,8 @@ public class PatternChangeComparison {
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         StringBuilder xmlString = new StringBuilder();
         
+        double sensitivity = 0.005;
+        
         DcrModel referenceModel = new DcrModel();
         referenceModel.loadModel(modelPath);
 
@@ -119,7 +121,7 @@ public class PatternChangeComparison {
                 break;
         }
         
-        ArrayList<DcrModel> trimmedModels = DriftDetector.trimModels(models, referenceModel, new GraphEditDistance(), true);
+        ArrayList<DcrModel> trimmedModels = DriftDetector.transformData(models, referenceModel, new GraphEditDistance(), true, sensitivity);
         
         ModelComparison modelComparison = new ModelComparison(referenceModel);
         
@@ -153,7 +155,7 @@ public class PatternChangeComparison {
         
         ArrayList<DcrModel> models = new ArrayList<DcrModel>();
         
-        int driftStrength = 10;
+        int driftStrength = 5;
         int driftIteration = iterations/2;
         
         ModelAdaption modelAdaption = new ModelAdaption(referenceModel.getClone());

@@ -31,19 +31,17 @@ import beamline.dcr.view.DcrModelXML;
 public class BasicStreamDriftDetection {
     public static void main(String[] args) throws Exception {
         //Test parameters
-        int eventlogNumber = 101;
+        int eventlogNumber = 111;
         int relationsThreshold = 0;
         double sigDiff = 0.9;
-        String[] patternList = ("Condition Response").split(" ");
+        String[] patternList = ("Condition Response Exclude Include").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
-        int maxTraces = 10;
-        int traceSize = 10;
+        int maxTraces = 5;
+        int traceSize = 5;
         int observationsBeforeEvaluation = 2;
-        int logs = 1;
-        String[] dcrConstraints = ("Condition Response").split(" ");
+        int logs = 2;
+        String[] dcrConstraints = ("Condition Response Exclude Include").split(" ");
         //
-        
-        ModelRepository repo = new ModelRepository();
         
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
@@ -69,11 +67,16 @@ public class BasicStreamDriftDetection {
         
         sc.configure(coll);
         
-        DcrModel model101 = new DcrModel();
-        model101.loadModel(currentPath + "/groundtruthmodels/Process" + eventlogNumber +".xml");
-        repo.addModelToRep(model101);
-        repo.addModelToRep(model101.getClone());
+        DcrModel referenceModel = new DcrModel();
+        referenceModel.loadModel(currentPath + "/groundtruthmodels/Process" + eventlogNumber +".xml");
         
+        ArrayList<Integer> updateIndices = new ArrayList<Integer>();
+        
+        int comparisons = 0;
+        int drifts = 0;
+        
+        StringBuilder outputString 
+            = new StringBuilder("refSim, trueSim\n");
         
         for (int i = 0; i < logs; i++) {
             String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + (eventlogNumber+i) +".xml";
@@ -107,19 +110,12 @@ public class BasicStreamDriftDetection {
                 }
             }
             
-            DcrModel referenceModel = new DcrModel();
-            referenceModel.loadModel(groundTruthModelPath);
-            
             DcrModel groundTruthModel = new DcrModel();
             groundTruthModel.loadModel(groundTruthModelPath);
     
             // simulate stream
             int currentObservedEvents = 0;
             int currentIteration = 1;
-            
-            int comparisons = 0;
-            int drifts = 0;
-            
             
             while(currentObservedEvents < totalObservations) {
                 for (Map.Entry<String, Integer> traceExecutionEntry : traceExecutionTime.entrySet()) {
@@ -135,29 +131,26 @@ public class BasicStreamDriftDetection {
                         if (currentObservedEvents % observationsBeforeEvaluation == 0) {
                             
                             DcrModel discoveredModel = sc.getDcrModel();
-                            double simRef = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, discoveredModel);
-                            double simTrue = DcrSimilarity.graphEditDistanceSimilarity(groundTruthModel, discoveredModel);
+                            double simRef = DcrSimilarity.jaccardSimilarity(referenceModel, discoveredModel);
+                            double simTrue = DcrSimilarity.jaccardSimilarity(groundTruthModel, discoveredModel);
                             
-                            System.out.println("Similarity to reference: " + simRef);
-                            System.out.println("Similarity to true model: " + simTrue);
+                            outputString.append(simRef + "," + simTrue + "\n");
                             
-                            boolean changeDetected = false;
+//                            System.out.println("Similarity to reference: " + simRef);
+//                            System.out.println("Similarity to true model: " + simTrue);
+                            
                             comparisons++;
                             if (simRef < sigDiff) {
+                                updateIndices.add(comparisons);
                                 drifts++;
-                                changeDetected = true;
                                 referenceModel = discoveredModel;
-                            } else {
-                                changeDetected = false;
-                            }
-                            System.out.println();
+                            } 
                         }
                     }
                 }
                 currentIteration++;
-//                System.out.println(currentObservedEvents + " of " + totalObservations);
+                System.out.println(comparisons + " of " + totalObservations);
             }
-            System.out.println(drifts + " drifts out of " + comparisons + " comparisons");
             
             // Reset all trace indexes to 0 
             for (XLog traces : parsedXesFile){
@@ -167,7 +160,30 @@ public class BasicStreamDriftDetection {
                 }
             }
         }
-
+        System.out.println(drifts + " drifts out of " + comparisons + " comparisons");
+        System.out.println("Drifts at model no. ");
+        
+        StringBuilder outputStringIndices = new StringBuilder("Index\n");
+        for (int j = 0; j < updateIndices.size(); j++) {
+            System.out.print(updateIndices.get(j) + 1 + ",");
+            outputStringIndices.append(updateIndices.get(j) + "\n");
+        }
+        
+        System.out.println();
+        System.out.println("size: " + updateIndices.size());
+        
+        FileWriter myWriter 
+            = new FileWriter(currentPath + "/evaluations/BasicStreamDriftTest/" + "BasicStreamDriftTest-" 
+                    + java.time.LocalDate.now() + ".csv"/*,true*/);
+        myWriter.write(outputString.toString());
+        myWriter.close();
+        
+        myWriter 
+            = new FileWriter(currentPath + "/evaluations/BasicStreamDriftTest/" + "DriftIndices-" 
+                + java.time.LocalDate.now() + ".csv"/*,true*/);
+        myWriter.write(outputStringIndices.toString());
+        myWriter.close();
+        
         System.exit(0);
     }
 }

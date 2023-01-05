@@ -1,0 +1,5 @@
+Metric, MSE, RMSE, Accuracy
+GED,0.01,0.1,99.0
+CNE,0.01,0.1,99.0
+JaccardDist,0.0,0.0,100.0
+Weighted GED,0.03,0.17320508075688773,97.0

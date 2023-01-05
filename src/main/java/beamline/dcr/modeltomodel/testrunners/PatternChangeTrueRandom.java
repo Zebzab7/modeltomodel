@@ -32,7 +32,8 @@ public class PatternChangeTrueRandom {
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
             paths
             .filter(Files::isRegularFile)
-            .forEach(path -> {if(path.toString().endsWith("1.xml")) {
+            .forEach(path -> {if(path.toString().endsWith("101.xml") || path.toString().endsWith("25.xml") 
+                    || path.toString().endsWith("3.xml")) {
                 try {
                     String filenameFull = path.getFileName().toString();
                     String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
@@ -78,9 +79,10 @@ public class PatternChangeTrueRandom {
         DcrModel originalModel = new DcrModel();
         originalModel.loadModel(modelPath);
         
+        System.out.println(originalModel.getActivities().size());
         for (int i = 0; i <= totalIterations; i++) {
             
-            if(i % (totalIterations/20) == 0) {
+            if(i % (totalIterations/30) == 0) {
                 mutations++;
                 System.out.println("Number of errors: " + mutations);
             }
@@ -88,6 +90,7 @@ public class PatternChangeTrueRandom {
             modelAdaption = new ModelAdaption(originalModel.getClone());
             modelAdaption.randomMutation(mutations);
             DcrModel adaptedModel = modelAdaption.getModel();
+            
             
             xmlString.append(filename +",").append(mutations + ",");
             xmlString.append(DcrSimilarity.graphEditDistanceSimilarity(originalModel, adaptedModel) + ",");

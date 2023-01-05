@@ -26,12 +26,12 @@ public class DcrSimilarity {
     static double rMin = 0;
     
     public static Map<DcrModel.RELATION, Double> constraintWeight = new HashMap<>(){{
-        put(DcrModel.RELATION.CONDITION, 0.06);
-        put(DcrModel.RELATION.RESPONSE, 0.07);
+        put(DcrModel.RELATION.CONDITION, 0.15);
+        put(DcrModel.RELATION.RESPONSE, 0.15);
         put(DcrModel.RELATION.PRECONDITION, 0.0);
         put(DcrModel.RELATION.MILESTONE, 0.0);
-        put(DcrModel.RELATION.INCLUDE, 0.07);
-        put(DcrModel.RELATION.EXCLUDE, 0.13);
+        put(DcrModel.RELATION.INCLUDE, 0.15);
+        put(DcrModel.RELATION.EXCLUDE, 0.15);
         put(DcrModel.RELATION.NORESPONSE, 0.0);
         put(DcrModel.RELATION.SPAWN, 0.0);
         put(DcrModel.RELATION.SEQUENCE, 0.0);
@@ -100,7 +100,7 @@ public class DcrSimilarity {
         
         return 1-sim;
     }
-
+    
     public static double graphEditDistanceSimilarityWithWeights(DcrModel modelA, DcrModel modelB) {
         Set<String> actA = modelA.getActivities();
         Set<String> actB = modelB.getActivities();
@@ -122,11 +122,22 @@ public class DcrSimilarity {
             }
             relationsDiffDist += (constraintWeight.get(relationType)*sum); 
         }
+
+        Set<Triple<String,String,RELATION>> allRelations = union(modelA.getRelations(),modelB.getRelations());
         
-        double relationsDist = 0.0;
+        double allRelationsDist = 0.0;
+        for (RELATION relationType : RELATION.values()) {
+            int sum = 0;
+            for (Triple<String,String,RELATION> relation : allRelations) {
+                if (relation.getRight().equals(relationType)) {
+                    sum++;
+                }
+            }
+            allRelationsDist += (constraintWeight.get(relationType)*sum); 
+        }
         
-        double dist = (0.61*activitiesDiff.size()) + relationsDiffDist;
-        double sim = (0.61*dist)/(actA.size() + actB.size() + relationsDist);
+        double dist = (0.60*activitiesDiff.size()) + relationsDiffDist;
+        double sim = (dist)/(actA.size() + actB.size() + allRelationsDist);
         
         return 1-sim;
     }
@@ -136,7 +147,7 @@ public class DcrSimilarity {
     }
     
     public static double longestCommonSubtraceSimilarity(DcrModel modelA, DcrModel modelB) {
-        int numOfTraces = 10;
+        int numOfTraces = 20;
         
         ArrayList<ArrayList<String>> modelATraces = new ArrayList<ArrayList<String>>();
         ArrayList<ArrayList<String>> modelBTraces = new ArrayList<ArrayList<String>>();
@@ -177,32 +188,17 @@ public class DcrSimilarity {
         return avg;
     }
     
-    public static double featureBasedSimilarity (DcrModel modelA, DcrModel modelB) {
+//    public static double diceCoefficient(DcrModel modelA, DcrModel modelB) {
+//        return 1.0;
+//    }
         
-        return 1.0;
-    }
-    
-    public static double causalFootprints(DcrModel modelA, DcrModel modelB) {
-        // Look back links
-        // Look ahead links
-        
-        return 1.0;
-    }
-    
     /**
      * Helper functions
      */
-    
-    /**
-     * Returns a set representing the union between two sets (shallow copy)
-     */
-    public static <T> Set<T> union(Set<T> set1, Set<T> set2) {
-        Set<T> union = new HashSet<T>(set1);
-        union.retainAll(set2);
-        return union;
-    }
-    
     public static int longestCommonSubSequence(ArrayList<String> sequence1, ArrayList<String> sequence2) {
+        if (sequence1.size() == 0 || sequence2.size() == 0) {
+            return 0;
+        }
         return longestCommonSubSequenceRecursive(sequence1, sequence2, sequence1.size()-1, sequence2.size()-1);
     }
     
@@ -217,7 +213,7 @@ public class DcrSimilarity {
                 
                 if (i == 0 || j == 0) 
                     L[i][j] = 0; 
-                
+                 
                 else if (sequence1.get(i-1).equals(sequence2.get(j-1))) 
                     L[i][j] = L[i-1][j-1] + 1; 
                 
@@ -228,6 +224,8 @@ public class DcrSimilarity {
         return L[m][n]; 
     } 
     
+    
+    
     /**
      * Returns a set representing the intersection between two sets
      */
@@ -235,6 +233,15 @@ public class DcrSimilarity {
         Set<T> intersect = new HashSet<T>(set1);
         intersect.retainAll(set2);
         return intersect;
+    }
+    
+    /**
+     * Returns a set representing the union between two sets (shallow copy)
+     */
+    public static <T> Set<T> union(Set<T> set1, Set<T> set2) {
+        Set<T> union = new HashSet<T>(set1);
+        union.retainAll(set2);
+        return union;
     }
     
     /**

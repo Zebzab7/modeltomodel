@@ -23,12 +23,12 @@ public class PatternChangeSystematicRandom {
         String groundTruthModels = currentPath + "/groundtruthmodels";
         
        StringBuilder modelComparisonString = new StringBuilder("sep=,\nmodel,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapActivities," +
-            "GED,CNE,Jaccard,W-GED,LCS");
+            "GED,CNE,Jaccard,W-GED,LCS\n");
     
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
             paths
             .filter(Files::isRegularFile)
-            .forEach(path -> {if(path.toString().endsWith("101.xml")) {
+            .forEach(path -> {if(path.toString().endsWith("3.xml")) {
                 try {
                     String filenameFull = path.getFileName().toString();
                     String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
@@ -72,6 +72,8 @@ public class PatternChangeSystematicRandom {
         DcrModel referenceModel = new DcrModel();
         referenceModel.loadModel(modelPath);
         
+        System.out.println("size: " + referenceModel.getActivities().size());
+        
         for (int addActivitySerialInt = 0; addActivitySerialInt <= 3; addActivitySerialInt++){
             for (int addActivityParallelInt = 0; addActivityParallelInt <= 3; addActivityParallelInt++){
                 for (int deleteActivityInt = 0; deleteActivityInt <= 3; deleteActivityInt++){
@@ -80,7 +82,7 @@ public class PatternChangeSystematicRandom {
                             for (int removeConstraintInt = 0; removeConstraintInt <= 3; removeConstraintInt++){
                                 for (int swapActivitiesInt = 0; swapActivitiesInt <= 3; swapActivitiesInt++){
                                     
-                                    if(iteration % 10 == 0)
+                                    if(iteration % 1000 == 0)
                                     System.out.println("Iteration: " + iteration + " out of " + totalIterations);
                                     iteration++;
 
@@ -107,6 +109,7 @@ public class PatternChangeSystematicRandom {
                                     double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(referenceModel, adaptedModel);
                                     
                                     xmlString.append(GEDScore + "," + CNEScore + "," + JaccardScore + "," + WGEDScore + "," + LCSScore + "\n");
+//                                    xmlString.append(GEDScore + "," + CNEScore + "," + JaccardScore + "," + WGEDScore + "\n");
                                 }
                             }
                         }
