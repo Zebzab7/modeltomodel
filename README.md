@@ -1,8 +1,8 @@
 # Thesis code additions
 The following files have been added or modified
-1. /src/main/java/beamline/dcr/model/relations
+* /src/main/java/beamline/dcr/model/relations
   * DcrModelExecution.java
-2. /src/main/java/beamline/dcr/modeltomodel/
+* /src/main/java/beamline/dcr/modeltomodel/
   * DcrSimilarity.java
   * DriftDetector.java
   * ModelRepository.java
@@ -14,15 +14,15 @@ The following files have been added or modified
     * PatternChangeTrueRandom.java
     * StreamDriftDetection.java
     * TraceGenerator.java
-3. /src/main/java/beamline/dcr/testsoftware/
+* /src/main/java/beamline/dcr/testsoftware/
   * ModelAdaption.java
-4. /src/main/java/beamline/dcr/testrunners/
+* /src/main/java/beamline/dcr/testrunners/
   * PatternChangeComparison.java
-5. /src/main/java/distancemetrics
+* /src/main/java/distancemetrics
   * CommonNodesAndEdges.java
   * GraphEditDistance.java
   * JaccardDistance.java
-6. /src/main/java/helper
+* /src/main/java/helper
   * LinearRegression.java
   * Pair.java
 
