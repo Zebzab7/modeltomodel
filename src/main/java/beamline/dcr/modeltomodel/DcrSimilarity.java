@@ -26,16 +26,28 @@ public class DcrSimilarity {
     static double rMin = 0;
     
     public static Map<DcrModel.RELATION, Double> constraintWeight = new HashMap<>(){{
-        put(DcrModel.RELATION.CONDITION, 0.15);
-        put(DcrModel.RELATION.RESPONSE, 0.15);
+        put(DcrModel.RELATION.CONDITION, 0.10);
+        put(DcrModel.RELATION.RESPONSE, 0.10);
         put(DcrModel.RELATION.PRECONDITION, 0.0);
         put(DcrModel.RELATION.MILESTONE, 0.0);
-        put(DcrModel.RELATION.INCLUDE, 0.15);
-        put(DcrModel.RELATION.EXCLUDE, 0.15);
+        put(DcrModel.RELATION.INCLUDE, 0.10);
+        put(DcrModel.RELATION.EXCLUDE, 0.10);
         put(DcrModel.RELATION.NORESPONSE, 0.0);
         put(DcrModel.RELATION.SPAWN, 0.0);
         put(DcrModel.RELATION.SEQUENCE, 0.0);
     }};
+    
+//    static Map<DcrModel.RELATION, Double> constraintWeight = new HashMap<>(){{
+//        put(DcrModel.RELATION.CONDITION, 0.06);
+//        put(DcrModel.RELATION.RESPONSE, 0.07);
+//        put(DcrModel.RELATION.PRECONDITION, 0.0);
+//        put(DcrModel.RELATION.MILESTONE, 0.0);
+//        put(DcrModel.RELATION.INCLUDE, 0.07);
+//        put(DcrModel.RELATION.EXCLUDE, 0.13);
+//        put(DcrModel.RELATION.NORESPONSE, 0.0);
+//        put(DcrModel.RELATION.SPAWN, 0.0);
+//        put(DcrModel.RELATION.SEQUENCE, 0.0);
+//    }};
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         String rootPath = System.getProperty("user.dir");

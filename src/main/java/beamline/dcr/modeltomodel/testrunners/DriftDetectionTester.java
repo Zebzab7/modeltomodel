@@ -32,7 +32,7 @@ public class DriftDetectionTester {
         String modelPath = rootPath + "/src/main/java/beamline/dcr/testsoftware/groundtruthmodels/";
 
         DcrModel referenceModel = new DcrModel();
-        referenceModel.loadModel(modelPath + "process101.xml");
+        referenceModel.loadModel(modelPath + "process25.xml");
 
         double sensitivity = 0.005;
         

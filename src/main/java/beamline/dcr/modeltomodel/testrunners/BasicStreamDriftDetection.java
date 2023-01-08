@@ -34,13 +34,14 @@ public class BasicStreamDriftDetection {
         int eventlogNumber = 111;
         int relationsThreshold = 0;
         double sigDiff = 0.9;
-        String[] patternList = ("Condition Response Exclude Include").split(" ");
+        String[] patternList = ("Condition Response Include Exclude").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
         int maxTraces = 5;
         int traceSize = 5;
         int observationsBeforeEvaluation = 2;
         int logs = 2;
-        String[] dcrConstraints = ("Condition Response Exclude Include").split(" ");
+        String[] dcrConstraints = ("Condition Response Include Exclude").split(" ");
+        int[] eventLogNumbers = {111, 112};
         //
         
         String rootPath = System.getProperty("user.dir");
@@ -78,9 +79,21 @@ public class BasicStreamDriftDetection {
         StringBuilder outputString 
             = new StringBuilder("refSim, trueSim\n");
         
+        ArrayList<DcrModel> models = new ArrayList<DcrModel>();
+        DcrModel model101 = new DcrModel();
+        model101.loadModel(currentPath + "/groundtruthmodels/Process101.xml");
+        DcrModel model25 = new DcrModel();
+        model25.loadModel(currentPath + "/groundtruthmodels/Process25.xml");
+        
+        models.add(model101);
+        models.add(model25);
+        
         for (int i = 0; i < logs; i++) {
-            String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + (eventlogNumber+i) +".xml";
-            String streamPath = currentPath + "/eventlogs/eventlog_graph"+(eventlogNumber+i)+ ".xes";
+//            String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + (eventlogNumber+i) +".xml";
+//            String streamPath = currentPath + "/eventlogs/eventlog_graph"+(eventlogNumber+i)+ ".xes";
+            
+            String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + eventLogNumbers[i] +".xml";
+            String streamPath = currentPath + "/eventlogs/eventlog_graph" + eventLogNumbers[i]+ ".xes";
             
             File xesFile = new File(streamPath);
             

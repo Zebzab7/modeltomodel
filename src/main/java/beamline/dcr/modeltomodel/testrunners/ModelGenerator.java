@@ -29,9 +29,21 @@ public class ModelGenerator {
         
         ModelAdaption modelAdaption = new ModelAdaption(model101.getClone());
         
-        modelAdaption.everyMutation(1);
+        modelAdaption.everyMutation(3);
+        
+        System.out.println(DcrSimilarity.jaccardSimilarity(model101, modelAdaption.getModel()));
         
         (new DcrModelXML(modelAdaption.getModel())).toFile(currentPath + "/groundtruthmodels/" + "Process" + (122));
+        referenceModels.add(modelAdaption.getModel().getClone());
+        
+        modelAdaption.everyMutation(3);
+        
+        (new DcrModelXML(modelAdaption.getModel())).toFile(currentPath + "/groundtruthmodels/" + "Process" + (123));
+        referenceModels.add(modelAdaption.getModel().getClone());
+        
+        modelAdaption.everyMutation(3);
+        
+        (new DcrModelXML(modelAdaption.getModel())).toFile(currentPath + "/groundtruthmodels/" + "Process" + (124));
         referenceModels.add(modelAdaption.getModel().getClone());
         
         System.out.println(DcrSimilarity.jaccardSimilarity(model101, modelAdaption.getModel()));

@@ -57,7 +57,6 @@ public class DriftDetector {
         for (int i = 0; i < models.size(); i++) {
             similarityScore[i] = DcrSimilarity.jaccardSimilarity(referenceModel, models.get(i));
         }
-        
         //TODO Remove outliers before proceeding to improve function
         
         int n = models.size();

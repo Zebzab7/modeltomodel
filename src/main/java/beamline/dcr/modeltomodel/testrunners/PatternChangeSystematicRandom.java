@@ -28,7 +28,7 @@ public class PatternChangeSystematicRandom {
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
             paths
             .filter(Files::isRegularFile)
-            .forEach(path -> {if(path.toString().endsWith("3.xml")) {
+            .forEach(path -> {if(path.toString().endsWith("25.xml") ) {
                 try {
                     String filenameFull = path.getFileName().toString();
                     String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));

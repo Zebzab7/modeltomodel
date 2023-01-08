@@ -46,15 +46,15 @@ public class StreamDriftDetection {
         int eventlogNumber = 121;
         double eps = 0.1;
         int minPoints = 5;
-        int observationsBeforeEvaluation = 5;
+        int observationsBeforeEvaluation = 4;
         int logs = 2;
         String patterns = "Condition Response Include Exclude";
         DRIFT driftType = DRIFT.SUDDEN;
-        double sensitivity = 0.05;
+        double sensitivity = 0.008;
         
         boolean replace = false;
         
-        int iterations = 10;
+        int iterations = 1;
         
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
@@ -68,6 +68,7 @@ public class StreamDriftDetection {
         for (int i = 0; i < iterations; i++) {
             int drifts = simulateDrift(eventlogNumber, eps, minPoints, 
                     patterns, observationsBeforeEvaluation, logs, driftType, replace, sensitivity);
+            System.out.println("iteration:" + i + ": " + drifts + " drifts detected");
             expectedVals[i] = logs-1;
             predictedVals[i] = drifts;
         }
@@ -123,8 +124,19 @@ public class StreamDriftDetection {
         XesXmlParser xesParser = new XesXmlParser();
         ArrayList<XLog> traceLogs = new ArrayList<XLog>();
         
-        for (int i = 0; i < logs; i++) {
-            String streamPath = currentPath + "/eventlogs/eventlog_graph"+ (eventlogNumber+i) + ".xes";
+        ArrayList<DcrModel> models = new ArrayList<DcrModel>();
+        DcrModel model101 = new DcrModel();
+        model101.loadModel(currentPath + "/groundtruthmodels/Process101.xml");
+        DcrModel model25 = new DcrModel();
+        model25.loadModel(currentPath + "/groundtruthmodels/Process25.xml");
+        
+        models.add(model101);
+        models.add(model25);
+        
+        int[] eventLogNumbers = {121, 122};
+        
+        for (int i = 0; i < eventLogNumbers.length; i++) {
+            String streamPath = currentPath + "/eventlogs/eventlog_graph"+ eventLogNumbers[i] + ".xes";
             
             File xesFile = new File(streamPath);
             
@@ -146,6 +158,8 @@ public class StreamDriftDetection {
         int drifts = 0;
         
         int comparisons = 0;
+        
+        int iteration = 0;
         
         int totalObservations = traceExecutionOrder.size();
         for (int i = 0; i < totalObservations; i++) {
@@ -178,11 +192,20 @@ public class StreamDriftDetection {
                     
                     // If we detect a drift its time to update model
                     if (discoveredDrifts > 0) {
-                        updateIndices.add(comparisons);
+                        
+                        // Prepare list of indices where drift was detected
+                        ArrayList<Integer> clusters = pair.getRight();
+                        for (int j = 0; j < clusters.size(); j++) {
+                            clusters.set(j, clusters.get(j)+(100*iteration));
+                        }
+                        clusters.remove(clusters.size()-1);
+                        
+                        updateIndices.addAll(clusters);
                         baseline = discoveredModel;
                         drifts += discoveredDrifts;
                         System.out.println("Drift detected, updating model");
                     }
+                    
                     
                     // Remove all elements
                     int n = discoveredModels.size();
@@ -190,6 +213,7 @@ public class StreamDriftDetection {
                         discoveredModels.remove(0);
                     }
                     
+                    iteration++;
                 }
             }
             System.out.println("Observed " + i + " out of " + totalObservations + " observations");

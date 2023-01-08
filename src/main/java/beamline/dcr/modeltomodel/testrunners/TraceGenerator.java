@@ -37,7 +37,7 @@ public class TraceGenerator {
     private static int eventLogNumber = 101;
     private static int traceLength = 30;
     private static int traces = 20;
-    private static int modelVariations = 2;
+    private static int modelVariations = 4;
     private static int driftStrength = 10;
     private static int multiplier = 4;
     
@@ -93,6 +93,7 @@ public class TraceGenerator {
                 System.out.println(fullTrace.toString());
             }
             saveLog(currentPath + "/eventlogs/eventlog_graph" + (eventLogNumber+k+10), generatedTraces);
+            saveLog(currentPath + "/eventlogs/eventlog_graph" + (121+k), generatedTraces);
         }
         return true;
     }
