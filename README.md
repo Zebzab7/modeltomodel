@@ -1,6 +1,10 @@
-1. First list item
-   * First nested list item
-     * Second nested list item
+# Thesis code additions
+The following files have been added or modified
+1. /src/main/java/beamline/dcr
+  * /DcrModelExecution.java
+  * /testsoftware
+    * /testrunners
+      */PatternChangeComparison.java
 
 # DCR miner test
 This miner is constructed as a product of the thesis Online Discovery and Model-to-Model Comparison of DCR Models from Event Streams by Lasse Helm Trige Starklit.
