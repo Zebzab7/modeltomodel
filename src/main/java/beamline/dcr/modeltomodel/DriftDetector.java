@@ -19,7 +19,7 @@ import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import distancemetrics.CommonNodesAndEdges;
 import distancemetrics.GraphEditDistance;
-import distancemetrics.JaccardDistance1D;
+import distancemetrics.JaccardDistance;
 import distancemetrics.WeightedGraphEditDistance;
 import helper.LinearRegression;
 import helper.Pair;

@@ -17,14 +17,14 @@ import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import distancemetrics.CommonNodesAndEdges;
 import distancemetrics.GraphEditDistance;
-import distancemetrics.JaccardDistance1D;
+import distancemetrics.JaccardDistance;
 import distancemetrics.WeightedGraphEditDistance;
 
 public class DriftDetectionTester {
     
     static ArrayList<DistanceMetric<DcrModel>> metrics = new ArrayList<DistanceMetric<DcrModel>>
         (Arrays.asList(new GraphEditDistance(), new CommonNodesAndEdges(), 
-                new JaccardDistance1D(), new WeightedGraphEditDistance()));
+                new JaccardDistance(), new WeightedGraphEditDistance()));
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, DBSCANClusteringException {
         String rootPath = System.getProperty("user.dir");

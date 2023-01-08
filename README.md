@@ -1,10 +1,30 @@
 # Thesis code additions
 The following files have been added or modified
-1. /src/main/java/beamline/dcr
-  * /DcrModelExecution.java
-  * /testsoftware
-    * /testrunners
-      */PatternChangeComparison.java
+1. /src/main/java/beamline/dcr/model/relations
+  * DcrModelExecution.java
+2. /src/main/java/beamline/dcr/modeltomodel/
+  * DcrSimilarity.java
+  * DriftDetector.java
+  * ModelRepository.java
+  * testrunners/
+    * BasicStreamDriftDetection.java
+    * DriftDetectionTester.java
+    * ModelGenerator.java
+    * PatternChangeSystematicRandom.java
+    * PatternChangeTrueRandom.java
+    * StreamDriftDetection.java
+    * TraceGenerator.java
+3. /src/main/java/beamline/dcr/testsoftware/
+  * ModelAdaption.java
+4. /src/main/java/beamline/dcr/testrunners/
+  * PatternChangeComparison.java
+5. /src/main/java/distancemetrics
+  * CommonNodesAndEdges.java
+  * GraphEditDistance.java
+  * JaccardDistance.java
+6. /src/main/java/helper
+  * LinearRegression.java
+  * Pair.java
 
 # DCR miner test
 This miner is constructed as a product of the thesis Online Discovery and Model-to-Model Comparison of DCR Models from Event Streams by Lasse Helm Trige Starklit.

@@ -32,7 +32,7 @@ import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import beamline.dcr.view.DcrModelXML;
 import distancemetrics.GraphEditDistance;
-import distancemetrics.JaccardDistance1D;
+import distancemetrics.JaccardDistance;
 import distancemetrics.WeightedGraphEditDistance;
 import helper.Pair;
 
@@ -185,8 +185,8 @@ public class StreamDriftDetection {
                     
                     // Trim models
                     ArrayList<DcrModel> trimmedModels 
-                        = DriftDetector.transformData(discoveredModels, baseline, new JaccardDistance1D(), replace, sensitivity);
-                    Pair<Integer, ArrayList<Integer>> pair = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new JaccardDistance1D());
+                        = DriftDetector.transformData(discoveredModels, baseline, new JaccardDistance(), replace, sensitivity);
+                    Pair<Integer, ArrayList<Integer>> pair = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new JaccardDistance());
                     
                     int discoveredDrifts = pair.getLeft();
                     

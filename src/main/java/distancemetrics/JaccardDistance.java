@@ -6,7 +6,7 @@ import org.christopherfrantz.dbscan.DistanceMetric;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.modeltomodel.DcrSimilarity;
 
-public class JaccardDistance1D implements DistanceMetric<DcrModel> {
+public class JaccardDistance implements DistanceMetric<DcrModel> {
 
     @Override
     public double calculateDistance(DcrModel arg0, DcrModel arg1) throws DBSCANClusteringException {

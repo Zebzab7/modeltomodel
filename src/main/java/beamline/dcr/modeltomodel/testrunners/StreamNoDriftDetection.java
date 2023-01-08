@@ -31,7 +31,7 @@ import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import beamline.dcr.view.DcrModelXML;
 import distancemetrics.GraphEditDistance;
-import distancemetrics.JaccardDistance1D;
+import distancemetrics.JaccardDistance;
 import distancemetrics.WeightedGraphEditDistance;
 
 public class StreamNoDriftDetection {
@@ -150,9 +150,9 @@ public class StreamNoDriftDetection {
         }
         
         ArrayList<DcrModel> trimmedModels 
-            = DriftDetector.transformData(discoveredModels, groundTruthModel, new JaccardDistance1D(), true, sensitivity);
-        int driftsTruncated = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new JaccardDistance1D()).getLeft();
-        int driftsNoTruncation = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new JaccardDistance1D()).getLeft();
+            = DriftDetector.transformData(discoveredModels, groundTruthModel, new JaccardDistance(), true, sensitivity);
+        int driftsTruncated = DriftDetector.DBSCAN(trimmedModels, eps, minPoints, new JaccardDistance()).getLeft();
+        int driftsNoTruncation = DriftDetector.DBSCAN(discoveredModels, eps, minPoints, new JaccardDistance()).getLeft();
         System.out.println("With truncation: " + driftsTruncated + " drifts detected.");
         System.out.println("Without truncation: " + driftsNoTruncation + " drifts detected.");
         System.exit(0);
