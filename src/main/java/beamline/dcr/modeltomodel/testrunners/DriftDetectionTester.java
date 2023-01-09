@@ -37,10 +37,10 @@ public class DriftDetectionTester {
         double sensitivity = 0.005;
         
         boolean trim = true;
-        boolean replace = true;
+        boolean replace = false;
         
-        double eps = DriftDetector.getEps();
-        int minPoints = DriftDetector.getMinPoints();
+        double eps = 0.15;
+        int minPoints = 5;
         
         // Initialize expected values and simulate data sets of process models
         int iterations = 100;

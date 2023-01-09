@@ -44,13 +44,13 @@ public class StreamDriftDetection {
     public static void main(String[] args) throws Exception {
         updateIndices = new ArrayList<Integer>();
         int eventlogNumber = 121;
-        double eps = 0.1;
+        double eps = 0.15;
         int minPoints = 5;
         int observationsBeforeEvaluation = 4;
         int logs = 2;
         String patterns = "Condition Response Include Exclude";
-        DRIFT driftType = DRIFT.SUDDEN;
-        double sensitivity = 0.008;
+        DRIFT driftType = DRIFT.GRADUAL;
+        double sensitivity = 0.005;
         
         boolean replace = false;
         
@@ -147,38 +147,58 @@ public class StreamDriftDetection {
         StringBuilder outputString 
             = new StringBuilder("baseline-sim, discover-sim\n");
         
+        
         DcrModel baseline = new DcrModel();
-        baseline.loadModel(currentPath + "/groundtruthmodels/Process" + (eventlogNumber) +".xml");
+//        baseline.loadModel(currentPath + "/groundtruthmodels/Process" + (eventlogNumber) +".xml");
         
         DcrModel groundTruthModel = new DcrModel();
         groundTruthModel.loadModel(currentPath + "/groundtruthmodels/Process" + (eventlogNumber) +".xml");
-        
+
+
         ArrayList<Pair<String, String>> traceExecutionOrder = getExecutionOrderFromDriftType(traceLogs, driftType);
+        ArrayList<Pair<String, String>> initExecutionOrder = new ArrayList<Pair<String, String>>(traceExecutionOrder);
 
         int drifts = 0;
-        
-        int comparisons = 0;
         
         int iteration = 0;
         
         int totalObservations = traceExecutionOrder.size();
+        
+        for (int i = 0; i < 400; i++) {
+            Pair<String, String> event = initExecutionOrder.get(i);
+            String traceID = event.getLeft();
+            String activity = event.getRight();
+            sc.consumeEvent(traceID, activity);
+        }
+        
         for (int i = 0; i < totalObservations; i++) {
             Pair<String, String> event = traceExecutionOrder.get(i);
             String traceID = event.getLeft();
             String activity = event.getRight();
             sc.consumeEvent(traceID, activity);
 
+            
             // Discover model
             if (i % observationsBeforeEvaluation == 0) {
                 DcrModel discoveredModel = sc.getDcrModel();
                 discoveredModels.add(discoveredModel);
+                
+                // Initialize first baseline run
+                if (i == 4) {
+                    DcrModel oldModel = baseline.getClone();
+                    System.out.println(discoveredModel.getActivities());
+                    System.out.println(discoveredModel.getRelations());
+                    baseline = discoveredModel.getClone();
+//                    System.out.println("sim: " + DcrSimilarity.jaccardSimilarity(baseline, oldModel));
+                    System.out.println();
+                }
+                
                 
                 double simRef = DcrSimilarity.jaccardSimilarity(baseline, discoveredModel);
                 double simTrue = DcrSimilarity.jaccardSimilarity(groundTruthModel, discoveredModel);
 
                 outputString.append(simRef + "," + simTrue + "\n");
                 
-                comparisons++;
                 
                 // Determine if we should look for drifts
                 if (discoveredModels.size() == 100) {
@@ -199,8 +219,8 @@ public class StreamDriftDetection {
                             clusters.set(j, clusters.get(j)+(100*iteration));
                         }
                         clusters.remove(clusters.size()-1);
-                        
                         updateIndices.addAll(clusters);
+
                         baseline = discoveredModel;
                         drifts += discoveredDrifts;
                         System.out.println("Drift detected, updating model");
@@ -271,7 +291,7 @@ public class StreamDriftDetection {
                     orders.add(getRandomExecutionOrderFromLog(traceLogs.get(i), traceCurrentIndex));
                 }
                 
-                double trimPercentage = 20;
+                double trimPercentage = 40;
                 int numOfElementsTrimmed = (int) (orders.get(0).size()*(trimPercentage/100.0));
                 
                 for (int i = 0; i < orders.size()-1; i++) {

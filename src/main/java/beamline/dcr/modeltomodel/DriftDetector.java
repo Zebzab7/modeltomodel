@@ -26,25 +26,6 @@ import helper.Pair;
 
 public class DriftDetector {
 
-    static double eps = 0.15;
-    static int minPoints = 5;
-    
-    public static void setEps(double eps) {
-        DriftDetector.eps = eps;
-    }
-    
-    public static void setMinPoints(int minPoints) {
-        DriftDetector.minPoints = minPoints;
-    }
-    
-    public static double getEps() {
-        return eps;
-    }
-    
-    public static int getMinPoints() {
-        return minPoints;
-    }
-    
     public static ArrayList<DcrModel> transformData(ArrayList<DcrModel> models, DcrModel referenceModel,
             DistanceMetric<DcrModel> metric, boolean replace, double sensitivityInput) throws DBSCANClusteringException {
         int strictness = 20;
