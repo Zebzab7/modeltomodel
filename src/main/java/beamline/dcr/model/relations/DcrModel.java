@@ -25,6 +25,8 @@ public class DcrModel {
 	private Set<Triple<String, String, RELATION>> relations = new HashSet<Triple<String, String, RELATION>>();
 	private HashMap<String, String> labelMappings = new HashMap<String, String>();
 	
+	HashMap<String, String> subActivities = new HashMap<String, String>();
+	
 	public enum RELATION {
 		PRECONDITION,
 		CONDITION,
@@ -55,6 +57,9 @@ public class DcrModel {
 	}
 	public void addActivity(String id){
 		activites.add(id);
+	}
+	public void addSubActivity(String subActivity, String parent) {
+	    subActivities.put(subActivity, parent);
 	}
 	public void addActivities(Set<String> activities){
 		activites.addAll(activities);
@@ -120,6 +125,7 @@ public class DcrModel {
 		//Set activity list
 		NodeList eventList = doc.getElementsByTagName("events").item(0).getChildNodes();
 		
+		// TODO Extend capability to include sub-sub and sub-sub-sub activities etc.
 		for (int i = 0; i < eventList.getLength(); i++) {
 			Node activity = eventList.item(i);
 			if (activity.getNodeName().equals("event")){
@@ -127,12 +133,15 @@ public class DcrModel {
 				String activityId = eventElement.getAttribute("id");
 				addActivity(activityId);
 				NodeList childNodes = activity.getChildNodes();
-				System.out.println("I am activity: " + activityId);
-				System.out.println(" with: " + childNodes.getLength() + " childNodes");
+				
+				// Add any that may exist sub activities
 				for (int j = 0; j < childNodes.getLength(); j++) {
 				    Node childActivity = childNodes.item(j);
 				    if (childActivity.getNodeName().equals("event")) {
-				        System.out.println("Yoo");
+				        Element childEventElement = (Element) childActivity;
+				        String childActivityId = childEventElement.getAttribute("id");
+				        addActivity(childActivityId);
+				        addSubActivity(childActivityId, activityId);
 				    }
                 }
 			}

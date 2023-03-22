@@ -40,6 +40,8 @@ public class Test {
             traces.add(trace); 
         }
         
+        System.out.println(CRModel.getActivities().toString());
+        
         for (int i = 0; i < traces.size(); i++) {
 //            System.out.println(traces.get(i));
             System.out.println(allTracesLabels.get(i));
