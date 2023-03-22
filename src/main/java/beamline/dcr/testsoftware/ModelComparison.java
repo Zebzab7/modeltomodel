@@ -26,6 +26,12 @@ public class ModelComparison {
     public ModelComparison() {
 
     }
+    public DcrModel getOriginalDcrModel() {
+        return originalDcrModel;
+    }
+    public DcrModel getComparativeDcrModel() {
+        return comparativeDcrModel;
+    }
     public ModelComparison(DcrModel dcrModel) {
         this.originalDcrModel = dcrModel;
     }

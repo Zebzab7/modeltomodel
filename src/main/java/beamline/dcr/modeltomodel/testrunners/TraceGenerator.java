@@ -82,12 +82,14 @@ public class TraceGenerator {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         
+        TraceGenerator traceGenerator = new TraceGenerator();
+        
         for (int k = 0; k < modelVariations; k++) {
             LinkedHashMap<String, List<String>> generatedTraces = new LinkedHashMap<String, List<String>>();
             DcrModel model = models.get(k);
             
             for (int i = 0; i < traces; i++) {
-                ArrayList<String> fullTrace = generateRandomTraceFromModel(model.getClone(), traceLength);
+                ArrayList<String> fullTrace = traceGenerator.generateRandomTraceFromModel(model.getClone(), traceLength);
                 
                 generatedTraces.put("Trace " + i + "-" + getUniqueID(), fullTrace);
                 System.out.println(fullTrace.toString());
@@ -98,7 +100,39 @@ public class TraceGenerator {
         return true;
     }
     
-    public static ArrayList<String> generateRandomTraceFromModel(DcrModel model, int traceLength) {
+    public ArrayList<String> generateAlternateTraceFromModel(DcrModel model, int traceLength){
+        DcrModelExecution execution = new DcrModelExecution(model.getClone());
+        ArrayList<String> executionOrder = new ArrayList<String>(model.getActivities());
+        ArrayList<String> visited = new ArrayList<String>();
+        for (int j = 0; j < traceLength; j++) {
+            
+            Collections.shuffle(executionOrder);
+            boolean found = false;
+            
+            if (rand.nextDouble() < 0.95) {
+                for (int i = 0; i < executionOrder.size(); i++) {
+                    if (execution.isPending(executionOrder.get(i))) {
+                        if (execution.executeActivity(executionOrder.get(i))) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!found) {
+                for (int i = 0; i < executionOrder.size(); i++) {
+                    if (execution.executeActivity(executionOrder.get(i))) {
+                        break;
+                    }
+                }
+            }
+        }
+        
+        ArrayList<String> fullTrace = execution.getTrace();
+        return fullTrace;
+    }
+    
+    public ArrayList<String> generateRandomTraceFromModel(DcrModel model, int traceLength) {
         DcrModelExecution execution = new DcrModelExecution(model.getClone());
         ArrayList<String> executionOrder = new ArrayList<String>(model.getActivities());
         
@@ -106,7 +140,6 @@ public class TraceGenerator {
         for (int j = 0; j < traceLength; j++) {
             
             Collections.shuffle(executionOrder);
-//            System.out.println(executionOrder);
             boolean found = false;
             
             if (rand.nextDouble() < 0.95) {

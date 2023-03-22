@@ -21,7 +21,7 @@ import beamline.dcr.testsoftware.ModelComparison;
 
 public class DcrSimilarity {
     
-    static int traceLength = 10;
+    static int traceLength = 50;
     static double rMax = 1000;
     static double rMin = 0;
     
@@ -79,6 +79,61 @@ public class DcrSimilarity {
         return modelComparison.getJaccardSimilarity();
     }
     
+    public static double levenshteinDistanceSimilarity(DcrModel modelA, DcrModel modelB) {
+        int numOfTraces = 1;
+        TraceGenerator traceGenerator = new TraceGenerator();
+        
+        ArrayList<ArrayList<String>> modelATraces = new ArrayList<ArrayList<String>>();
+        ArrayList<ArrayList<String>> modelBTraces = new ArrayList<ArrayList<String>>();
+        
+        for (int i = 0; i < numOfTraces; i++) {
+            modelATraces.add(traceGenerator.generateRandomTraceFromModel(modelA, traceLength));
+            modelBTraces.add(traceGenerator.generateRandomTraceFromModel(modelB, traceLength));
+        }
+        
+        ArrayList<String> trace1 = modelATraces.get(0);
+        ArrayList<String> trace2 = modelBTraces.get(0);
+        
+        double dist = levenshteinDistance(trace1, trace2);
+        
+        return 1.0;
+    }
+    
+    
+    public static <T> double levenshteinDistance(ArrayList<T> seq1, ArrayList<T> seq2) {
+        int[][] dp = new int[seq1.size() + 1][seq2.size() + 1];
+
+        for (int i = 0; i <= seq1.size(); i++) {
+            for (int j = 0; j <= seq2.size(); j++) {
+                if (i == 0) {
+                    dp[i][j] = j;
+                }
+                else if (j == 0) {
+                    dp[i][j] = i;
+                }
+                else {
+                    dp[i][j] = Math.min(dp[i - 1][j - 1] 
+                     + costOfSubstitution(seq1.get(i-1), seq2.get(j - 1)), 
+                      Math.min(dp[i - 1][j] + 1, 
+                      dp[i][j - 1] + 1));
+                }
+            }
+        }
+
+        return dp[seq1.size()][seq2.size()];
+    }
+    
+    private static <T> int costOfSubstitution(T i, T j) {
+//        System.out.println();
+//        System.out.println("i: " + i);
+//        System.out.println("j: " + j);
+        if (i.equals(j)) {
+//            System.out.println("yes!");
+            return 0;
+        }
+        return 1;
+    }
+
     /*
      * Returns similarity based on common nodes and edges of graphs
      */
@@ -161,12 +216,14 @@ public class DcrSimilarity {
     public static double longestCommonSubtraceSimilarity(DcrModel modelA, DcrModel modelB) {
         int numOfTraces = 20;
         
+        TraceGenerator traceGenerator = new TraceGenerator();
+        
         ArrayList<ArrayList<String>> modelATraces = new ArrayList<ArrayList<String>>();
         ArrayList<ArrayList<String>> modelBTraces = new ArrayList<ArrayList<String>>();
         
         for (int i = 0; i < numOfTraces; i++) {
-            modelATraces.add(TraceGenerator.generateRandomTraceFromModel(modelA, traceLength));
-            modelBTraces.add(TraceGenerator.generateRandomTraceFromModel(modelB, traceLength));
+            modelATraces.add(traceGenerator.generateRandomTraceFromModel(modelA, traceLength));
+            modelBTraces.add(traceGenerator.generateRandomTraceFromModel(modelB, traceLength));
         }
         
         double complianceDegreeSum = 0;

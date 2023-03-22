@@ -7,6 +7,7 @@ import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.view.DcrModelXML;
 import distancemetrics.GraphEditDistance;
+import distancemetrics.JaccardDistance;
 
 import org.christopherfrantz.dbscan.DBSCANClusteringException;
 import org.xml.sax.SAXException;
@@ -50,7 +51,7 @@ public class PatternChangeComparison {
 
         for (DRIFT driftType : DRIFT.values()) {
             StringBuilder modelComparisonString 
-            = new StringBuilder("sep=,\nmodel,GED,CNE,Jaccard,W-GED,LCS,GED-T,CNE-T,Jaccard-T,W-GED-T,LCS-T\n");
+            = new StringBuilder("model,Jac, JacTrim\n");
             
             try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
                 paths
@@ -79,7 +80,7 @@ public class PatternChangeComparison {
             try {
                 FileWriter myWriter 
                 = new FileWriter(currentPath + "/evaluations/driftChange/" + driftType.toString() 
-                    + "-" + noiseString + "-" + java.time.LocalDate.now() + ".csv"/*,true*/);
+                    + "-" + noiseString + "-" + java.time.LocalDate.now() + "-" + "GED" + ".csv"/*,true*/);
                 myWriter.write(modelComparisonString.toString());
                 myWriter.close();
                 
@@ -121,31 +122,23 @@ public class PatternChangeComparison {
                 break;
         }
         
-        ArrayList<DcrModel> trimmedModels = DriftDetector.transformData(models, referenceModel, new GraphEditDistance(), true, sensitivity);
+        ArrayList<DcrModel> trimmedModels = DriftDetector.transformData(models, referenceModel, new JaccardDistance(), false, sensitivity);
         
-        ModelComparison modelComparison = new ModelComparison(referenceModel);
+        double JaccardScore = 0;
+        double JaccardScore2 = 0;
         
         for (int i = 0; i < models.size(); i++) {
-            modelComparison.loadComparativeModel(trimmedModels.get(i));
+            JaccardScore = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, models.get(i));
             
-            double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, models.get(i));
-            double CNEScore = DcrSimilarity.commonNodesAndEdgesSimilarity(referenceModel, models.get(i));
-            double JaccardScore = DcrSimilarity.jaccardSimilarity(referenceModel, models.get(i));
-            double WGEDScore = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, models.get(i));
-            double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(referenceModel, models.get(i));
+            if (i < trimmedModels.size()) {
+                JaccardScore2 = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, trimmedModels.get(i));
+            } else {
+                JaccardScore2 = 0;
+            }
             
             xmlString.append(filename + ",");
-            xmlString.append(GEDScore+ "," + CNEScore + "," + JaccardScore + "," + WGEDScore + "," + LCSScore + ",");
-            
-            modelComparison.loadComparativeModel(models.get(i));
-            
-            GEDScore = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, trimmedModels.get(i));
-            CNEScore = DcrSimilarity.commonNodesAndEdgesSimilarity(referenceModel, trimmedModels.get(i));
-            JaccardScore = DcrSimilarity.jaccardSimilarity(referenceModel, trimmedModels.get(i));
-            WGEDScore = DcrSimilarity.graphEditDistanceSimilarityWithWeights(referenceModel, trimmedModels.get(i));
-            LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(referenceModel, trimmedModels.get(i));
-            
-            xmlString.append(GEDScore+ "," + CNEScore + "," + JaccardScore + "," + WGEDScore + "," + LCSScore + "\n");
+            xmlString.append(JaccardScore + "," );
+            xmlString.append(JaccardScore2 + "\n");
         }
         
         return xmlString.toString();

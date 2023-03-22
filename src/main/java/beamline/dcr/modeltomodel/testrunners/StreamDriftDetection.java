@@ -47,9 +47,9 @@ public class StreamDriftDetection {
         double eps = 0.15;
         int minPoints = 5;
         int observationsBeforeEvaluation = 4;
-        int logs = 2;
+        int logs = 4;
         String patterns = "Condition Response Include Exclude";
-        DRIFT driftType = DRIFT.GRADUAL;
+        DRIFT driftType = DRIFT.SUDDEN;
         double sensitivity = 0.005;
         
         boolean replace = false;
@@ -124,16 +124,7 @@ public class StreamDriftDetection {
         XesXmlParser xesParser = new XesXmlParser();
         ArrayList<XLog> traceLogs = new ArrayList<XLog>();
         
-        ArrayList<DcrModel> models = new ArrayList<DcrModel>();
-        DcrModel model101 = new DcrModel();
-        model101.loadModel(currentPath + "/groundtruthmodels/Process101.xml");
-        DcrModel model25 = new DcrModel();
-        model25.loadModel(currentPath + "/groundtruthmodels/Process25.xml");
-        
-        models.add(model101);
-        models.add(model25);
-        
-        int[] eventLogNumbers = {121, 122};
+        int[] eventLogNumbers = {101, 102};
         
         for (int i = 0; i < eventLogNumbers.length; i++) {
             String streamPath = currentPath + "/eventlogs/eventlog_graph"+ eventLogNumbers[i] + ".xes";
@@ -147,7 +138,6 @@ public class StreamDriftDetection {
         StringBuilder outputString 
             = new StringBuilder("baseline-sim, discover-sim\n");
         
-        
         DcrModel baseline = new DcrModel();
 //        baseline.loadModel(currentPath + "/groundtruthmodels/Process" + (eventlogNumber) +".xml");
         
@@ -159,11 +149,8 @@ public class StreamDriftDetection {
         ArrayList<Pair<String, String>> initExecutionOrder = new ArrayList<Pair<String, String>>(traceExecutionOrder);
 
         int drifts = 0;
-        
         int iteration = 0;
-        
         int totalObservations = traceExecutionOrder.size();
-        
         for (int i = 0; i < 400; i++) {
             Pair<String, String> event = initExecutionOrder.get(i);
             String traceID = event.getLeft();
@@ -291,7 +278,7 @@ public class StreamDriftDetection {
                     orders.add(getRandomExecutionOrderFromLog(traceLogs.get(i), traceCurrentIndex));
                 }
                 
-                double trimPercentage = 40;
+                double trimPercentage = 20;
                 int numOfElementsTrimmed = (int) (orders.get(0).size()*(trimPercentage/100.0));
                 
                 for (int i = 0; i < orders.size()-1; i++) {

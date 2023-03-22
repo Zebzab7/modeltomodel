@@ -1,14 +1,18 @@
 package beamline.dcr.model.relations;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.MutableTriple;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,13 +20,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 public class DcrModel {
 	private Set<String> activites;
 	private Set<Triple<String, String, RELATION>> relations = new HashSet<Triple<String, String, RELATION>>();
+	private HashMap<String, String> labelMappings = new HashMap<String, String>();
 	
 	public enum RELATION {
 		PRECONDITION,
@@ -61,6 +62,9 @@ public class DcrModel {
 	public Set<String> getActivities() {
 		return activites;
 	}
+	public HashMap<String, String> getLabelMappings() {
+        return labelMappings;
+    }
 	public Set<Triple<String, String, RELATION>> getRelations() {
 		return relations;
 	}
@@ -112,21 +116,39 @@ public class DcrModel {
 		DocumentBuilder builder = factory.newDocumentBuilder();
 
 		Document doc = builder.parse(new File(xmlGraphPath));
-
+		
 		//Set activity list
 		NodeList eventList = doc.getElementsByTagName("events").item(0).getChildNodes();
-
+		
 		for (int i = 0; i < eventList.getLength(); i++) {
 			Node activity = eventList.item(i);
 			if (activity.getNodeName().equals("event")){
 				Element eventElement = (Element) activity;
 				String activityId = eventElement.getAttribute("id");
 				addActivity(activityId);
-
-
+				NodeList childNodes = activity.getChildNodes();
+				System.out.println("I am activity: " + activityId);
+				System.out.println(" with: " + childNodes.getLength() + " childNodes");
+				for (int j = 0; j < childNodes.getLength(); j++) {
+				    Node childActivity = childNodes.item(j);
+				    if (childActivity.getNodeName().equals("event")) {
+				        System.out.println("Yoo");
+				    }
+                }
 			}
 		}
-
+		
+		NodeList labelMappingList = doc.getElementsByTagName("labelMappings").item(0).getChildNodes();
+		for (int i = 0; i < labelMappingList.getLength(); i++) {
+            Node node = labelMappingList.item(i);
+            if (node.getNodeName().equals("labelMapping")) {
+                Element labelMappingElement = (Element) node;
+                String activityName = labelMappingElement.getAttribute("eventId");
+                String labelName = labelMappingElement.getAttribute("labelId");
+                labelMappings.put(activityName, labelName);
+            }
+        }
+		
 		//Set constraints in unionRelationSet
 		NodeList constraints = doc.getElementsByTagName("constraints").item(0).getChildNodes();
 		for (int j = 0; j < constraints.getLength(); j++) {

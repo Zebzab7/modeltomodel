@@ -40,8 +40,6 @@ public class StreamTester {
         int observationsBeforeEvaluation = Integer.parseInt(args[9]);
         String[] dcrConstraints = args[10].split(" ");
         //
-
-        
         
         Set<Integer> traceWindowSizes = new HashSet<>();
         for (String size : traceWindowSizesStringList ){
@@ -132,7 +130,6 @@ public class StreamTester {
             while(currentObservedEvents < totalObservations) {
                 for (Map.Entry<String, Integer> traceExecutionEntry : traceExecutionTime.entrySet()) {
                     String currentTraceId = traceExecutionEntry.getKey();
-                    System.out.println(currentTraceId);
                     int currentTraceIndex = traceCurrentIndex.get(currentTraceId);
                     int numActivitiesInTrace = traceCollection.get(currentTraceId).size();
                     if (currentIteration % traceExecutionEntry.getValue() == 0 &&
@@ -149,6 +146,11 @@ public class StreamTester {
                             
                             DcrModel dcrModel = sc.getDcrModel();
                             
+                            if (currentObservedEvents % 10 == 0) {
+                                System.out.println("acts: " + dcrModel.getActivities().size());
+                                System.out.println("relations: " + dcrModel.getRelations().size());
+                            }
+                            
                             //comparison
                             UnionRelationSet unionRelationSet = sc.getUnionRelationSet();
                             TransitionSystem transitionSystem = new TransitionSystem(unionRelationSet);
@@ -157,7 +159,7 @@ public class StreamTester {
                             ModelComparison modelComparison = new ModelComparison(dcrModel);
                             modelComparison.loadComparativeModel(compareModel);
                             double jaccard = modelComparison.getJaccardSimilarity();
-
+                            
                             String row = modelComparison.getJaccardSimilarity() +"," + modelComparison.getPrecision() +
                                     "," + modelComparison.getRecall() + "," + conformanceChecking.getFitness() + "," +
                                     conformanceChecking.getPrecision() + "," + conformanceChecking.getIllegalTracesString();

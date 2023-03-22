@@ -41,7 +41,7 @@ public class DriftDetectionTester {
         
         double eps = 0.15;
         int minPoints = 5;
-        
+         
         // Initialize expected values and simulate data sets of process models
         int iterations = 100;
         int[] predictedVals = new int[iterations];

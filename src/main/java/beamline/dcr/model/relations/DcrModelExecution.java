@@ -58,6 +58,8 @@ public class DcrModelExecution {
         Set<Triple<String,String,RELATION>> relations 
             = model.getDcrRelationsWithActivity(activity);
         
+        if (executionTrace.contains(activity)) return false;
+        
         for (Triple<String,String,RELATION> relation : relations) {
             if (relation.getMiddle().equals(activity) 
                     && relation.getRight() == RELATION.CONDITION) {

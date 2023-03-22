@@ -34,14 +34,14 @@ public class BasicStreamDriftDetection {
         int eventlogNumber = 111;
         int relationsThreshold = 0;
         double sigDiff = 0.9;
-        String[] patternList = ("Condition Response Include Exclude").split(" ");
+        String[] patternList = ("Condition Response").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
         int maxTraces = 5;
         int traceSize = 5;
-        int observationsBeforeEvaluation = 2;
+        int observationsBeforeEvaluation = 4;
         int logs = 2;
-        String[] dcrConstraints = ("Condition Response Include Exclude").split(" ");
-        int[] eventLogNumbers = {111, 112};
+        String[] dcrConstraints = ("Condition Response").split(" ");
+        int[] eventLogNumbers = {121};
         //
         
         String rootPath = System.getProperty("user.dir");
@@ -125,6 +125,10 @@ public class BasicStreamDriftDetection {
             
             DcrModel groundTruthModel = new DcrModel();
             groundTruthModel.loadModel(groundTruthModelPath);
+            
+            System.out.println("Ground Truth:");
+            System.out.println(groundTruthModel.getActivities().size());
+            System.out.println(groundTruthModel.getRelations().size());
     
             // simulate stream
             int currentObservedEvents = 0;
@@ -144,6 +148,12 @@ public class BasicStreamDriftDetection {
                         if (currentObservedEvents % observationsBeforeEvaluation == 0) {
                             
                             DcrModel discoveredModel = sc.getDcrModel();
+                            
+                            if (currentObservedEvents % 50 == 0) {
+                                System.out.println("acts: " + discoveredModel.getActivities().size());
+                                System.out.println("relations: " + discoveredModel.getRelations().size());
+                            }
+                            
                             double simRef = DcrSimilarity.jaccardSimilarity(referenceModel, discoveredModel);
                             double simTrue = DcrSimilarity.jaccardSimilarity(groundTruthModel, discoveredModel);
                             
@@ -162,7 +172,7 @@ public class BasicStreamDriftDetection {
                     }
                 }
                 currentIteration++;
-                System.out.println(comparisons + " of " + totalObservations);
+//                System.out.println(comparisons + " of " + totalObservations);
             }
             
             // Reset all trace indexes to 0 

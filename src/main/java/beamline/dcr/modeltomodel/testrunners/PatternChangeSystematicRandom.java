@@ -24,11 +24,16 @@ public class PatternChangeSystematicRandom {
         
        StringBuilder modelComparisonString = new StringBuilder("sep=,\nmodel,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapActivities," +
             "GED,CNE,Jaccard,W-GED,LCS\n");
-    
+       
+       String model = "Total";
+       String inputString = model;
+       
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
             paths
             .filter(Files::isRegularFile)
-            .forEach(path -> {if(path.toString().endsWith("25.xml") ) {
+            .forEach(path -> {if(path.toString().endsWith("Process101.xml") 
+                        || path.toString().endsWith("Process25.xml")
+                        || path.toString().endsWith("Process3.xml")) {
                 try {
                     String filenameFull = path.getFileName().toString();
                     String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
@@ -51,7 +56,7 @@ public class PatternChangeSystematicRandom {
         try {
             FileWriter myWriter 
             = new FileWriter(currentPath + "/evaluations/randomMutations/SystematicRandom/" + java.time.LocalDate.now()
-               + System.currentTimeMillis() + ".csv"/*,true*/);
+               + "-" + inputString + ".csv"/*,true*/);
             myWriter.write(modelComparisonString.toString());
             myWriter.close();
             
