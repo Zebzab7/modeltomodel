@@ -20,20 +20,18 @@ import beamline.dcr.modeltomodel.DcrSimilarity;
 import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 
-
-
 public class PrintPatternSimilarity {
     public static void main(String[] args) throws IOException {
        String rootPath = System.getProperty("user.dir");
        String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-       String groundTruthModels = currentPath + "/driftedmodels";
+       String groundTruthModels = currentPath + "/driftedmodels/ResearchPaper";
         
        StringBuilder modelComparisonString = new StringBuilder("Step,GED,LCS\n");
        String inputString = "GEDvsLCS";
        
        Path groundTruthPath = Paths.get(groundTruthModels); 
        ArrayList<Path> paths = getArrayListFromStream(Files.walk(groundTruthPath)
-               .filter(Files::isRegularFile).filter(path -> path.toString().contains("Alternate")));
+               .filter(Files::isRegularFile).filter(path -> path.toString().contains("ResearchPaper")));
        
        Collections.sort(paths, new Comparator<Path>() {
            @Override
@@ -49,7 +47,7 @@ public class PrintPatternSimilarity {
                String filenameFull = paths.get(i).getFileName().toString();
                String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
                String simString = writeSimilarity(paths.get(i).toString(),filenameTrimmed,
-                       groundTruthModels + "/ComputerRepairOriginal.xml");
+                       groundTruthModels + "/ResearchPaper1.xml");
 //               System.out.println(simString);
                modelComparisonString.append(simString);
                System.out.println(filenameTrimmed + " has been compared");
@@ -68,7 +66,7 @@ public class PrintPatternSimilarity {
                + "-" + inputString + ".csv"/*,true*/);
             myWriter.write(modelComparisonString.toString());
             myWriter.close();
-            
+            System.out.println("Finished writing to: /evaluations/randomMutations/BehaviorDrivenDrifts/");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -85,7 +83,7 @@ public class PrintPatternSimilarity {
         newModel.loadModel(modelPath);
         
         double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(newModel, referenceModel);
-        double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(newModel, referenceModel);
+        double LCSScore = DcrSimilarity.levenshteinDistanceSimilarity(newModel, referenceModel);
         xmlString.append(getNumFromString(filename) + "," + GEDScore + "," + LCSScore + "\n");
         
         return xmlString.toString();

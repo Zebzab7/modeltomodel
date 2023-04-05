@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,7 +23,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class DcrModel {
-	private Set<String> activites;
+	private Set<String> activities;
 	private Set<Triple<String, String, RELATION>> relations = new HashSet<Triple<String, String, RELATION>>();
 	private HashMap<String, String> labelMappings = new HashMap<String, String>();
 	
@@ -40,38 +42,70 @@ public class DcrModel {
 	}
 	
 	public DcrModel()  {
-		this.activites = new HashSet<>();
+		this.activities = new HashSet<>();
 	}
-	
 	public void addRelations(Set<Triple<String, String, RELATION>> setOfRelations) {
 		for (Triple<String, String, RELATION> relation : setOfRelations){
-			activites.add(relation.getLeft());
-			activites.add(relation.getMiddle());
+			activities.add(relation.getLeft());
+			activities.add(relation.getMiddle());
 		}
 		relations.addAll(setOfRelations);
 	}
 	public void addRelation(Triple<String, String, RELATION> relation) {
-		activites.add(relation.getLeft());
-		activites.add(relation.getMiddle());
+		activities.add(relation.getLeft());
+		activities.add(relation.getMiddle());
 		relations.add(relation);
 	}
 	public void addActivity(String id){
-		activites.add(id);
+		activities.add(id);
 	}
 	public void addSubActivity(String subActivity, String parent) {
 	    subActivities.put(subActivity, parent);
 	}
 	public void addActivities(Set<String> activities){
-		activites.addAll(activities);
+		this.activities.addAll(activities);
 	}
 	public Set<String> getActivities() {
-		return activites;
+		return activities;
 	}
+	public HashMap<String, String> getAllSubActivities() {
+        return subActivities;
+    }
+	public ArrayList<String> getLabels() {
+	    ArrayList<String> activitiesList = new ArrayList<String>(activities);
+	    ArrayList<String> labels = new ArrayList<String>();
+	    for (int i = 0; i < activitiesList.size(); i++) {
+	        labels.add(labelMappings.get(activitiesList.get(i)));
+        }
+	    return labels;
+	}
+	public boolean isSubActivity(String activity) {
+	    if (subActivities.containsKey(activity)) return true;
+	    return false;
+	}
+	public ArrayList<String> getSubActivitiesFromParent(String activity) {
+	    ArrayList<String> children = new ArrayList<String>();
+	    for (HashMap.Entry<String, String> entry : subActivities.entrySet()) {
+	        if (entry.getValue().equals(activity)) {
+	            children.add(entry.getKey());
+	        }
+        }
+	    return children;
+    }
+	public void setSubActivities(HashMap<String, String> subActivities) {
+        this.subActivities = subActivities;
+    }
 	public HashMap<String, String> getLabelMappings() {
         return labelMappings;
     }
+	public void setLabelMappings(HashMap<String, String> labelMappings) {
+        this.labelMappings = labelMappings;
+    }
 	public Set<Triple<String, String, RELATION>> getRelations() {
 		return relations;
+	}
+	public String getParentActivity(String subActivity) {
+	    return subActivities.get(subActivity);
 	}
 	public boolean containsRelation(Triple<String, String, RELATION> relation){
 		return relations.contains(relation);
@@ -88,7 +122,7 @@ public class DcrModel {
 			}
 		}
 		relations.removeAll(relationsToRemove);
-		activites.remove(source);
+		activities.remove(source);
 	}
 	public void removeRelations(String source, String target){
 		for (Triple<String, String, RELATION> relation : relations){
@@ -115,6 +149,11 @@ public class DcrModel {
 				.filter(entry -> entry.getRight() == constraint)
 				.collect(Collectors.toSet());
 	}
+    public boolean isParentActivity(String activity) {
+        int n = subActivities.size();
+        if (subActivities.containsValue(activity)) return true;
+        return false;
+    }
 	public void loadModel(String xmlGraphPath) throws ParserConfigurationException, IOException, SAXException {
 		DocumentBuilderFactory factory =
 				DocumentBuilderFactory.newInstance();
@@ -199,7 +238,7 @@ public class DcrModel {
 		String[] rowSplit = row.split(" ",3);
 
 		String sourceActivity = rowSplit[0].replace("\"","");
-		activites.add(sourceActivity);
+		activities.add(sourceActivity);
 		RELATION relation = null;
 		switch (rowSplit[1]){
 			//Ignore excludes and includes
@@ -217,7 +256,7 @@ public class DcrModel {
 
 				String targetActivity = target.replace("\"","").replace("(","").replace(")","");
 				relations.add(Triple.of(sourceActivity,targetActivity,relation));
-				activites.add(targetActivity);
+				activities.add(targetActivity);
 			}
 		}
 
@@ -239,17 +278,16 @@ public class DcrModel {
 		}
 
 	}
-	
-	
-	
+
 	/**
 	 * Returns a shallow copy of this DCR model
 	 */
 	public DcrModel getClone() {
 	    DcrModel copy = new DcrModel();
-	    copy.addActivities(activites);
-	    copy.addRelations(relations);
+	    copy.addActivities(this.activities);
+	    copy.addRelations(this.relations);
+	    copy.setSubActivities(this.subActivities);
+	    copy.setLabelMappings(this.labelMappings);
 	    return copy;
 	}
-
 }

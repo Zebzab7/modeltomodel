@@ -136,7 +136,6 @@ public class TraceGenerator {
         DcrModelExecution execution = new DcrModelExecution(model.getClone());
         ArrayList<String> executionOrder = new ArrayList<String>(model.getActivities());
         
-        
         for (int j = 0; j < traceLength; j++) {
             
             Collections.shuffle(executionOrder);
@@ -160,7 +159,6 @@ public class TraceGenerator {
                 }
             }
         }
-        
         ArrayList<String> fullTrace = execution.getTrace();
         
         return fullTrace;

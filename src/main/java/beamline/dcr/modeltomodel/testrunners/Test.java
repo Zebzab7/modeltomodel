@@ -3,6 +3,7 @@ package beamline.dcr.modeltomodel.testrunners;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -15,11 +16,10 @@ public class Test {
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-//        String groundTruthModelPath = currentPath + "/driftedmodels/ComputerRepairOriginal.xml";
-//        String groundTruthModelPath = currentPath + "/driftedmodels/AlternateComputerRepair16.xml";
-        String groundTruthModelPath = currentPath + "/driftedmodels/CRS/Graph7.xml";
+        String groundTruthModelPath = currentPath + "/driftedmodels/ResearchPaper/ResearchPaper10.xml";
         
-        int traceLength = 10;
+        int numOfTraces = 1;
+        int traceLength = 20;
         
         DcrModel CRModel = new DcrModel();
         CRModel.loadModel(groundTruthModelPath);
@@ -30,7 +30,7 @@ public class Test {
         ArrayList<ArrayList<String>> traces = new ArrayList<ArrayList<String>>();
         ArrayList<ArrayList<String>> allTracesLabels = new ArrayList<ArrayList<String>>();
         
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < numOfTraces; i++) {
             ArrayList<String> trace = traceGenerator.generateRandomTraceFromModel(CRModel, traceLength);
             ArrayList<String> traceLabels = new ArrayList<String>();
             for (int j = 0; j < trace.size(); j++) {
@@ -40,13 +40,11 @@ public class Test {
             traces.add(trace); 
         }
         
-        System.out.println(CRModel.getActivities().toString());
-        
         for (int i = 0; i < traces.size(); i++) {
-//            System.out.println(traces.get(i));
-            System.out.println(allTracesLabels.get(i));
+            for (int j = 0; j < allTracesLabels.get(i).size(); j++) {
+                System.out.println(allTracesLabels.get(i).get(j));
+            }
         }
-        
     }
 }
 

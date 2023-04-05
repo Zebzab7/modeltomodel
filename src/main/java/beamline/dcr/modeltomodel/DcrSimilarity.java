@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -80,7 +81,7 @@ public class DcrSimilarity {
     }
     
     public static double levenshteinDistanceSimilarity(DcrModel modelA, DcrModel modelB) {
-        int numOfTraces = 1;
+        int numOfTraces = 100;
         TraceGenerator traceGenerator = new TraceGenerator();
         
         ArrayList<ArrayList<String>> modelATraces = new ArrayList<ArrayList<String>>();
@@ -94,11 +95,17 @@ public class DcrSimilarity {
         ArrayList<String> trace1 = modelATraces.get(0);
         ArrayList<String> trace2 = modelBTraces.get(0);
         
-        double dist = levenshteinDistance(trace1, trace2);
+        double[] dists = new double[numOfTraces];
         
-        return 1.0;
+        double avgDist = 0;
+        for (int i = 0; i < dists.length; i++) {
+            avgDist += levenshteinDistance(trace1, trace2);
+        }
+        avgDist = avgDist / numOfTraces;
+        
+        double sim = 1.0 - (avgDist / (trace1.size() + trace2.size()));
+        return sim;
     }
-    
     
     public static <T> double levenshteinDistance(ArrayList<T> seq1, ArrayList<T> seq2) {
         int[][] dp = new int[seq1.size() + 1][seq2.size() + 1];
