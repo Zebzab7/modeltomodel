@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +23,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DcrModel {
@@ -154,12 +158,74 @@ public class DcrModel {
         if (subActivities.containsValue(activity)) return true;
         return false;
     }
+
+
+
 	public void loadModel(String xmlGraphPath) throws ParserConfigurationException, IOException, SAXException {
 		DocumentBuilderFactory factory =
 				DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 
 		Document doc = builder.parse(new File(xmlGraphPath));
+		
+		//Set activity list
+		NodeList eventList = doc.getElementsByTagName("events").item(0).getChildNodes();
+		
+		// TODO Extend capability to include sub-sub and sub-sub-sub activities etc.
+		for (int i = 0; i < eventList.getLength(); i++) {
+			Node activity = eventList.item(i);
+			if (activity.getNodeName().equals("event")){
+				Element eventElement = (Element) activity;
+				String activityId = eventElement.getAttribute("id");
+				addActivity(activityId);
+				NodeList childNodes = activity.getChildNodes();
+				
+				// Add any that may exist sub activities
+				for (int j = 0; j < childNodes.getLength(); j++) {
+				    Node childActivity = childNodes.item(j);
+				    if (childActivity.getNodeName().equals("event")) {
+				        Element childEventElement = (Element) childActivity;
+				        String childActivityId = childEventElement.getAttribute("id");
+				        addActivity(childActivityId);
+				        addSubActivity(childActivityId, activityId);
+				    }
+                }
+			}
+		}
+		
+		NodeList labelMappingList = doc.getElementsByTagName("labelMappings").item(0).getChildNodes();
+		for (int i = 0; i < labelMappingList.getLength(); i++) {
+            Node node = labelMappingList.item(i);
+            if (node.getNodeName().equals("labelMapping")) {
+                Element labelMappingElement = (Element) node;
+                String activityName = labelMappingElement.getAttribute("eventId");
+                String labelName = labelMappingElement.getAttribute("labelId");
+                labelMappings.put(activityName, labelName);
+            }
+        }
+		
+		//Set constraints in unionRelationSet
+		NodeList constraints = doc.getElementsByTagName("constraints").item(0).getChildNodes();
+		for (int j = 0; j < constraints.getLength(); j++) {
+			Node childNode = constraints.item(j);
+			switch (childNode.getNodeName()){
+				case "conditions":
+				case "responses":
+				case "excludes":
+				case "includes":
+					addToRelationSet(childNode.getChildNodes());
+					break;
+
+			}
+		}
+
+	}
+	public void loadModelFromString(String xmlContents) throws ParserConfigurationException, IOException, SAXException {
+		DocumentBuilderFactory factory =
+				DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+
+		Document doc = builder.parse(new InputSource(new StringReader(xmlContents)));
 		
 		//Set activity list
 		NodeList eventList = doc.getElementsByTagName("events").item(0).getChildNodes();
@@ -276,7 +342,17 @@ public class DcrModel {
 				addRelation(Triple.of(source,target, relation));
 			}
 		}
+	}
 
+	public static void writeXmlToFile(String xmlString, String filePath) {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+			writer.write(xmlString);
+			writer.close();
+			System.out.println("XML file written successfully.");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

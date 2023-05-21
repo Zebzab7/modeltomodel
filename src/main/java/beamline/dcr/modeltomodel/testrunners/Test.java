@@ -10,7 +10,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import beamline.dcr.model.relations.DcrModel;
-import jdk.nashorn.api.tree.ForInLoopTree;
 
 public class Test {
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {

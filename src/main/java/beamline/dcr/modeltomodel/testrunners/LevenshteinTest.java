@@ -23,7 +23,7 @@ public class LevenshteinTest {
         
         OGModel.loadModel(OGModelPath);
         newModel.loadModel(newModelPath);
-        
+
         System.out.println(DcrSimilarity.levenshteinDistanceSimilarity(OGModel, newModel));    
     }
 }
