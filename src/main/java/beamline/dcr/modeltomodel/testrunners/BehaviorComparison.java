@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,6 +26,12 @@ public class BehaviorComparison {
         String rootPath = System.getProperty("user.dir");
         String filepath = rootPath + "/src/main/java/beamline/dcr/testsoftware/publicrepodataset";
 
+        File dir = new File(filepath);
+        if (!dir.exists()) {
+            // Create the directory and any necessary parent directories
+            dir.mkdirs();
+        }
+
         String modelResponse = null;
         ArrayList<String> modelIds = null;
 
@@ -32,7 +39,7 @@ public class BehaviorComparison {
         try {
             URL url = new URL("https://repository.dcrgraphs.net/api/graphs");
             String response = httpRequest(url);
-            modelIds = extractIds(response.toString());
+            modelIds = extractIds(response);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,45 +65,69 @@ public class BehaviorComparison {
         double totalRevisionsSum = 0;
         int totalRevisionsCount = 0;
 
-        // for (int i = 0; i < modelIds.size(); i++) {
-        //     int id = Integer.parseInt(modelIds.get(i));
-        //     URL modelsURL = new URL("https://repository.dcrgraphs.net/api/graphs/" + id);
-        //     modelResponse = httpRequest(modelsURL);
+        for (int i = 0; i < modelIds.size(); i++) {
+            int id = Integer.parseInt(modelIds.get(i));
+            URL modelsURL = new URL("https://repository.dcrgraphs.net/api/graphs/" + id);
+            modelResponse = httpRequest(modelsURL);
 
-        //     if (modelResponse != null && !modelResponse.equals("")) {
-        //         DcrModel currentModel = new DcrModel();
-        //         currentModel.loadModelFromString(modelResponse);
-        //         activitiesSum += currentModel.getActivities().size();
-        //         activitiesCount++;
-        //         edgesSum += currentModel.getRelations().size();
-        //         edgesCount++;
+            if (modelResponse != null && !modelResponse.equals("")) {
+                String originalModelXml = httpRequest(new URL("https://repository.dcrgraphs.net/api/graphs/" + id));
 
-        //         if (currentModel.getActivities().size() > X) {
-        //             countOverX++;
-        //         }
+                dir = new File(filepath + "/model" + id);
+                if (!dir.exists()) {
+                    // Create the directory and any necessary parent directories
+                    dir.mkdirs();
                 
-        //         if (currentModel.getActivities().size() > max) {
-        //             max = currentModel.getActivities().size();
-        //         }
+                }
 
-        //         String versions = httpRequest(new URL("https://repository.dcrgraphs.net/api/graphs/" + id + "/versions"));
+                DcrModel.writeXmlToFile(originalModelXml, filepath + "/model" + id  + "/original.xml");
+
+                ArrayList<String> versionsIds = new ArrayList<>();
+                String versionsResponse = httpRequest(new URL("https://repository.dcrgraphs.net/api/graphs/" + id + "/versions/"));
+                versionsIds = extractIds(versionsResponse);
+
+                for (int j = 0; j < versionsIds.size(); j++) {
+                    
+                    // 1. Load the current model version
+                    String currentModelXml = httpRequest(new URL("https://repository.dcrgraphs.net/api/graphs/" + id + "/versions/" 
+                        + versionsIds.get(j)));
+
+                    DcrModel.writeXmlToFile(currentModelXml, filepath + "/Model" + id  + "/version" + (j+1) + ".xml");
+
+                    DcrModel currentModel = new DcrModel();
+                    currentModel.loadModelFromString(modelResponse);
+                    activitiesSum += currentModel.getActivities().size();
+                    activitiesCount++;
+                    edgesSum += currentModel.getRelations().size();
+                    edgesCount++;
     
-        //         String word = "major";
-        //         int occurrences = StringUtils.countMatches(versions, word);
-
-        //         majorRevisionSum += occurrences;
-        //         majorRevisionCount++;
-
-        //         String word2 = "minor";
-        //         int occurrences2 = StringUtils.countMatches(versions, word2);
-
-        //         minorRevisionSum += occurrences2;
-        //         minorRevisionCount++;
-
-        //         totalRevisionsSum += occurrences + occurrences2;
-        //         totalRevisionsCount++;
-        //     }
-        // }
+                    if (currentModel.getActivities().size() > X) {
+                        countOverX++;
+                    }
+                    
+                    if (currentModel.getActivities().size() > max) {
+                        max = currentModel.getActivities().size();
+                    }
+    
+                    String versions = httpRequest(new URL("https://repository.dcrgraphs.net/api/graphs/" + id + "/versions"));
+        
+                    String word = "major";
+                    int occurrences = StringUtils.countMatches(versions, word);
+    
+                    majorRevisionSum += occurrences;
+                    majorRevisionCount++;
+    
+                    String word2 = "minor";
+                    int occurrences2 = StringUtils.countMatches(versions, word2);
+    
+                    minorRevisionSum += occurrences2;
+                    minorRevisionCount++;
+    
+                    totalRevisionsSum += occurrences + occurrences2;
+                    totalRevisionsCount++;
+                }
+            }
+        }
 
         System.err.println("Max number of activities: " + max);
         System.err.println("Average number of activities: " + activitiesSum / activitiesCount);
@@ -139,7 +170,8 @@ public class BehaviorComparison {
             con.setRequestMethod("GET");
 
             // TODO - load username and password from file
-
+            String username = "s194624@student.dtu.dk";
+            String password = "Zebzabaa1";
             
             String authString = username + ":" + password;
             String encodedAuth = Base64.getEncoder().encodeToString(authString.getBytes());

@@ -20,7 +20,7 @@ public class PatternChangeSystematicRandom {
     public static void main(String[] args) throws IOException {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-        String groundTruthModels = currentPath + "/groundtruthmodels";
+        String groundTruthModels = currentPath + "/publicrepodataset";
         
        StringBuilder modelComparisonString = new StringBuilder("sep=,\nmodel,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapActivities," +
             "GED,CNE,Jaccard,W-GED,LCS\n");
@@ -31,9 +31,7 @@ public class PatternChangeSystematicRandom {
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
             paths
             .filter(Files::isRegularFile)
-            .forEach(path -> {if(path.toString().endsWith("Process101.xml") 
-                        || path.toString().endsWith("Process25.xml")
-                        || path.toString().endsWith("Process3.xml")) {
+            .forEach(path -> {if(path.toString().startsWith() {
                 try {
                     String filenameFull = path.getFileName().toString();
                     String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
