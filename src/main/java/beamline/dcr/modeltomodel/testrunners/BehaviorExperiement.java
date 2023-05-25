@@ -3,6 +3,7 @@ package beamline.dcr.modeltomodel.testrunners;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -13,8 +14,11 @@ import beamline.dcr.modeltomodel.DcrSimilarity;
 import beamline.dcr.testsoftware.ModelAdaption;
 
 public class BehaviorExperiement {
+
+    static Random rand = new Random();
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
+        
         
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
@@ -42,49 +46,45 @@ public class BehaviorExperiement {
     
     private static String randomMutationsString(String modelPath, DcrModel.RELATION relationType) throws IOException, SAXException, ParserConfigurationException {
 
-        StringBuilder output = new StringBuilder("sep=,\naddActSerial,addActParallel,replaceAct,addConst,swapActivities,totalChanges,GED,LCS\n");
+        StringBuilder output = new StringBuilder("sep=,\nnumOfChanges,GED,LCS,BehavioralProfile\n");
 
         DcrModel originalModel = new DcrModel();
         originalModel.loadModel(modelPath);
 
+        // int totalIterations = 4*4*4*4*4;
         int iteration = 0;
-        int totalIterations = 4*4*4*4*4;
-        
-        ModelAdaption modelAdaption = new ModelAdaption(originalModel);
-        for (int addActivitySerialInt = 0; addActivitySerialInt <= 3; addActivitySerialInt++){
-            for (int addActivityParallelInt = 0; addActivityParallelInt <= 3; addActivityParallelInt++){
-                for (int replaceActivityInt = 0; replaceActivityInt <= 3; replaceActivityInt++){
-                    for (int addConstraintInt = 0; addConstraintInt <= 3; addConstraintInt++){
-                        for (int swapActivitiesInt = 0; swapActivitiesInt <= 3; swapActivitiesInt++){
-                            int totalChanges = addActivitySerialInt + addActivityParallelInt + replaceActivityInt 
-                                + addConstraintInt + swapActivitiesInt;
-                            
-                            if(iteration % (totalIterations/10) == 0) {
-                                System.out.println("Iteration: " + iteration + " out of " + totalIterations);
-                            }
-                            iteration++;
+        int totalIterations = 20*20;
 
-                            modelAdaption = new ModelAdaption(modelPath);
-                            if (!modelAdaption.insertActivitySerial(addActivitySerialInt) ||
-                            ! modelAdaption.insertActivityParallel(addActivityParallelInt) ||
-                            ! modelAdaption.replaceActivity(replaceActivityInt) ||
-                            ! modelAdaption.addConstraintOfType(addConstraintInt, relationType) ||
-                            ! modelAdaption.swapActivities(swapActivitiesInt)){
-                                continue;
-                            }
-                            
-                            output.append(addActivitySerialInt + ",").append(addActivityParallelInt+ ",").append(replaceActivityInt+ ",")
-                                .append(addConstraintInt+ ",").append(swapActivitiesInt +",").append(totalChanges + ",");
-                            
-                            DcrModel adaptedModel  = modelAdaption.getModel();
-                            double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(originalModel, adaptedModel);
-                            double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(originalModel, adaptedModel);
-                            output.append(GEDScore + "," + LCSScore + "\n");
-                        }
-                    }
+        ModelAdaption modelAdaption = new ModelAdaption(originalModel);
+        for (int i = 0; i < 20; i++) {
+            for (int j = 0; j < 20; j++) {
+
+                if(iteration % (totalIterations/100) == 0) {
+                    System.out.println("Iteration: " + iteration + " out of " + totalIterations);
                 }
+
+                modelAdaption = new ModelAdaption(modelPath);
+
+                if (rand.nextDouble() < 0.5) {
+                    relationType = DcrModel.RELATION.EXCLUDE;
+                } else {
+                    relationType = DcrModel.RELATION.INCLUDE;
+                }
+
+                if (!modelAdaption.addConstraintOfType(i, relationType)) {
+                    System.out.println("Failed to add constraint of type " + relationType);
+                    continue;
+                }
+
+                DcrModel adaptedModel  = modelAdaption.getModel();
+                double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(originalModel, adaptedModel);
+                double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(originalModel, adaptedModel);
+                double behavioralScore = DcrSimilarity.behavioralProfileSimilarity(originalModel, adaptedModel);
+                output.append(i + "," + GEDScore + "," + LCSScore + "," + behavioralScore + "\n");
+                iteration++;
             }
         }
+
         return output.toString();
     }
 }

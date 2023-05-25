@@ -10,7 +10,6 @@ import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,10 +25,14 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import beamline.dcr.modeltomodel.testrunners.TraceGenerator;
+
 public class DcrModel {
 	private Set<String> activities;
 	private Set<Triple<String, String, RELATION>> relations = new HashSet<Triple<String, String, RELATION>>();
 	private HashMap<String, String> labelMappings = new HashMap<String, String>();
+
+	private Set<ActivityRelation> profile = null;
 	
 	HashMap<String, String> subActivities = new HashMap<String, String>();
 	
@@ -158,8 +161,108 @@ public class DcrModel {
         if (subActivities.containsValue(activity)) return true;
         return false;
     }
+	public Set<ActivityRelation> getProfile() {
+		return profile;
+	}
+	public void setProfile(Set<ActivityRelation> profile) {
+		this.profile = profile;
+	}
+	public Set<ActivityRelation> createBehavioralProfile() {
+		profile = new HashSet<ActivityRelation>();
+		ArrayList<ArrayList<String>> traces = new ArrayList<ArrayList<String>>();
 
+		int traceLength = 100;
+		int numOfTraces = 40;
 
+		TraceGenerator traceGenerator = new TraceGenerator();
+		for (int i = 0; i < numOfTraces; i++) {
+			traces.add(traceGenerator.generateRandomTraceFromModel(this, traceLength));
+		}
+
+		boolean coOccurence = false;
+		boolean exclusive = false;
+		boolean strictOrder = false;
+		boolean interleaving = false;
+
+		boolean foundActivity1 = false;
+		boolean foundActivity2 = false;
+
+		boolean foundActivity1BeforeActivity2 = false;
+		boolean foundActivity2BeforeActivity1 = false;
+
+		String[] activitiesList = activities.toArray(new String[activities.size()]);
+
+		for (int i = 0; i < activitiesList.length; i++) {
+			for (int j = 0; j < activitiesList.length; j++) {
+				if (i == j) {
+					continue;
+				}
+				String activity1 = activitiesList[i];
+				String activity2 = activitiesList[j];
+
+				coOccurence = true;
+				exclusive = true;
+				strictOrder = true;
+				interleaving = false;
+
+				for (int k = 0; k < traces.size(); k++) {
+					ArrayList<String> trace = traces.get(k);
+					int n = trace.size();
+
+					foundActivity1 = false;
+					foundActivity2 = false;
+
+					for (int k2 = 0; k2 < n; k2++) {
+						String traceActivity = traces.get(k).get(k2);
+						if (!foundActivity1 && traceActivity.equals(activity1)) {
+							foundActivity1 = true;
+						}
+						if (!foundActivity2 && traceActivity.equals(activity2)) {
+							foundActivity2 = true;
+						}
+
+						// If the second activity is found before the first activity, the order is not strict
+						if (traceActivity.equals(activity2) && !foundActivity1) {
+							foundActivity2BeforeActivity1 = true;
+							strictOrder = false;
+						}
+						if (traceActivity.equals(activity1) && !foundActivity2) {
+							foundActivity1BeforeActivity2 = true;
+						}
+					}
+
+					// If at any point have found both orders of activities in the trace, they are interleaving
+					if (foundActivity1BeforeActivity2 && foundActivity2BeforeActivity1) {
+						interleaving = false;
+					}
+
+					// If both activities are found in any trace, they can not be exclusive
+					if (foundActivity1 && foundActivity2) {
+						exclusive = false;
+					}
+
+					// If at any point one activity is found and the other is not, they can not be co-occurent
+					if (foundActivity1 ^ foundActivity2) {
+						coOccurence = false;
+					}
+				}
+				
+				if (strictOrder) {
+					profile.add(new ActivityRelation(activity1, activity2, "strict-order"));
+				}
+				if (exclusive) {
+					profile.add(new ActivityRelation(activity1, activity2, "exclusive"));
+				}
+				if (coOccurence) {
+					profile.add(new ActivityRelation(activity1, activity2, "co-occurence"));
+				}
+				if (interleaving) {
+					profile.add(new ActivityRelation(activity1, activity2, "interleaving"));
+				}
+			}
+		}
+		return profile;
+	}
 
 	public void loadModel(String xmlGraphPath) throws ParserConfigurationException, IOException, SAXException {
 		DocumentBuilderFactory factory =

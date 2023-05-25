@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
 
 import beamline.dcr.model.relations.DcrModel;
 
-public class BehaviorComparison {
+public class DataSetLoader {
     
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
         String rootPath = System.getProperty("user.dir");

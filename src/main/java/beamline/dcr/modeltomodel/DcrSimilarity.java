@@ -14,6 +14,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang3.tuple.Triple;
 import org.xml.sax.SAXException;
 
+import beamline.dcr.model.relations.ActivityRelation;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.DcrModel.RELATION;
 import beamline.dcr.modeltomodel.testrunners.TraceGenerator;
@@ -163,6 +164,16 @@ public class DcrSimilarity {
         
         return 1-sim;
     }
+
+    public static double behavioralProfileSimilarity(DcrModel modelA, DcrModel modelB) {
+        Set<ActivityRelation> behavioralProfileA = modelA.createBehavioralProfile();
+        Set<ActivityRelation> behavioralProfileB = modelB.createBehavioralProfile();
+
+        double intersection = DcrSimilarity.intersection(behavioralProfileA, behavioralProfileB).size();
+        double union = DcrSimilarity.union(behavioralProfileA, behavioralProfileB).size();
+
+        return intersection / union;
+    }
     
     public static double graphEditDistanceSimilarityWithWeights(DcrModel modelA, DcrModel modelB) {
         Set<String> actA = modelA.getActivities();
@@ -253,10 +264,6 @@ public class DcrSimilarity {
         return avg;
     }
     
-//    public static double diceCoefficient(DcrModel modelA, DcrModel modelB) {
-//        return 1.0;
-//    }
-        
     /**
      * Helper functions
      */
@@ -289,8 +296,6 @@ public class DcrSimilarity {
         return L[m][n]; 
     } 
     
-    
-    
     /**
      * Returns a set representing the intersection between two sets
      */
@@ -305,7 +310,7 @@ public class DcrSimilarity {
      */
     public static <T> Set<T> union(Set<T> set1, Set<T> set2) {
         Set<T> union = new HashSet<T>(set1);
-        union.retainAll(set2);
+        union.addAll(set2);
         return union;
     }
     

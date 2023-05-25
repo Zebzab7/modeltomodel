@@ -17,17 +17,15 @@ import org.xml.sax.SAXException;
 
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.modeltomodel.DcrSimilarity;
-import beamline.dcr.testsoftware.ModelAdaption;
-import beamline.dcr.testsoftware.ModelComparison;
 
 public class PrintPatternSimilarity {
     public static void main(String[] args) throws IOException {
        String rootPath = System.getProperty("user.dir");
        String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-       String groundTruthModels = currentPath + "/driftedmodels/ResearchPaper";
+       String groundTruthModels = currentPath + "/driftedmodels/ResearchPaperExample";
         
-       StringBuilder modelComparisonString = new StringBuilder("Step,GED,LCS\n");
-       String inputString = "GEDvsLCS";
+       StringBuilder modelComparisonString = new StringBuilder("Step,GED,BehavioralProfile\n");
+       String inputString = "GEDvsBehavioralProfile";
        
        Path groundTruthPath = Paths.get(groundTruthModels); 
        ArrayList<Path> paths = getArrayListFromStream(Files.walk(groundTruthPath)
@@ -83,7 +81,7 @@ public class PrintPatternSimilarity {
         newModel.loadModel(modelPath);
         
         double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(newModel, referenceModel);
-        double LCSScore = DcrSimilarity.levenshteinDistanceSimilarity(newModel, referenceModel);
+        double LCSScore = DcrSimilarity.behavioralProfileSimilarity(newModel, referenceModel);
         xmlString.append(getNumFromString(filename) + "," + GEDScore + "," + LCSScore + "\n");
         
         return xmlString.toString();
