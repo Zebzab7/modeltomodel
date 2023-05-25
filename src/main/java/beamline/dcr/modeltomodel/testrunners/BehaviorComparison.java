@@ -22,6 +22,7 @@ import org.xml.sax.SAXException;
 import beamline.dcr.model.relations.DcrModel;
 
 public class BehaviorComparison {
+    
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
         String rootPath = System.getProperty("user.dir");
         String filepath = rootPath + "/src/main/java/beamline/dcr/testsoftware/publicrepodataset";

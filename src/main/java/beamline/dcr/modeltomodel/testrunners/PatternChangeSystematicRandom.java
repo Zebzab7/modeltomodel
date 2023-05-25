@@ -31,7 +31,7 @@ public class PatternChangeSystematicRandom {
         try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
             paths
             .filter(Files::isRegularFile)
-            .forEach(path -> {if(path.toString().startsWith() {
+            .forEach(path -> {if(path.toString().startsWith("model")) {
                 try {
                     String filenameFull = path.getFileName().toString();
                     String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
@@ -46,8 +46,6 @@ public class PatternChangeSystematicRandom {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                
-                
             }});
         }
         

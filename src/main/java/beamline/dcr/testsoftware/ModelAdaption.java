@@ -98,6 +98,35 @@ public class ModelAdaption {
         }
         return true;
     }
+
+    // Add a constraint of a specific type to a random activity
+    public boolean addConstraintOfType(int numRepeatings, DcrModel.RELATION constraintType){
+        for (int i = 0; i < numRepeatings; i++) {
+            String source = getRandomExistingActivity(model.getRelations());
+            if(source==null){
+                return false;
+            }
+            Set<Triple<String,String, DcrModel.RELATION>> relationsWithSource = model.getDcrRelationsWithSource(source);
+            while (relationsWithSource.size()==0){
+                source = getRandomExistingActivity(model.getRelations());
+                relationsWithSource = model.getDcrRelationsWithSource(source);
+            }
+
+            String target = getRandomExistingActivity(relationsWithSource);
+            List<DcrModel.RELATION> constraints =
+                    Collections.unmodifiableList(Arrays.asList(DcrModel.RELATION.values()));
+            int size = constraints.size();
+            Random random = new Random();
+
+            DcrModel.RELATION randomConstraint = constraints.get(random.nextInt(size));
+            while (!(randomConstraint.equals(constraintType))) {
+                randomConstraint = constraints.get(random.nextInt(size));
+            }
+
+            model.addRelation(Triple.of(source, target, randomConstraint));
+        }
+        return true;
+    }
     public boolean addConstraint(int numRepeatings){
         for (int i = 0; i < numRepeatings; i++) {
             String source = getRandomExistingActivity(model.getRelations());
