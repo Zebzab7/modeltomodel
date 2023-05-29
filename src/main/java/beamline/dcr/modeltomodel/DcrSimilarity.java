@@ -14,7 +14,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang3.tuple.Triple;
 import org.xml.sax.SAXException;
 
-import beamline.dcr.model.relations.ActivityRelation;
+import beamline.dcr.model.relations.ActivityRelations;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.DcrModel.RELATION;
 import beamline.dcr.modeltomodel.testrunners.TraceGenerator;
@@ -166,13 +166,15 @@ public class DcrSimilarity {
     }
 
     public static double behavioralProfileSimilarity(DcrModel modelA, DcrModel modelB) {
-        Set<ActivityRelation> behavioralProfileA = modelA.createBehavioralProfile();
-        Set<ActivityRelation> behavioralProfileB = modelB.createBehavioralProfile();
+        Set<ActivityRelations> behavioralProfileA = modelA.createBehavioralProfile();
+        Set<ActivityRelations> behavioralProfileB = modelB.createBehavioralProfile();
 
-        double intersection = DcrSimilarity.intersection(behavioralProfileA, behavioralProfileB).size();
-        double union = DcrSimilarity.union(behavioralProfileA, behavioralProfileB).size();
+        Set<String> matches = intersection(modelA.getActivities(), modelB.getActivities());
+        double F =(double) matches.size();
 
-        return intersection / union;
+        Set<ActivityRelations> P = DcrSimilarity.intersection(behavioralProfileA, behavioralProfileB);
+
+        return (double) P.size() / (F*F-F);
     }
     
     public static double graphEditDistanceSimilarityWithWeights(DcrModel modelA, DcrModel modelB) {

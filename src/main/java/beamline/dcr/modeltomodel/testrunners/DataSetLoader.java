@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,16 +37,16 @@ public class DataSetLoader {
         String modelResponse = null;
         ArrayList<String> modelIds = null;
 
-        // Retrieve available models
-        try {
-            URL url = new URL("https://repository.dcrgraphs.net/api/graphs");
-            String response = httpRequest(url);
-            modelIds = extractIds(response);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // // Retrieve available models
+        // try {
+        //     URL url = new URL("https://repository.dcrgraphs.net/api/graphs");
+        //     String response = httpRequest(url);
+        //     modelIds = extractIds(response);
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
         
-        System.err.println("Found " + modelIds.size() + " models");
+        // System.err.println("Found " + modelIds.size() + " models");
 
         int countOverX = 0;
         int max = 0;
@@ -65,6 +66,9 @@ public class DataSetLoader {
 
         double totalRevisionsSum = 0;
         int totalRevisionsCount = 0;
+        
+        modelIds = new ArrayList<String>();
+        modelIds.add("1622838");
 
         for (int i = 0; i < modelIds.size(); i++) {
             int id = Integer.parseInt(modelIds.get(i));
@@ -83,15 +87,28 @@ public class DataSetLoader {
 
                 DcrModel.writeXmlToFile(originalModelXml, filepath + "/model" + id  + "/original.xml");
 
-                ArrayList<String> versionsIds = new ArrayList<>();
+                ArrayList<String> versionsIdsString = new ArrayList<>();
                 String versionsResponse = httpRequest(new URL("https://repository.dcrgraphs.net/api/graphs/" + id + "/versions/"));
-                versionsIds = extractIds(versionsResponse);
+                versionsIdsString = extractIds(versionsResponse);
 
-                for (int j = 0; j < versionsIds.size(); j++) {
+                int[] versionsIds = new int[versionsIdsString.size()];
+
+                for (int j = 0; j < versionsIdsString.size(); j++) {
+                    versionsIds[j] = Integer.parseInt(versionsIdsString.get(j));
+                }
+
+                // Sort the int array in decreasing order
+                Arrays.sort(versionsIds);
+                // reverseArray(versionsIds);
+
+                for (int j = 0; j < versionsIds.length; j++) {
                     
                     // 1. Load the current model version
                     String currentModelXml = httpRequest(new URL("https://repository.dcrgraphs.net/api/graphs/" + id + "/versions/" 
-                        + versionsIds.get(j)));
+                        + versionsIds[j]));
+
+                    System.out.println("https://repository.dcrgraphs.net/api/graphs/" + id + "/versions/" 
+                        + versionsIds[j]);
 
                     DcrModel.writeXmlToFile(currentModelXml, filepath + "/Model" + id  + "/version" + (j+1) + ".xml");
 
@@ -140,7 +157,19 @@ public class DataSetLoader {
 
         // URL modelsURL = new URL("https://repository.dcrgraphs.net/api/graphs/" + id);
 
-        DcrModel.writeXmlToFile(httpRequest(new URL("https://repository.dcrgraphs.net/api/graphs/" + modelIds.get(0))), filepath);
+        // DcrModel.writeXmlToFile(httpRequest(new URL("https://repository.dcrgraphs.net/api/graphs/" + modelIds.get(0))), filepath);
+    }
+
+    private static void reverseArray(int[] array) {
+        int start = 0;
+        int end = array.length - 1;
+        while (start < end) {
+            int temp = array[start];
+            array[start] = array[end];
+            array[end] = temp;
+            start++;
+            end--;
+        }
     }
 
     public static BufferedImage getModelImage(String image) {

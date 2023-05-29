@@ -32,7 +32,7 @@ public class DcrModel {
 	private Set<Triple<String, String, RELATION>> relations = new HashSet<Triple<String, String, RELATION>>();
 	private HashMap<String, String> labelMappings = new HashMap<String, String>();
 
-	private Set<ActivityRelation> profile = null;
+	private Set<ActivityRelations> profile = null;
 	
 	HashMap<String, String> subActivities = new HashMap<String, String>();
 	
@@ -161,18 +161,27 @@ public class DcrModel {
         if (subActivities.containsValue(activity)) return true;
         return false;
     }
-	public Set<ActivityRelation> getProfile() {
+	public Set<ActivityRelations> getProfile() {
 		return profile;
 	}
-	public void setProfile(Set<ActivityRelation> profile) {
+	public void setProfile(Set<ActivityRelations> profile) {
 		this.profile = profile;
 	}
-	public Set<ActivityRelation> createBehavioralProfile() {
-		profile = new HashSet<ActivityRelation>();
+	public Set<ActivityRelations> getActivityRelationsFromActivitities(String activity1, String activity2) {
+		Set<ActivityRelations> activityRelations = new HashSet<ActivityRelations>();
+		for (ActivityRelations activityRelation : profile) {
+			if (activityRelation.getActivityA().equals(activity1) && activityRelation.getActivityB().equals(activity2)) {
+				activityRelations.add(activityRelation);
+			}
+		}
+		return activityRelations;
+	}
+	public Set<ActivityRelations> createBehavioralProfile() {
+		profile = new HashSet<ActivityRelations>();
 		ArrayList<ArrayList<String>> traces = new ArrayList<ArrayList<String>>();
 
-		int traceLength = 100;
-		int numOfTraces = 40;
+		int traceLength = 1000;
+		int numOfTraces = 30;
 
 		TraceGenerator traceGenerator = new TraceGenerator();
 		for (int i = 0; i < numOfTraces; i++) {
@@ -197,8 +206,11 @@ public class DcrModel {
 				if (i == j) {
 					continue;
 				}
+
 				String activity1 = activitiesList[i];
 				String activity2 = activitiesList[j];
+
+				ActivityRelations activityRelation = new ActivityRelations(activity1, activity2);
 
 				coOccurence = true;
 				exclusive = true;
@@ -248,17 +260,18 @@ public class DcrModel {
 				}
 				
 				if (strictOrder) {
-					profile.add(new ActivityRelation(activity1, activity2, "strict-order"));
+					activityRelation.addRelation("strict-order");
 				}
 				if (exclusive) {
-					profile.add(new ActivityRelation(activity1, activity2, "exclusive"));
+					activityRelation.addRelation("exclusive");
 				}
 				if (coOccurence) {
-					profile.add(new ActivityRelation(activity1, activity2, "co-occurence"));
+					activityRelation.addRelation("co-occurence");
 				}
 				if (interleaving) {
-					profile.add(new ActivityRelation(activity1, activity2, "interleaving"));
+					activityRelation.addRelation("interleaving");
 				}
+				profile.add(activityRelation);
 			}
 		}
 		return profile;
