@@ -1,4 +1,4 @@
-package beamline.dcr.modeltomodel.testrunners;
+package beamline.dcr.modeltomodelcomparison.testrunners;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package beamline.dcr.modeltomodel;
+package beamline.dcr.modeltomodelcomparison;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import org.xml.sax.SAXException;
 import beamline.dcr.model.relations.ActivityRelations;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.DcrModel.RELATION;
-import beamline.dcr.modeltomodel.testrunners.TraceGenerator;
+import beamline.dcr.modeltomodelcomparison.testrunners.TraceGenerator;
 import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 

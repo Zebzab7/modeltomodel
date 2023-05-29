@@ -2,7 +2,7 @@ package beamline.dcr.testsoftware;
 
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.DcrModel.RELATION;
-import beamline.dcr.modeltomodel.DcrSimilarity;
+import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.xml.sax.SAXException;

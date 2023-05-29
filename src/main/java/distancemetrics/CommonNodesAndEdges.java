@@ -4,7 +4,7 @@ import org.christopherfrantz.dbscan.DBSCANClusteringException;
 import org.christopherfrantz.dbscan.DistanceMetric;
 
 import beamline.dcr.model.relations.DcrModel;
-import beamline.dcr.modeltomodel.DcrSimilarity;
+import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
 
 public class CommonNodesAndEdges implements DistanceMetric<DcrModel> {
 

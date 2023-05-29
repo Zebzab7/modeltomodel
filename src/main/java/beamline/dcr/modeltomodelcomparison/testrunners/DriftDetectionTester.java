@@ -1,4 +1,4 @@
-package beamline.dcr.modeltomodel.testrunners;
+package beamline.dcr.modeltomodelcomparison.testrunners;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import org.christopherfrantz.dbscan.DistanceMetric;
 import org.xml.sax.SAXException;
 
 import beamline.dcr.model.relations.DcrModel;
-import beamline.dcr.modeltomodel.DriftDetector;
+import beamline.dcr.modeltomodelcomparison.DriftDetector;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison;
 import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import distancemetrics.CommonNodesAndEdges;

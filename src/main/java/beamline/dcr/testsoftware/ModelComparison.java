@@ -1,7 +1,7 @@
 package beamline.dcr.testsoftware;
 
 import beamline.dcr.model.relations.DcrModel;
-import beamline.dcr.modeltomodel.DcrSimilarity;
+import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.w3c.dom.Document;

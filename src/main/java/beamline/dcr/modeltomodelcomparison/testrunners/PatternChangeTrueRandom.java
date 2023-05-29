@@ -1,4 +1,4 @@
-package beamline.dcr.modeltomodel.testrunners;
+package beamline.dcr.modeltomodelcomparison.testrunners;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import org.christopherfrantz.dbscan.DBSCANClusteringException;
 import org.xml.sax.SAXException;
 
 import beamline.dcr.model.relations.DcrModel;
-import beamline.dcr.modeltomodel.DcrSimilarity;
+import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
 import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 

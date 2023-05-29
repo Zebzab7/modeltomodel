@@ -1,4 +1,4 @@
-package beamline.dcr.modeltomodel;
+package beamline.dcr.modeltomodelcomparison;
 
 import java.util.ArrayList;
 

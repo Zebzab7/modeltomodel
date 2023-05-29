@@ -1,4 +1,4 @@
-package beamline.dcr.modeltomodel.testrunners;
+package beamline.dcr.modeltomodelcomparison.testrunners;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -21,8 +21,8 @@ import beamline.core.web.miner.models.MinerParameterValue;
 import beamline.dcr.miners.DFGBasedMiner;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.UnionRelationSet;
-import beamline.dcr.modeltomodel.DcrSimilarity;
-import beamline.dcr.modeltomodel.ModelRepository;
+import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
+import beamline.dcr.modeltomodelcomparison.ModelRepository;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;

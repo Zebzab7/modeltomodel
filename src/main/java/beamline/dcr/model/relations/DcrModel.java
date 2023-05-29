@@ -25,7 +25,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import beamline.dcr.modeltomodel.testrunners.TraceGenerator;
+import beamline.dcr.modeltomodelcomparison.testrunners.TraceGenerator;
 
 public class DcrModel {
 	private Set<String> activities;

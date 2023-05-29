@@ -1,8 +1,8 @@
 package beamline.dcr.testsoftware.testrunners;
 
 import beamline.dcr.model.relations.DcrModel;
-import beamline.dcr.modeltomodel.DcrSimilarity;
-import beamline.dcr.modeltomodel.DriftDetector;
+import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
+import beamline.dcr.modeltomodelcomparison.DriftDetector;
 import beamline.dcr.testsoftware.ModelAdaption;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.view.DcrModelXML;

@@ -7,7 +7,7 @@ import beamline.dcr.miners.DFGBasedMiner;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.UnionRelationSet;
 import beamline.dcr.model.relations.dfg.ExtendedDFG;
-import beamline.dcr.modeltomodel.DcrSimilarity;
+import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
 import beamline.dcr.testsoftware.ConformanceChecking;
 import beamline.dcr.testsoftware.ModelComparison;
 import beamline.dcr.testsoftware.TransitionSystem;

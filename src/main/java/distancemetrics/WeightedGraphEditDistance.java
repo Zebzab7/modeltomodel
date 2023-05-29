@@ -3,7 +3,7 @@ package distancemetrics;
 import org.christopherfrantz.dbscan.DistanceMetric;
 
 import beamline.dcr.model.relations.DcrModel;
-import beamline.dcr.modeltomodel.DcrSimilarity;
+import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
 
 public class WeightedGraphEditDistance implements DistanceMetric<DcrModel> {
     public double calculateDistance(DcrModel arg0, DcrModel arg1) throws org.christopherfrantz.dbscan.DBSCANClusteringException {
