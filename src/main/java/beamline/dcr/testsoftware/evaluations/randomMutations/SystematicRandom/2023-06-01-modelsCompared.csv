@@ -1,0 +1,2 @@
+sep=,
+model,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapActivities,GED,LCS,BehavioralProfile

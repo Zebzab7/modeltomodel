@@ -28,7 +28,7 @@ public class PrintPatternSimilarityAnyDataSet {
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/publicrepodataset/model" + modelNumber + "/";
 
-        StringBuilder modelComparisonString = new StringBuilder("Step,GED,BehavioralProfile\n");
+        StringBuilder modelComparisonString = new StringBuilder("Step,version,GED,BehavioralProfile\n");
         String inputString = "GEDvsBehavioralProfile" + "model" + modelNumber;
         
         Path groundTruthPath = Paths.get(groundTruthModels); 
@@ -44,17 +44,17 @@ public class PrintPatternSimilarityAnyDataSet {
            }
        });
 
-       int count = 1;
+       int stepCount = 1;
        for (int i = firstModelVersion; i < paths.size(); i++) {
            try {
                 String filenameFull = paths.get(i).getFileName().toString();
                 String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
                 String simString = writeSimilarity(paths.get(i).toString(),filenameTrimmed,
-                        groundTruthModels + "/version" +firstModelVersion + ".xml", count);
+                        groundTruthModels + "/version" +firstModelVersion + ".xml", stepCount, i);
 //               System.out.println(simString);
                 modelComparisonString.append(simString);
                 System.out.println(filenameTrimmed + " has been compared");
-                count++;
+                stepCount++;
            } catch (ParserConfigurationException e) {
                e.printStackTrace();
            } catch (SAXException e) {
@@ -77,7 +77,7 @@ public class PrintPatternSimilarityAnyDataSet {
         }
     }
 
-    private static String writeSimilarity(String modelPath, String filename, String referenceModelPath, int step) 
+    private static String writeSimilarity(String modelPath, String filename, String referenceModelPath, int step, int version) 
             throws IOException, SAXException, ParserConfigurationException {
         DcrModel referenceModel = new DcrModel();
         referenceModel.loadModel(referenceModelPath);   
@@ -88,7 +88,7 @@ public class PrintPatternSimilarityAnyDataSet {
         
         double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(newModel, referenceModel);
         double LCSScore = DcrSimilarity.behavioralProfileSimilarity(newModel, referenceModel);
-        xmlString.append(step + "," + GEDScore + "," + LCSScore + "\n");
+        xmlString.append(step + "," + version + "," + GEDScore + "," + LCSScore + "\n");
         
         return xmlString.toString();
     }

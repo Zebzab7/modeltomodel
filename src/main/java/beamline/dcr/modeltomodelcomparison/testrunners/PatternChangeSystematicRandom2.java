@@ -14,19 +14,18 @@ import org.xml.sax.SAXException;
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
 import beamline.dcr.testsoftware.ModelAdaption;
-import beamline.dcr.testsoftware.ModelComparison;
 
 public class PatternChangeSystematicRandom2 {
     public static void main(String[] args) throws IOException {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/publicrepodataset";
-        String filename = "ResearchPaper1";
+        String filename = "/model7188/original";
         
         StringBuilder modelComparisonString = new StringBuilder("sep=,\nmodel,addActSerial,addActParallel,deleteAct,replaceAct,addConst,removeConst,swapActivities," +
             "GED,LCS,BehavioralProfile\n");
 
-        groundTruthModels = currentPath + "/driftedmodels/ResearchPaperExample/";
+        // groundTruthModels = currentPath + "/driftedmodels/ResearchPaperExample/";
         String modelPath = groundTruthModels + filename + ".xml";
 
         try {
@@ -40,28 +39,6 @@ public class PatternChangeSystematicRandom2 {
             e.printStackTrace();
         }
 
-        
-        // try (Stream<Path> paths = Files.walk(Paths.get(groundTruthModels))) {
-        //     paths
-        //     .filter(Files::isRegularFile)
-        //     .forEach(path -> {if(path.toString().startsWith("model")) {
-        //         try {
-        //             String filenameFull = path.getFileName().toString();
-        //             String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
-        //             String simString = randomMutationsString(path.toString(),filenameTrimmed);
-        //             //System.out.println(simString);
-        //             modelComparisonString.append(simString);
-        //             System.out.println(filenameTrimmed + " has been compared");
-        //         } catch (ParserConfigurationException e) {
-        //             e.printStackTrace();
-        //         } catch (SAXException e) {
-        //             e.printStackTrace();
-        //         } catch (IOException e) {
-        //             e.printStackTrace();
-        //         }
-        //     }});
-        // }
-        
         try {
             FileWriter myWriter 
             = new FileWriter(currentPath + "/evaluations/randomMutations/SystematicRandom/" + java.time.LocalDate.now()
@@ -96,7 +73,8 @@ public class PatternChangeSystematicRandom2 {
                             for (int removeConstraintInt = 0; removeConstraintInt <= 3; removeConstraintInt++){
                                 for (int swapActivitiesInt = 0; swapActivitiesInt <= 3; swapActivitiesInt++){
                                     
-                                    if(iteration % 1000 == 0)
+
+                                    if(iteration % 100 == 0)
                                     System.out.println("Iteration: " + iteration + " out of " + totalIterations);
                                     iteration++;
 
@@ -119,7 +97,6 @@ public class PatternChangeSystematicRandom2 {
                                     double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(referenceModel, adaptedModel);
                                     double behavioralScore = DcrSimilarity.behavioralProfileSimilarity(referenceModel, adaptedModel);
                                     double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(referenceModel, adaptedModel);
-                                    // double LCSScore = 1.0;
                                     
                                     xmlString.append(GEDScore + "," + LCSScore + "," + behavioralScore + "\n");
                                 }

@@ -75,6 +75,15 @@ public class DcrModel {
 	public Set<String> getActivities() {
 		return activities;
 	}
+	public ArrayList<String> getParentActivities() {
+		ArrayList<String> parentActivities = new ArrayList<String>();
+	    for (HashMap.Entry<String, String> entry : subActivities.entrySet()) {
+	        if (!parentActivities.contains(entry.getValue())) {
+	            parentActivities.add(entry.getValue());
+	        }
+		}
+	    return parentActivities;
+	}
 	public HashMap<String, String> getAllSubActivities() {
         return subActivities;
     }
@@ -325,13 +334,13 @@ public class DcrModel {
 		for (int j = 0; j < constraints.getLength(); j++) {
 			Node childNode = constraints.item(j);
 			switch (childNode.getNodeName()){
+				case "milestones":
 				case "conditions":
 				case "responses":
 				case "excludes":
 				case "includes":
 					addToRelationSet(childNode.getChildNodes());
 					break;
-
 			}
 		}
 

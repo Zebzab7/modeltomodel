@@ -18,23 +18,18 @@ public class BehaviorExperiement {
     static Random rand = new Random();
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
-        
-        
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/publicrepodataset";
         
-        String fileName = "model89";
-        String modelPath = groundTruthModels + "/" + fileName + "/original.xml";
+        String modelId = "7188";
+        String modelPath = groundTruthModels + "/model" + modelId + "/original.xml";
 
-        DcrModel.RELATION relationType = DcrModel.RELATION.EXCLUDE;
-
-        String modelComparisonString = randomMutationsString(modelPath, relationType);
-        
+        String modelComparisonString = randomMutationsString(modelPath);
         try {
             FileWriter myWriter 
-            = new FileWriter(currentPath + "/evaluations/randomMutations/SystematicRandom/" + java.time.LocalDate.now()
-               + "-" + fileName + "-" + relationType + ".csv"/*,true*/);
+            = new FileWriter(currentPath + "/evaluations/randomMutations/BehaviorExperiement/" + java.time.LocalDate.now()
+               + "-" + modelId + "randomEdits" + ".csv"/*,true*/);
             myWriter.write(modelComparisonString.toString());
             myWriter.close();
             
@@ -44,45 +39,62 @@ public class BehaviorExperiement {
         }
     }
     
-    private static String randomMutationsString(String modelPath, DcrModel.RELATION relationType) throws IOException, SAXException, ParserConfigurationException {
+    private static String randomMutationsString(String modelPath) throws IOException, SAXException, ParserConfigurationException {
+
+        String rootPath = System.getProperty("user.dir");
+        String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
+        String adaptions = currentPath + "/evaluations/BehaviorExperiement/model7188";
 
         StringBuilder output = new StringBuilder("sep=,\nnumOfChanges,GED,LCS,BehavioralProfile\n");
-
         DcrModel originalModel = new DcrModel();
         originalModel.loadModel(modelPath);
+        ModelAdaption modelAdaption = new ModelAdaption(originalModel.getClone());
 
-        // int totalIterations = 4*4*4*4*4;
-        int iteration = 0;
-        int totalIterations = 20*20;
+        System.out.println(originalModel.getActivities().size());
 
-        ModelAdaption modelAdaption = new ModelAdaption(originalModel);
-        for (int i = 0; i < 20; i++) {
-            for (int j = 0; j < 20; j++) {
+        int totalIterations = 20;
 
-                if(iteration % (totalIterations/100) == 0) {
-                    System.out.println("Iteration: " + iteration + " out of " + totalIterations);
-                }
+        for (int i = 0; i < totalIterations; i++) {
 
-                modelAdaption = new ModelAdaption(modelPath);
-
-                if (rand.nextDouble() < 0.5) {
-                    relationType = DcrModel.RELATION.EXCLUDE;
-                } else {
-                    relationType = DcrModel.RELATION.INCLUDE;
-                }
-
-                if (!modelAdaption.addConstraintOfType(i, relationType)) {
-                    System.out.println("Failed to add constraint of type " + relationType);
-                    continue;
-                }
-
-                DcrModel adaptedModel  = modelAdaption.getModel();
-                double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(originalModel, adaptedModel);
-                double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(originalModel, adaptedModel);
-                double behavioralScore = DcrSimilarity.behavioralProfileSimilarity(originalModel, adaptedModel);
-                output.append(i + "," + GEDScore + "," + LCSScore + "," + behavioralScore + "\n");
-                iteration++;
+            switch(rand.nextInt(7)) {
+                case 0:
+                    System.out.println("insertActivitySerial");
+                    if (!modelAdaption.insertActivitySerial(1)) continue;
+                    break;
+                case 1:
+                    System.out.println("insertActivityParallel");
+                    if (!modelAdaption.insertActivityParallel(1)) continue;
+                    break;
+                case 2:
+                    System.out.println("deleteActivity");
+                    if (!modelAdaption.deleteActivity(1)) continue;
+                    break;
+                case 3:
+                    System.out.println("replaceActivity");
+                    if (!modelAdaption.replaceActivity(1)) continue;
+                    break;
+                case 4:
+                    System.out.println("addConstraint");
+                    if (!modelAdaption.addConstraint(1)) continue;
+                    break;
+                case 5:
+                    System.out.println("removeConstraint");
+                    if (!modelAdaption.removeConstraint(1)) continue;
+                    break;
+                case 6:
+                    System.out.println("swapActivities");
+                    if (!modelAdaption.swapActivities(1)) continue;
+                    break;
             }
+
+            DcrModel adaptedModel  = modelAdaption.getModel();
+
+            ModelViewer.dcrGraphToImage(adaptedModel, adaptions + "/adaption" + (i+1) + ".png");
+
+            double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(originalModel, adaptedModel);
+            double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(originalModel, adaptedModel);
+            double behavioralScore = DcrSimilarity.behavioralProfileSimilarity(originalModel, adaptedModel);
+            output.append(i + "," + GEDScore + "," + LCSScore + "," + behavioralScore + "\n");
         }
 
         return output.toString();
