@@ -2,7 +2,7 @@ package beamline.dcr.testsoftware;
 
 import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.model.relations.DcrModel.RELATION;
-import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
+import beamline.dcr.modeltomodelcomparison.testrunners.BehaviorExperiement;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.xml.sax.SAXException;
@@ -15,7 +15,7 @@ public class ModelAdaption {
     
     private DcrModel model;
     
-    Random r = new Random();
+    public static Random r = BehaviorExperiement.rand;
 
     public ModelAdaption(String modelPath) throws IOException, SAXException, ParserConfigurationException {
         this.model = new DcrModel();
@@ -27,9 +27,12 @@ public class ModelAdaption {
     }
     
     public boolean insertActivitySerial(int numRepeatings){
-        
         for (int i = 0; i < numRepeatings; i++) {
             String activityNew = getRandomNonExistingActivity();
+
+            System.out.println("Inserting " + activityNew + " serial");
+
+            model.getLabelMappings().put(activityNew, activityNew);
 
             //Get random activity from all relations
             String randomSource = getRandomExistingActivity(model.getRelations());
@@ -57,23 +60,30 @@ public class ModelAdaption {
             if (!hasChanged){
                 return false;
             }
+            model.addActivity(activityNew);
             model.removeRelations(relationsToRemove);
             model.addRelations(relationsToAdd);
         }
         return true;
     }
     public boolean insertActivityParallel(int numRepeatings){
-        
         for (int i = 0; i < numRepeatings; i++) {
             String randomActivity = getRandomNonExistingActivity();
             model.addActivity(randomActivity);
+            System.out.println("Inserting " + randomActivity + " parallel");
         }
         return true;
     }
     public boolean deleteActivity(int numRepeatings){
         for (int i = 0; i < numRepeatings; i++) {
             String randomExistingActivity = getRandomExistingActivity(model.getRelations());
+            while (model.isParentActivity(randomExistingActivity)) {
+                randomExistingActivity = getRandomExistingActivity(model.getRelations());
+            }
+            System.out.println("Deleting " + model.getLabelMappings().get(randomExistingActivity));
+            System.out.println(model.getActivities().toString());
             model.removeActivity(randomExistingActivity);
+            System.out.println(model.getActivities().toString());
         }
         return true;
     }
@@ -81,6 +91,11 @@ public class ModelAdaption {
         for (int i = 0; i < numRepeatings; i++) {
             String oldActivity = getRandomExistingActivity(model.getRelations());
             String newActivity = getRandomNonExistingActivity();
+            
+            model.getLabelMappings().put(newActivity, newActivity);
+            System.out.println("Replacing " + model.getLabelMappings().get(oldActivity)
+            + " with " + model.getLabelMappings().get(newActivity));
+            model.getLabelMappings().remove(oldActivity);
             Set<Triple<String, String, DcrModel.RELATION>> relationsWithActivity = new HashSet<>();
             relationsWithActivity.addAll(model.getDcrRelationsWithActivity(oldActivity));
 
@@ -95,6 +110,9 @@ public class ModelAdaption {
                     model.addRelation(Triple.of(source, newActivity, dcrConstraint));
                 }
             }
+            model.getActivities().remove(oldActivity);
+            model.getAllSubActivities().remove(oldActivity);
+            model.getActivities().add(newActivity);
         }
         return true;
     }
@@ -116,13 +134,12 @@ public class ModelAdaption {
             List<DcrModel.RELATION> constraints =
                     Collections.unmodifiableList(Arrays.asList(DcrModel.RELATION.values()));
             int size = constraints.size();
-            Random random = new Random();
 
-            DcrModel.RELATION randomConstraint = constraints.get(random.nextInt(size));
+            DcrModel.RELATION randomConstraint = constraints.get(r.nextInt(size));
             while (!(randomConstraint.equals(constraintType))) {
-                randomConstraint = constraints.get(random.nextInt(size));
+                randomConstraint = constraints.get(r.nextInt(size));
             }
-
+            System.out.println("Adding " + source + " " + target + " " + randomConstraint);
             model.addRelation(Triple.of(source, target, randomConstraint));
         }
         return true;
@@ -143,14 +160,16 @@ public class ModelAdaption {
             List<DcrModel.RELATION> constraints =
                     Collections.unmodifiableList(Arrays.asList(DcrModel.RELATION.values()));
             int size = constraints.size();
-            Random random = new Random();
-
-            DcrModel.RELATION randomConstraint = constraints.get(random.nextInt(size));
+            
+            boolean same = source == target;
+            DcrModel.RELATION randomConstraint = constraints.get(r.nextInt(size));
             while (!(randomConstraint.equals(RELATION.CONDITION) ||randomConstraint.equals(RELATION.RESPONSE) ||
-                    randomConstraint.equals(RELATION.INCLUDE) || randomConstraint.equals(RELATION.EXCLUDE))) {
-                randomConstraint = constraints.get(random.nextInt(size));
+                    randomConstraint.equals(RELATION.INCLUDE) || randomConstraint.equals(RELATION.EXCLUDE)) 
+                    || (randomConstraint.equals(RELATION.CONDITION) && same)) {
+                randomConstraint = constraints.get(r.nextInt(size));
             }
-
+            System.out.println("addConstraint");
+            System.out.println("Adding " + source + " " + target + " " + randomConstraint);
             model.addRelation(Triple.of(source, target, randomConstraint));
         }
         return true;
@@ -165,7 +184,7 @@ public class ModelAdaption {
             }else if(size==0){
                 return false;
             }else{
-                int item = new Random().nextInt(size); // In real life, the Random object should be rather more shared than this
+                int item = r.nextInt(size); // In real life, the Random object should be rather more shared than this
                 int i = 0;
 
                 for (Triple<String, String, DcrModel.RELATION> randomRelation : relations) {
@@ -176,7 +195,7 @@ public class ModelAdaption {
                     i++;
                 }
             }
-
+            System.out.println("Removing " + relationToRemove.getLeft() + " " + relationToRemove.getRight() + " " + relationToRemove.getMiddle());
             model.removeRelation(relationToRemove.getLeft(), relationToRemove.getMiddle(), relationToRemove.getRight());
         }
         return true;
@@ -198,6 +217,8 @@ public class ModelAdaption {
                 activity2 = getRandomExistingActivity(dcrRelations);
                 maxCount++;
             }
+
+            System.out.println("Swapping " + model.getLabelMappings().get(activity1) + " and " + model.getLabelMappings().get(activity2));
 
             for (Triple<String, String, DcrModel.RELATION> relation : dcrRelations) {
                 String source = relation.getLeft();
@@ -225,7 +246,7 @@ public class ModelAdaption {
     }
     
     public boolean applyNoise() {
-        switch((new Random()).nextInt(6)) {
+        switch(r.nextInt(6)) {
             case 0:
                 insertActivitySerial(1);
                 break;
@@ -253,7 +274,7 @@ public class ModelAdaption {
     
     public boolean randomMutation(int numRepeatings) {
         for (int i = 0; i < numRepeatings; i++) {
-            switch((new Random()).nextInt(7)) {
+            switch(r.nextInt(7)) {
                 case 0:
                     insertActivitySerial(1);
                     break;
@@ -308,11 +329,10 @@ public class ModelAdaption {
             List<DcrModel.RELATION> constraints =
                     Collections.unmodifiableList(Arrays.asList(DcrModel.RELATION.values()));
             int size = constraints.size();
-            Random random = new Random();
 
-            DcrModel.RELATION randomConstraint = constraints.get(random.nextInt(size));
+            DcrModel.RELATION randomConstraint = constraints.get(r.nextInt(size));
             while (!(randomConstraint.equals(RELATION.CONDITION) ||randomConstraint.equals(RELATION.RESPONSE))) {
-                randomConstraint = constraints.get(random.nextInt(size));
+                randomConstraint = constraints.get(r.nextInt(size));
             }
 
             model.addRelation(Triple.of(source, target, randomConstraint));
@@ -351,7 +371,7 @@ public class ModelAdaption {
         }if (size==0){
             return null;
         }
-        int item = new Random().nextInt(size); // In real life, the Random object should be rather more shared than this
+        int item = r.nextInt(size); // In real life, the Random object should be rather more shared than this
         int i = 0;
         for(String randomActivity : activities)
         {
@@ -373,7 +393,7 @@ public class ModelAdaption {
         }if (size==0){
             return null;
         }
-        int item = new Random().nextInt(size); // In real life, the Random object should be rather more shared than this
+        int item = r.nextInt(size); // In real life, the Random object should be rather more shared than this
         int i = 0;
         for(String randomActivity : activities)
         {

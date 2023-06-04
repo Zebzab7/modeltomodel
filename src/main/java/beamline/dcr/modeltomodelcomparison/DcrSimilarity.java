@@ -223,7 +223,7 @@ public class DcrSimilarity {
     }
     
     public static double longestCommonSubtraceSimilarity(DcrModel modelA, DcrModel modelB) {
-        int numOfTraces = 20;
+        int numOfTraces = 100;
         
         TraceGenerator traceGenerator = new TraceGenerator();
         

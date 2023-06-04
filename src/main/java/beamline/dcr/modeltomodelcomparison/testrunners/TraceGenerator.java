@@ -141,16 +141,16 @@ public class TraceGenerator {
             Collections.shuffle(executionOrder);
             boolean found = false;
             
-            if (rand.nextDouble() < 0.95) {
-                for (int i = 0; i < executionOrder.size(); i++) {
-                    if (execution.isPending(executionOrder.get(i))) {
-                        if (execution.executeActivity(executionOrder.get(i))) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-            }
+            // if (rand.nextDouble() < 0.95) {
+            //     for (int i = 0; i < executionOrder.size(); i++) {
+            //         if (execution.isPending(executionOrder.get(i))) {
+            //             if (execution.executeActivity(executionOrder.get(i))) {
+            //                 found = true;
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
             if (!found) {
                 for (int i = 0; i < executionOrder.size(); i++) {
                     if (execution.executeActivity(executionOrder.get(i))) {

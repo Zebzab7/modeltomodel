@@ -65,6 +65,7 @@ public class DcrModel {
 	}
 	public void addActivity(String id){
 		activities.add(id);
+		labelMappings.put(id, id);
 	}
 	public void addSubActivity(String subActivity, String parent) {
 	    subActivities.put(subActivity, parent);
@@ -132,13 +133,19 @@ public class DcrModel {
 	public void removeActivity(String source){
 		Set<Triple<String, String, DcrModel.RELATION>> relationsToRemove = new HashSet<>();
 		for (Triple<String, String, RELATION> relation : relations){
-			if (relation.getLeft().equals(source) ){
+			if (relation.getLeft().equals(source)){
 				relationsToRemove.add(Triple.of(source, relation.getMiddle(), relation.getRight()));
-
+			}
+			if (relation.getMiddle().equals(source)){
+				relationsToRemove.add(Triple.of(relation.getLeft(), source, relation.getRight()));
 			}
 		}
 		relations.removeAll(relationsToRemove);
+		labelMappings.remove(source);
 		activities.remove(source);
+		if(isSubActivity(source)) {
+			subActivities.remove(source);
+		}
 	}
 	public void removeRelations(String source, String target){
 		for (Triple<String, String, RELATION> relation : relations){
@@ -190,7 +197,7 @@ public class DcrModel {
 		ArrayList<ArrayList<String>> traces = new ArrayList<ArrayList<String>>();
 
 		int traceLength = 1000;
-		int numOfTraces = 30;
+		int numOfTraces = 100;
 
 		TraceGenerator traceGenerator = new TraceGenerator();
 		for (int i = 0; i < numOfTraces; i++) {
@@ -485,10 +492,30 @@ public class DcrModel {
 	 */
 	public DcrModel getClone() {
 	    DcrModel copy = new DcrModel();
-	    copy.addActivities(this.activities);
-	    copy.addRelations(this.relations);
-	    copy.setSubActivities(this.subActivities);
-	    copy.setLabelMappings(this.labelMappings);
+		for (String activity : this.activities) {
+			String newActivity = activity;
+			copy.activities.add(newActivity);
+		}
+		for (HashMap.Entry<String, String> entry : this.subActivities.entrySet()) {
+			String newActivity = entry.getKey();
+			String newParent = entry.getValue();
+			copy.subActivities.put(newActivity, newParent);
+		}
+		for (Triple<String, String, RELATION> relation : this.relations) {
+			String newSource = relation.getLeft();
+			String newTarget = relation.getMiddle();
+			RELATION newConstraint = relation.getRight();
+			copy.relations.add(Triple.of(newSource, newTarget, newConstraint));
+		}
+		for (HashMap.Entry<String, String> entry : this.labelMappings.entrySet()) {
+		    String newActivity = entry.getKey();
+		    String newLabel = entry.getValue();
+		    copy.labelMappings.put(newActivity, newLabel);
+		}
+	    // copy.addActivities(this.activities);
+	    // copy.addRelations(this.relations);
+	    // copy.setSubActivities(this.subActivities);
+	    // copy.setLabelMappings(this.labelMappings);
 	    return copy;
 	}
 }

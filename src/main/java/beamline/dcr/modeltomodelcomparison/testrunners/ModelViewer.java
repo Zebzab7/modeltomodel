@@ -56,16 +56,13 @@ public class ModelViewer {
     public static void dcrGraphToImage(DcrModel model, String outputFilePath) throws IOException {
 
         MutableGraph graph = mutGraph("DCRGraph" + count).setDirected(true);
-        System.out.println("here and graph: " + graph);
         count++;
 
         HashMap<String, String> labelMap = model.getLabelMappings();
         ArrayList<String> parentActivities = model.getParentActivities();
         for (int i = 0; i < parentActivities.size(); i++) {
-
             String parentActivity = parentActivities.get(i);
             ArrayList<String> childActivities = model.getSubActivitiesFromParent(parentActivity);
-
             MutableGraph cluster = mutGraph(labelMap.get(parentActivity)).setDirected(true).setCluster(true);
             MutableGraph subGraph = mutGraph("").setDirected(true);
             // cluster.graphAttrs().add(Label.of(labelMap.get(parentActivity)));
@@ -77,12 +74,11 @@ public class ModelViewer {
             cluster.add(subGraph);
             graph.add(cluster);
         }
-
         Set<String> activitySet = model.getActivities();
         String[] activities = activitySet.toArray(new String[activitySet.size()]);
         int n = activities.length;
         for (int i = 0; i < n; i++) {
-
+            
             // First add the activity
             String activity = activities[i];
             
@@ -94,7 +90,7 @@ public class ModelViewer {
             }
         }
         File outputImage = new File(outputFilePath);
-        System.out.println(graph);
+
         Graphviz.fromGraph(graph).render(Format.PNG).toFile(outputImage);
     }
 
