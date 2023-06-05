@@ -22,7 +22,7 @@ public class BehaviorExperiement {
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
         String groundTruthModels = currentPath + "/publicrepodataset";
         
-        String modelId = "7188";
+        String modelId = "7262";
         String modelPath = groundTruthModels + "/model" + modelId + "/original.xml";
         
         DcrModel originalModel = new DcrModel();
