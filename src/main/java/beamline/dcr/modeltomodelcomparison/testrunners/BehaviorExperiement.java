@@ -104,9 +104,9 @@ public class BehaviorExperiement {
             DcrModel adaptedModel  = modelAdaption.getModel();
             ModelViewer.dcrGraphToImage(adaptedModel, adaptions + "/adaption" + (i+1) + ".png");
 
-            GEDScore = DcrSimilarity.graphEditDistanceSimilarity(previousModel, adaptedModel);
-            LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(previousModel, adaptedModel);
-            behavioralScore = DcrSimilarity.behavioralProfileSimilarity(previousModel, adaptedModel);
+            GEDScore = DcrSimilarity.graphEditDistanceSimilarity(originalModel, adaptedModel);
+            LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(originalModel, adaptedModel);
+            behavioralScore = DcrSimilarity.behavioralProfileSimilarity(originalModel, adaptedModel);
             output.append((i+1) + "," + GEDScore + "," + LCSScore + "," + behavioralScore + ","+ edit + "\n");
         }
 
