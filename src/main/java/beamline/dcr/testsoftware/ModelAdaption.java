@@ -94,25 +94,29 @@ public class ModelAdaption {
             
             model.getLabelMappings().put(newActivity, newActivity);
             System.out.println("Replacing " + model.getLabelMappings().get(oldActivity)
-            + " with " + model.getLabelMappings().get(newActivity));
+                + " with " + model.getLabelMappings().get(newActivity));
             model.getLabelMappings().remove(oldActivity);
             Set<Triple<String, String, DcrModel.RELATION>> relationsWithActivity = new HashSet<>();
             relationsWithActivity.addAll(model.getDcrRelationsWithActivity(oldActivity));
 
+            Set<Triple<String, String, DcrModel.RELATION>> relationsToRemove = new HashSet<>();
+            Set<Triple<String, String, DcrModel.RELATION>> relationsToAdd = new HashSet<>();
             for (Triple<String, String, DcrModel.RELATION> relation : relationsWithActivity) {
                 String source = relation.getLeft();
                 String target = relation.getMiddle();
                 DcrModel.RELATION dcrConstraint = relation.getRight();
-                model.removeRelation(source, target, dcrConstraint);
-                if (source.equals(oldActivity)) {
-                    model.addRelation(Triple.of(newActivity, target, dcrConstraint));
+                relationsToRemove.add(Triple.of(source, target, dcrConstraint));
+                if (source.equals(oldActivity) && target.equals(oldActivity)) {
+                    relationsToAdd.add(Triple.of(newActivity, newActivity, dcrConstraint));
+                } else if (source.equals(oldActivity)) {
+                    relationsToAdd.add(Triple.of(newActivity, target, dcrConstraint));
                 } else {
-                    model.addRelation(Triple.of(source, newActivity, dcrConstraint));
+                    relationsToAdd.add(Triple.of(source, newActivity, dcrConstraint));
                 }
             }
+            model.addRelations(relationsToAdd);
+            model.removeRelations(relationsToRemove);
             model.getActivities().remove(oldActivity);
-            model.getAllSubActivities().remove(oldActivity);
-            model.getActivities().add(newActivity);
         }
         return true;
     }

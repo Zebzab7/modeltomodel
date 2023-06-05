@@ -15,7 +15,7 @@ import beamline.dcr.testsoftware.ModelAdaption;
 
 public class BehaviorExperiement {
 
-    public static Random rand = new Random(989);
+    public static Random rand = new Random(960);
     
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         String rootPath = System.getProperty("user.dir");
