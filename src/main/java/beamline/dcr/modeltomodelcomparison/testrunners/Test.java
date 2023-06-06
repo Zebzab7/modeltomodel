@@ -15,14 +15,14 @@ public class Test {
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-        String groundTruthModelPath = currentPath + "/driftedmodels/ResearchPaper/ResearchPaper10.xml";
-        
-        int numOfTraces = 1;
-        int traceLength = 20;
+        String groundTruthModelPath = currentPath + "/driftedmodels/ResearchPaperExample/ResearchPaper12.xml";
         
         DcrModel CRModel = new DcrModel();
         CRModel.loadModel(groundTruthModelPath);
-        
+
+        int numOfTraces = 1;
+        int traceLength = CRModel.getActivities().size()*3;
+
         HashMap<String, String> labelMappings = CRModel.getLabelMappings();
         
         TraceGenerator traceGenerator = new TraceGenerator();

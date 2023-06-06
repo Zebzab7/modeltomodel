@@ -19,44 +19,50 @@ import beamline.dcr.model.relations.DcrModel;
 import beamline.dcr.modeltomodelcomparison.DcrSimilarity;
 
 public class PrintPatternSimilarity {
-    public static void main(String[] args) throws IOException {
-       String rootPath = System.getProperty("user.dir");
-       String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-       String groundTruthModels = currentPath + "/driftedmodels/ResearchPaperExample";
+    public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
+        String rootPath = System.getProperty("user.dir");
+        String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
+        String groundTruthModels = currentPath + "/driftedmodels/ResearchPaperExample";
 
-       StringBuilder modelComparisonString = new StringBuilder("Step,GED,BehavioralProfile\n");
-       String inputString = "GEDvsBehavioralProfile";
-       
-       Path groundTruthPath = Paths.get(groundTruthModels); 
-       ArrayList<Path> paths = getArrayListFromStream(Files.walk(groundTruthPath)
-               .filter(Files::isRegularFile).filter(path -> path.toString().contains("ResearchPaper")));
-       
-       Collections.sort(paths, new Comparator<Path>() {
-           @Override
-           public int compare(Path p1, Path p2) {
-               int num1 = getNumFromString(p1.getFileName().toString());
-               int num2 = getNumFromString(p2.getFileName().toString());
-               return num1 - num2;
-           }
-       });
-       
-       for (int i = 0; i < paths.size(); i++) {
-           try {
-               String filenameFull = paths.get(i).getFileName().toString();
-               String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
-               String simString = writeSimilarity(paths.get(i).toString(),filenameTrimmed,
-                       groundTruthModels + "/ResearchPaper1.xml");
-//               System.out.println(simString);
-               modelComparisonString.append(simString);
-               System.out.println(filenameTrimmed + " has been compared");
-           } catch (ParserConfigurationException e) {
-               e.printStackTrace();
-           } catch (SAXException e) {
-               e.printStackTrace();
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
-       }
+        StringBuilder modelComparisonString = new StringBuilder("Step,GED,LCS,BehavioralProfile\n");
+        String inputString = "GEDvsLCSvsBehavioralProfile";
+        
+        Path groundTruthPath = Paths.get(groundTruthModels); 
+        ArrayList<Path> paths = getArrayListFromStream(Files.walk(groundTruthPath)
+                .filter(Files::isRegularFile).filter(path -> path.toString().contains("ResearchPaper")));
+        
+        Collections.sort(paths, new Comparator<Path>() {
+            @Override
+            public int compare(Path p1, Path p2) {
+                int num1 = getNumFromString(p1.getFileName().toString());
+                int num2 = getNumFromString(p2.getFileName().toString());
+                return num1 - num2;
+            }
+        });
+
+        DcrModel previousModel = new DcrModel();
+        for (int i = 0; i < paths.size(); i++) {
+            if (i > 0) {
+                previousModel.loadModel(paths.get(i-1).toString());
+            } else {
+                previousModel.loadModel(paths.get(i).toString());
+            }
+            try {
+                String filenameFull = paths.get(i).getFileName().toString();
+                String filenameTrimmed = filenameFull.substring(0, filenameFull.lastIndexOf('.'));
+                String simString = writeSimilarity(paths.get(i).toString(),filenameTrimmed,
+                        groundTruthModels + "/ResearchPaper1.xml", previousModel);
+    //               System.out.println(simString);
+                modelComparisonString.append(simString);
+                System.out.println(filenameTrimmed + " has been compared");
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (SAXException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
        
         try {
             FileWriter myWriter 
@@ -71,7 +77,7 @@ public class PrintPatternSimilarity {
         }
     }
         
-    private static String writeSimilarity(String modelPath, String filename, String referenceModelPath) 
+    private static String writeSimilarity(String modelPath, String filename, String referenceModelPath, DcrModel previousModel) 
             throws IOException, SAXException, ParserConfigurationException {
         DcrModel referenceModel = new DcrModel();
         referenceModel.loadModel(referenceModelPath);   
@@ -80,9 +86,10 @@ public class PrintPatternSimilarity {
         DcrModel newModel = new DcrModel();
         newModel.loadModel(modelPath);
         
-        double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(newModel, referenceModel);
-        double LCSScore = DcrSimilarity.behavioralProfileSimilarity(newModel, referenceModel);
-        xmlString.append(getNumFromString(filename) + "," + GEDScore + "," + LCSScore + "\n");
+        double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(newModel, previousModel);
+        double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(newModel, previousModel);
+        double BPScore = DcrSimilarity.behavioralProfileSimilarity(newModel, previousModel);
+        xmlString.append(getNumFromString(filename) + "," + GEDScore + "," + LCSScore + "," + BPScore + "\n");
         
         return xmlString.toString();
     }

@@ -60,8 +60,9 @@ public class DcrModelExecution {
      * @return
      */
     public boolean isExecutable(String activity) {
-        if (model.isParentActivity(activity)) return false;
-        if (executionTrace.contains(activity) 
+        if (model.isParentActivity(activity)) { 
+            return false;
+        } if (executionTrace.contains(activity) 
                 || !marking.getRight().contains(activity) 
                     || !checkIfPreconditionsMet(activity)) return false;
         if (model.isSubActivity(activity)) {
@@ -103,8 +104,42 @@ public class DcrModelExecution {
             marking.getMiddle().remove(activity);
             executionTrace.add(activity);
             updateMarkingFromActivity(activity);
+
+            if (model.isSubActivity(activity)) {
+                String parent = model.getParentActivity(activity);
+                boolean allSubActivitiesExecuted = true;
+                ArrayList<String> subActs = model.getSubActivitiesFromParent(parent);
+                for (int i = 0; i < subActs.size(); i++) {
+                    if (!executionTrace.contains(subActs.get(i))) {
+                        allSubActivitiesExecuted = false;
+                        break;
+                    }
+                }
+                if (allSubActivitiesExecuted) {
+                    marking.getLeft().add(parent);
+                    marking.getMiddle().remove(parent);
+                    updateMarkingFromActivity(parent);
+                    return true;
+                }
+            }
             return true;
         }
+        // if (model.isParentActivity(activity)) {
+            // boolean allSubActivitiesExecuted = true;
+            // ArrayList<String> subActs = model.getSubActivitiesFromParent(activity);
+            // for (int i = 0; i < subActs.size(); i++) {
+            //     if (!executionTrace.contains(subActs.get(i))) {
+            //         allSubActivitiesExecuted = false;
+            //         break;
+            //     }
+            // }
+            // if (allSubActivitiesExecuted) {
+            //     marking.getLeft().add(activity);
+            //     marking.getMiddle().remove(activity);
+            //     updateMarkingFromActivity(activity);
+            //     return true;
+            // }
+        // }
         return false;
     }
     

@@ -196,7 +196,7 @@ public class DcrModel {
 		profile = new HashSet<ActivityRelations>();
 		ArrayList<ArrayList<String>> traces = new ArrayList<ArrayList<String>>();
 
-		int traceLength = 1000;
+		int traceLength = activities.size();
 		int numOfTraces = 100;
 
 		TraceGenerator traceGenerator = new TraceGenerator();

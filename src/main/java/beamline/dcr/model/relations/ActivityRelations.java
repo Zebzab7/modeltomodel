@@ -8,7 +8,7 @@ public class ActivityRelations {
 
     private String activityA;
     private String activityB;
-    private ArrayList<String> relations = new ArrayList<String>();
+    private Set<String> relations = new HashSet<String>();
 
     public ActivityRelations(String activityA, String activityB) {
         this.activityA = activityA;
@@ -23,7 +23,7 @@ public class ActivityRelations {
         return activityB;
     }
 
-    public ArrayList<String> getRelations() {
+    public Set<String> getRelations() {
         return relations;
     }
 

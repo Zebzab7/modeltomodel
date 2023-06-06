@@ -34,10 +34,10 @@ import beamline.dcr.testsoftware.testrunners.PatternChangeComparison.DRIFT;
 import beamline.dcr.view.DcrModelXML;
 
 public class TraceGenerator {
-    private static int eventLogNumber = 101;
-    private static int traceLength = 30;
+    private static int eventLogNumber = 1;
+    private static int traceLength = 50;
     private static int traces = 20;
-    private static int modelVariations = 4;
+    private static int modelVariations = 12;
     private static int driftStrength = 10;
     private static int multiplier = 4;
     
@@ -49,24 +49,26 @@ public class TraceGenerator {
         
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-        String groundTruthModelPath = currentPath + "/groundtruthmodels/Process" + eventLogNumber + ".xml";
+        // String groundTruthModelPath = currentPath + "/driftedmodels/ResearchPaperExample/" + eventLogNumber + ".xml";
         
         ArrayList<DcrModel> referenceModels = new ArrayList<DcrModel>();
 
-        DcrModel initModel = new DcrModel();
-        initModel.loadModel(groundTruthModelPath);
+        // DcrModel initModel = new DcrModel();
+        // initModel.loadModel(groundTruthModelPath);
         
-        referenceModels.add(initModel.getClone());
-        (new DcrModelXML(initModel)).toFile(currentPath + "/groundtruthmodels/" + "Process" + (eventLogNumber+10));
+        // referenceModels.add(initModel.getClone());
+        // (new DcrModelXML(initModel)).toFile(currentPath + "/driftedmodels/ResearchPaperExample" + (eventLogNumber) + "-X");
         
-        ModelAdaption modelAdaption = new ModelAdaption(initModel);
+        // ModelAdaption modelAdaption = new ModelAdaption(initModel);
         
-        for (int i = 1; i < modelVariations; i++) {
-            (new DcrModelXML(initModel)).toFile(currentPath + "/groundtruthmodels/" + "Process" + (eventLogNumber+10+i));
-            if (!modelAdaption.everyMutation(driftStrength)) {
-                System.out.println("Mutation operation was unsuccessful");
-            } 
-            referenceModels.add(modelAdaption.getModel().getClone());
+        for (int i = 1; i <= modelVariations; i++) {
+            DcrModel model = new DcrModel();
+            model.loadModel(currentPath + "/driftedmodels/ResearchPaperExample/ResearchPaper" + (i) + ".xml");
+            // if (!modelAdaption.everyMutation(driftStrength)) {
+            //     System.out.println("Mutation operation was unsuccessful");
+            // } 
+            referenceModels.add(model);
+            // referenceModels.add(modelAdaption.getModel().getClone());
         }
         
         for (DcrModel model : referenceModels ) {
@@ -84,18 +86,20 @@ public class TraceGenerator {
         
         TraceGenerator traceGenerator = new TraceGenerator();
         
-        for (int k = 0; k < modelVariations; k++) {
+        for (int k = 0; k < models.size(); k++) {
             LinkedHashMap<String, List<String>> generatedTraces = new LinkedHashMap<String, List<String>>();
             DcrModel model = models.get(k);
+
+            System.out.println("Model " + (k+1));
             
             for (int i = 0; i < traces; i++) {
-                ArrayList<String> fullTrace = traceGenerator.generateRandomTraceFromModel(model.getClone(), traceLength);
+                ArrayList<String> fullTrace = traceGenerator.generateRandomTraceFromModel(model, traceLength);
                 
                 generatedTraces.put("Trace " + i + "-" + getUniqueID(), fullTrace);
                 System.out.println(fullTrace.toString());
             }
-            saveLog(currentPath + "/eventlogs/eventlog_graph" + (eventLogNumber+k+10), generatedTraces);
-            saveLog(currentPath + "/eventlogs/eventlog_graph" + (121+k), generatedTraces);
+            saveLog(currentPath + "/eventlogs/researchPaper_graph" + (k+1), generatedTraces);
+            // saveLog(currentPath + "/eventlogs/researchPaper_graph" + (121+k), generatedTraces);
         }
         return true;
     }
@@ -135,32 +139,40 @@ public class TraceGenerator {
     public ArrayList<String> generateRandomTraceFromModel(DcrModel model, int traceLength) {
         DcrModelExecution execution = new DcrModelExecution(model.getClone());
         ArrayList<String> executionOrder = new ArrayList<String>(model.getActivities());
-        
+        int count = 0;
         for (int j = 0; j < traceLength; j++) {
             
             Collections.shuffle(executionOrder);
-            boolean found = false;
+            // boolean found = false;
+
+            for (int i = 0; i < executionOrder.size(); i++) {
+                if (execution.executeActivity(executionOrder.get(i))) {
+                    count++;
+                    break;
+                }
+            }
             
             // if (rand.nextDouble() < 0.95) {
             //     for (int i = 0; i < executionOrder.size(); i++) {
             //         if (execution.isPending(executionOrder.get(i))) {
             //             if (execution.executeActivity(executionOrder.get(i))) {
+            //                 count++;
             //                 found = true;
             //                 break;
             //             }
             //         }
             //     }
             // }
-            if (!found) {
-                for (int i = 0; i < executionOrder.size(); i++) {
-                    if (execution.executeActivity(executionOrder.get(i))) {
-                        break;
-                    }
-                }
-            }
+            // if (!found) {
+            //     for (int i = 0; i < executionOrder.size(); i++) {
+            //         if (execution.executeActivity(executionOrder.get(i))) {
+            //             count++;
+            //             break;
+            //         }
+            //     }
+            // }
         }
         ArrayList<String> fullTrace = execution.getTrace();
-        
         return fullTrace;
     }
     

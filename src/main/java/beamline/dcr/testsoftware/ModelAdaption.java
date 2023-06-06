@@ -30,7 +30,7 @@ public class ModelAdaption {
         for (int i = 0; i < numRepeatings; i++) {
             String activityNew = getRandomNonExistingActivity();
 
-            // System.out.println("Inserting " + activityNew + " serial");
+            System.out.println("Inserting " + activityNew + " serial");
 
             model.getLabelMappings().put(activityNew, activityNew);
 
@@ -70,7 +70,7 @@ public class ModelAdaption {
         for (int i = 0; i < numRepeatings; i++) {
             String randomActivity = getRandomNonExistingActivity();
             model.addActivity(randomActivity);
-            // System.out.println("Inserting " + randomActivity + " parallel");
+            System.out.println("Inserting " + randomActivity + " parallel");
         }
         return true;
     }
@@ -80,7 +80,7 @@ public class ModelAdaption {
             while (model.isParentActivity(randomExistingActivity)) {
                 randomExistingActivity = getRandomExistingActivity(model.getRelations());
             }
-            // System.out.println("Deleting " + model.getLabelMappings().get(randomExistingActivity));
+            System.out.println("Deleting " + model.getLabelMappings().get(randomExistingActivity));
             model.removeActivity(randomExistingActivity);
         }
         return true;
@@ -91,8 +91,8 @@ public class ModelAdaption {
             String newActivity = getRandomNonExistingActivity();
             
             model.getLabelMappings().put(newActivity, newActivity);
-            // System.out.println("Replacing " + model.getLabelMappings().get(oldActivity)
-            //     + " with " + model.getLabelMappings().get(newActivity));
+            System.out.println("Replacing " + model.getLabelMappings().get(oldActivity)
+                + " with " + model.getLabelMappings().get(newActivity));
             model.getLabelMappings().remove(oldActivity);
             Set<Triple<String, String, DcrModel.RELATION>> relationsWithActivity = new HashSet<>();
             relationsWithActivity.addAll(model.getDcrRelationsWithActivity(oldActivity));
@@ -141,7 +141,7 @@ public class ModelAdaption {
             while (!(randomConstraint.equals(constraintType))) {
                 randomConstraint = constraints.get(r.nextInt(size));
             }
-            // System.out.println("Adding " + source + " " + target + " " + randomConstraint);
+            System.out.println("Adding " + source + " " + target + " " + randomConstraint);
             model.addRelation(Triple.of(source, target, randomConstraint));
         }
         return true;
@@ -170,8 +170,8 @@ public class ModelAdaption {
                     || (randomConstraint.equals(RELATION.CONDITION) && same)) {
                 randomConstraint = constraints.get(r.nextInt(size));
             }
-            // System.out.println("addConstraint");
-            // System.out.println("Adding " + source + " " + target + " " + randomConstraint);
+            System.out.println("addConstraint");
+            System.out.println("Adding " + source + " " + target + " " + randomConstraint);
             model.addRelation(Triple.of(source, target, randomConstraint));
         }
         return true;
@@ -197,7 +197,7 @@ public class ModelAdaption {
                     i++;
                 }
             }
-            // System.out.println("Removing " + relationToRemove.getLeft() + " " + relationToRemove.getRight() + " " + relationToRemove.getMiddle());
+            System.out.println("Removing " + relationToRemove.getLeft() + " " + relationToRemove.getRight() + " " + relationToRemove.getMiddle());
             model.removeRelation(relationToRemove.getLeft(), relationToRemove.getMiddle(), relationToRemove.getRight());
         }
         return true;
