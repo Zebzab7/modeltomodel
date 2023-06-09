@@ -1,0 +1,337 @@
+<dcrgraph title="DCR Regex Test" dataTypesStatus="hide" filterLevel="-1" insightFilter="false" zoomLevel="0" formGroupStyle="Normal" formLayoutStyle="Horizontal" formShowPendingCount="true" graphBG="#f1f6fe" graphType="0" exercise="false">
+    <meta>
+        <graph id="1624459" hash="E3D1674DF876266D6DD36B6DED41FD1A" guid="44DA9669-933C-424D-9639-C0C43F789D84" OwnerName="Sebastian Boriths" OwnerId="136191" categoryId="7257" categoryTitle="Default" Keywords=""/>
+        <revision id="3221114" type="minor" date="2023-06-07T19:11:52.837"/>
+        <organization id="1" name="Community"/>
+    </meta>
+    <specification>
+        <resources>
+            <events>
+                <event id="Activity5">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="850" yLoc="375"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <readRoles>
+                            <readRole/>
+                        </readRoles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription/>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>6</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                </event>
+                <event id="Activity6" type="subprocess">
+                    <precondition message=""/>
+                    <custom>
+                        <visualization>
+                            <location xLoc="125" yLoc="75"/>
+                            <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                        </visualization>
+                        <roles>
+                            <role/>
+                        </roles>
+                        <readRoles>
+                            <readRole/>
+                        </readRoles>
+                        <groups>
+                            <group/>
+                        </groups>
+                        <phases>
+                            <phase/>
+                        </phases>
+                        <eventType/>
+                        <eventScope>private</eventScope>
+                        <eventTypeData/>
+                        <eventDescription/>
+                        <purpose/>
+                        <guide/>
+                        <insight use="false"/>
+                        <level>1</level>
+                        <sequence>7</sequence>
+                        <costs>0</costs>
+                        <eventData/>
+                        <interfaces/>
+                    </custom>
+                    <event id="Activity4">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="400" yLoc="125"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <readRoles>
+                                <readRole/>
+                            </readRoles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription/>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>5</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity0Copy">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="350" yLoc="325"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <readRoles>
+                                <readRole/>
+                            </readRoles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription/>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>2</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity0">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="150" yLoc="325"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <readRoles>
+                                <readRole/>
+                            </readRoles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription/>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>1</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity2">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="550" yLoc="225"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <readRoles>
+                                <readRole/>
+                            </readRoles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription/>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>3</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                    <event id="Activity3">
+                        <precondition message=""/>
+                        <custom>
+                            <visualization>
+                                <location xLoc="550" yLoc="425"/>
+                                <colors bg="#f9f7ed" textStroke="#000000" stroke="#cccccc"/>
+                            </visualization>
+                            <roles>
+                                <role/>
+                            </roles>
+                            <readRoles>
+                                <readRole/>
+                            </readRoles>
+                            <groups>
+                                <group/>
+                            </groups>
+                            <phases>
+                                <phase/>
+                            </phases>
+                            <eventType/>
+                            <eventScope>private</eventScope>
+                            <eventTypeData/>
+                            <eventDescription/>
+                            <purpose/>
+                            <guide/>
+                            <insight use="false"/>
+                            <level>1</level>
+                            <sequence>4</sequence>
+                            <costs>0</costs>
+                            <eventData/>
+                            <interfaces/>
+                        </custom>
+                    </event>
+                </event>
+            </events>
+            <subProcesses/>
+            <distribution/>
+            <labels>
+                <label id="A"/>
+                <label id="B"/>
+                <label id="C"/>
+                <label id="D"/>
+                <label id="E"/>
+                <label id="F"/>
+                <label id="Activity6"/>
+            </labels>
+            <labelMappings>
+                <labelMapping eventId="Activity0" labelId="A"/>
+                <labelMapping eventId="Activity0Copy" labelId="B"/>
+                <labelMapping eventId="Activity2" labelId="C"/>
+                <labelMapping eventId="Activity3" labelId="D"/>
+                <labelMapping eventId="Activity4" labelId="E"/>
+                <labelMapping eventId="Activity5" labelId="F"/>
+                <labelMapping eventId="Activity6" labelId="Activity6"/>
+            </labelMappings>
+            <expressions/>
+            <variables/>
+            <variableAccesses>
+                <writeAccesses/>
+            </variableAccesses>
+            <custom>
+                <keywords/>
+                <roles/>
+                <groups/>
+                <phases/>
+                <eventTypes/>
+                <eventParameters/>
+                <graphDetails>DCR Process</graphDetails>
+                <graphDocumentation/>
+                <graphLanguage>en-US</graphLanguage>
+                <graphDomain>process</graphDomain>
+                <graphFilters>
+                    <filteredGroups/>
+                    <filteredRoles/>
+                    <filteredPhases/>
+                </graphFilters>
+                <hightlighterMarkup id="HLM"/>
+                <highlighterMarkup>
+                    <highlightLayers>
+                        <highlightLayer default="true" name="description">DCR Process</highlightLayer>
+                    </highlightLayers>
+                    <highlights/>
+                </highlighterMarkup>
+            </custom>
+        </resources>
+        <constraints>
+            <conditions>
+                <condition sourceId="Activity0Copy" targetId="Activity2" filterLevel="1" description="" time="" groups="" link="Activity0Copy--condition--Activity2"/>
+                <condition sourceId="Activity0Copy" targetId="Activity3" filterLevel="1" description="" time="" groups="" link="Activity0Copy--condition--Activity3"/>
+                <condition sourceId="Activity2" targetId="Activity4" filterLevel="1" description="" time="" groups="" link="Activity2--condition--Activity4"/>
+            </conditions>
+            <responses>
+                <response sourceId="Activity0" targetId="Activity0Copy" filterLevel="1" description="" time="" groups=""/>
+                <response sourceId="Activity4" targetId="Activity0Copy" filterLevel="1" description="" time="" groups=""/>
+            </responses>
+            <coresponses/>
+            <excludes>
+                <exclude sourceId="Activity5" targetId="Activity6" filterLevel="1" description="" time="" groups=""/>
+                <exclude sourceId="Activity6" targetId="Activity5" filterLevel="1" description="" time="" groups=""/>
+            </excludes>
+            <includes/>
+            <milestones>
+                <milestone sourceId="Activity0Copy" targetId="Activity2" filterLevel="1" description="" time="" groups="" link="Activity0Copy--condition--Activity2"/>
+                <milestone sourceId="Activity0Copy" targetId="Activity3" filterLevel="1" description="" time="" groups="" link="Activity0Copy--condition--Activity3"/>
+                <milestone sourceId="Activity2" targetId="Activity4" filterLevel="1" description="" time="" groups="" link="Activity2--condition--Activity4"/>
+            </milestones>
+            <updates/>
+            <spawns/>
+            <templateSpawns/>
+        </constraints>
+    </specification>
+    <runtime>
+        <custom>
+            <globalMarking/>
+        </custom>
+        <marking>
+            <globalStore/>
+            <executed/>
+            <included>
+                <event id="Activity0"/>
+                <event id="Activity0Copy"/>
+                <event id="Activity2"/>
+                <event id="Activity3"/>
+                <event id="Activity4"/>
+                <event id="Activity5"/>
+                <event id="Activity6"/>
+            </included>
+            <pendingResponses/>
+        </marking>
+    </runtime>
+</dcrgraph>

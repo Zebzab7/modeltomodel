@@ -23,7 +23,7 @@ public class BasicStreamDriftDetection {
         //Test parameters
         int eventlogNumber = 1;
         int relationsThreshold = 0;
-        double sigDiff = 0.75;
+        double sigDiff = 0.9;
         String[] patternList = ("Condition Response Include Exclude").split(" ");
         String[] transitiveReductionList = (" ").split(" ");
         int maxTraces = 5;

@@ -36,7 +36,7 @@ import beamline.dcr.view.DcrModelXML;
 public class TraceGenerator {
     private static int eventLogNumber = 1;
     private static int traceLength = 50;
-    private static int traces = 20;
+    private static int traces = 30;
     private static int modelVariations = 12;
     private static int driftStrength = 10;
     private static int multiplier = 4;
@@ -143,34 +143,27 @@ public class TraceGenerator {
         for (int j = 0; j < traceLength; j++) {
             
             Collections.shuffle(executionOrder);
-            // boolean found = false;
-
-            for (int i = 0; i < executionOrder.size(); i++) {
-                if (execution.executeActivity(executionOrder.get(i))) {
-                    count++;
-                    break;
+            boolean found = false;
+            
+            if (rand.nextDouble() < 0.90) {
+                for (int i = 0; i < executionOrder.size(); i++) {
+                    if (execution.isPending(executionOrder.get(i))) {
+                        if (execution.executeActivity(executionOrder.get(i))) {
+                            count++;
+                            found = true;
+                            break;
+                        }
+                    }
                 }
             }
-            
-            // if (rand.nextDouble() < 0.95) {
-            //     for (int i = 0; i < executionOrder.size(); i++) {
-            //         if (execution.isPending(executionOrder.get(i))) {
-            //             if (execution.executeActivity(executionOrder.get(i))) {
-            //                 count++;
-            //                 found = true;
-            //                 break;
-            //             }
-            //         }
-            //     }
-            // }
-            // if (!found) {
-            //     for (int i = 0; i < executionOrder.size(); i++) {
-            //         if (execution.executeActivity(executionOrder.get(i))) {
-            //             count++;
-            //             break;
-            //         }
-            //     }
-            // }
+            if (!found) {
+                for (int i = 0; i < executionOrder.size(); i++) {
+                    if (execution.executeActivity(executionOrder.get(i))) {
+                        count++;
+                        break;
+                    }
+                }
+            }
         }
         ArrayList<String> fullTrace = execution.getTrace();
         return fullTrace;

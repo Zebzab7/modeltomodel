@@ -15,7 +15,8 @@ public class Test {
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-        String groundTruthModelPath = currentPath + "/driftedmodels/ResearchPaperExample/ResearchPaper12.xml";
+        // String groundTruthModelPath = currentPath + "/driftedmodels/ResearchPaperExample/ResearchPaper12.xml";
+        String groundTruthModelPath = currentPath + "/RegexModels/DCRRegexTest3.xml";
         
         DcrModel CRModel = new DcrModel();
         CRModel.loadModel(groundTruthModelPath);

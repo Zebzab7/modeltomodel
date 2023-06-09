@@ -169,6 +169,8 @@ public class DcrSimilarity {
         Set<ActivityRelations> behavioralProfileA = modelA.createBehavioralProfile();
         Set<ActivityRelations> behavioralProfileB = modelB.createBehavioralProfile();
 
+        System.out.println("Behavioral profile A: " + behavioralProfileB);
+
         Set<String> matches = intersection(modelA.getActivities(), modelB.getActivities());
         double F =(double) matches.size();
 

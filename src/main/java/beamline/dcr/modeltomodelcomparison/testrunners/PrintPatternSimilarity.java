@@ -86,9 +86,9 @@ public class PrintPatternSimilarity {
         DcrModel newModel = new DcrModel();
         newModel.loadModel(modelPath);
         
-        double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(newModel, previousModel);
-        double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(newModel, previousModel);
-        double BPScore = DcrSimilarity.behavioralProfileSimilarity(newModel, previousModel);
+        double GEDScore = DcrSimilarity.graphEditDistanceSimilarity(newModel, referenceModel);
+        double LCSScore = DcrSimilarity.longestCommonSubtraceSimilarity(newModel, referenceModel);
+        double BPScore = DcrSimilarity.behavioralProfileSimilarity(newModel, referenceModel);
         xmlString.append(getNumFromString(filename) + "," + GEDScore + "," + LCSScore + "," + BPScore + "\n");
         
         return xmlString.toString();
