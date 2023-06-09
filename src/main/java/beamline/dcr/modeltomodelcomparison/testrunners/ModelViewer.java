@@ -33,21 +33,27 @@ public class ModelViewer {
         int version = 0;
 
         String rootPath = System.getProperty("user.dir");
-        String modelRepo = rootPath + "/src/main/java/beamline/dcr/testsoftware/publicrepodataset/model" + modelId;
+        // String modelRepo = rootPath + "/src/main/java/beamline/dcr/testsoftware/publicrepodataset/model" + modelId;
+        String modelRepo = rootPath + "/src/main/java/beamline/dcr/testsoftware/driftedmodels/ResearchPaperExample/";
         String filePath = null;
         String fileName = null;
         
-        if (version == 0) {
-            filePath = modelRepo + "/original.xml";
-            fileName = "original";
-        } else {
-            filePath = modelRepo + "/version" + version + ".xml";
-            fileName = "version" + version;
-        }
+        // if (version == 0) {
+        //     filePath = modelRepo + "/original.xml";
+        //     fileName = "original";
+        // } else {
+        //     filePath = modelRepo + "/version" + version + ".xml";
+        //     fileName = "version" + version;
+        // }
+
+        filePath = modelRepo + "ResearchPaper9.xml";
+        fileName = "ResearchPaper9";
 
         DcrModel model = new DcrModel();
         model.loadModel(filePath);
 
+        System.out.println(model.getRelations().toString());
+        
         String writePath = modelRepo + "/View/" + fileName + ".png";
         dcrGraphToImage(model, writePath);
         System.out.println("Graph rendered to " + writePath);

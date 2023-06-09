@@ -18,17 +18,18 @@ public class ProfileSimilarityTest {
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
         String rootPath = System.getProperty("user.dir");
         String currentPath = rootPath + "/src/main/java/beamline/dcr/testsoftware";
-        String modelPath = currentPath + "/driftedmodels/ResearchPaperExample/ResearchPaper1.xml";
-        String modelPath2 = currentPath + "/driftedmodels/ResearchPaperExample/ResearchPaper2.xml";
+        // String modelPath = currentPath + "/driftedmodels/ResearchPaperExample/ResearchPaper1.xml";
+        // String modelPath2 = currentPath + "/driftedmodels/ResearchPaperExample/ResearchPaper2.xml";
 
-        // String modelPath = currentPath + "/RegexModels/DCRRegexTest.xml";
-        // String modelPath2 = currentPath + "/RegexModels/DCRRegexTest2.xml";
+        String modelPath = currentPath + "/RegexModels/DCRRegexTest.xml";
+        String modelPath2 = currentPath + "/RegexModels/DCRRegexTest3.xml";
         
         DcrModel model1 = new DcrModel();
         model1.loadModel(modelPath);
 
         DcrModel model2 = new DcrModel();
         model2.loadModel(modelPath2);
+
 
         System.out.println();
         System.out.println(DcrSimilarity.behavioralProfileSimilarity(model1, model2));
