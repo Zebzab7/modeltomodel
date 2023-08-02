@@ -1,3 +1,23 @@
+# DCR graph locations
+The locations of the public datasets provided from DCRSolutions: 
+
+src/main/java/beamline/dcr/testsoftware/publicrepodataset/model<model_num> 
+
+## Graphs used for "Applications of Model-to-Model Similarity Metrics to Capture Process Behavior in Declarative Models"
+Section 5.1 depicts 4 sub-plots in which the following baselines models were utilized:
+
+Top left plot: 89  
+Top right plot: 5047  
+Bottom right plot: 7188  
+Bottom left plot: 7262  
+
+## Research paper example
+The DCR graph modeling the process of writing a research paper used in sections 5.2.3 and 5.3 is located in:
+
+src/main/java/beamline/dcr/testsoftware/driftedmodels/ResearchPaperExample/ResearchPaper<version_number> 
+
+Where <version_number> is each of the graph snapshots. Version numbers are 1 through 12), 1 being the original graph before any changes are applied.
+
 # DCR miner test
 This miner is constructed as a product of the thesis Online Discovery and Model-to-Model Comparison of DCR Models from Event Streams by Lasse Helm Trige Starklit.
 
