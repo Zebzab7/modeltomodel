@@ -11,6 +11,8 @@ Top right plot: 5047
 Bottom right plot: 7188  
 Bottom left plot: 7262  
 
+Model 7188 was also used in section 5.2.2.
+
 ## Research paper example
 The DCR graph modeling the process of writing a research paper used in sections 5.2.3 and 5.3 is located in:
 
